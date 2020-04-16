@@ -1,0 +1,58 @@
+package com.zhsnail.finance.service;
+
+import com.zhsnail.finance.entity.Permission;
+import com.zhsnail.finance.entity.Role;
+import com.zhsnail.finance.entity.User;
+
+import java.util.List;
+import java.util.Map;
+
+public interface SystemService {
+    /**
+     * 根据员工id查找用户
+     * @param staffId 员工id
+     * @return User实体
+     */
+    User findUserByStaId(String staffId);
+
+    /**
+     * 根据学生id查找用户
+     * @param studentId 学生id
+     * @return User实体
+     */
+    User findUserByStuId(String studentId);
+
+    /**
+     * 根据用户名查找用户
+     * @param userName 用户名
+     * @return User实体
+     */
+    User findUser(String userName);
+
+    /**
+     * 保存User实体
+     * @param user user
+     */
+    void saveUser(User user);
+
+    /**
+     * 根据id查询用户
+     * @param id id
+     * @return User实体
+     */
+    User findUserById(String id);
+
+    /**
+     * 根据用户id查找角色
+     * @param userId 用户id
+     * @return List<Role>
+     */
+    List<Role> findRoleList(String userId);
+
+    /**
+     * 查询用户的权限及菜单
+     * @param userName 用户名
+     * @return user实体
+     */
+    User findUserInfo(String userName);
+}
