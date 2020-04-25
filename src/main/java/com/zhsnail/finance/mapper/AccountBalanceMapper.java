@@ -1,15 +1,12 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.AccountBalance;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import com.zhsnail.finance.vo.AccountBalanceVo;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
 import org.apache.ibatis.type.JdbcType;
+
+import java.util.List;
 
 public interface AccountBalanceMapper {
     @Delete({
@@ -84,4 +81,49 @@ public interface AccountBalanceMapper {
         "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(AccountBalance record);
+
+
+    @UpdateProvider(type=AccountBalanceSqlProvider.class, method="updateByAccIdSelective")
+    void updateByAccId(AccountBalanceVo accountBalanceVo);
+
+    @SelectProvider(type=AccountBalanceSqlProvider.class, method="selectAllConditionSql")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="debit_stayear_amt", property="debitStayearAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="credit_stayear_amt", property="creditStayearAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="credit_staperiod_amt", property="creditStaperiodAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="debit_staperiod_amt", property="debitStaperiodAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="credit_endperiod_amt", property="creditEndperiodAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="debit_endperiod_amt", property="debitEndperiodAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="credit_currperiod_amt", property="creditCurrperiodAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="debit_currperiod_amt", property="debitCurrperiodAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="credit_accumyear_amt", property="creditAccumyearAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="debit_accumyear_amt", property="debitAccumyearAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="account_period", property="accountPeriod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="account_id", property="accountId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="account_id",property="account",one=@One(select="com.zhsnail.finance.mapper.AccountMapper.selectByPrimaryKey",fetchType= FetchType.EAGER))
+    })
+    List<AccountBalance> findByCondition(AccountBalanceVo accountBalanceVo);
+
+    @Select({
+            "select * from LEM_ACCOUNT_BALANCE",
+            "where account_id = #{accountId,jdbcType=VARCHAR}"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="debit_stayear_amt", property="debitStayearAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="credit_stayear_amt", property="creditStayearAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="credit_staperiod_amt", property="creditStaperiodAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="debit_staperiod_amt", property="debitStaperiodAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="credit_endperiod_amt", property="creditEndperiodAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="debit_endperiod_amt", property="debitEndperiodAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="credit_currperiod_amt", property="creditCurrperiodAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="debit_currperiod_amt", property="debitCurrperiodAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="credit_accumyear_amt", property="creditAccumyearAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="debit_accumyear_amt", property="debitAccumyearAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="account_period", property="accountPeriod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="account_id", property="accountId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="account_id",property="account",one=@One(select="com.zhsnail.finance.mapper.AccountMapper.selectByPrimaryKey",fetchType= FetchType.EAGER))
+    })
+    AccountBalance findByAccId(String accountId);
 }

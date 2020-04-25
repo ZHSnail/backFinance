@@ -4,30 +4,40 @@ import java.math.BigDecimal;
 
 public class AccountBalance {
     private String id;
-
+    //借方年初余额
     private BigDecimal debitStayearAmt;
-
+    //贷方年初余额
     private BigDecimal creditStayearAmt;
-
+    //贷方期初余额
     private BigDecimal creditStaperiodAmt;
-
+//借方期初余额
     private BigDecimal debitStaperiodAmt;
-
+//贷方期末余额
     private BigDecimal creditEndperiodAmt;
-
+//借方期末余额
     private BigDecimal debitEndperiodAmt;
-
+//贷方本期发生额
     private BigDecimal creditCurrperiodAmt;
-
+//借方本期发生额
     private BigDecimal debitCurrperiodAmt;
-
+//贷方本年累计发生额
     private BigDecimal creditAccumyearAmt;
-
+//借方本年累计发生额
     private BigDecimal debitAccumyearAmt;
-
+//会计期间
     private String accountPeriod;
-
+//会计科目id
     private String accountId;
+
+    private Account account;
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
 
     public String getId() {
         return id;

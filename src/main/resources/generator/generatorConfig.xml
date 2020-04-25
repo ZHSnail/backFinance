@@ -47,14 +47,8 @@
                              targetPackage="com.zhsnail.finance.mapper" targetProject="src/main/java">
         </javaClientGenerator>
 
-        <table tableName="LEM_ACCOUNT" domainObjectName="Account"
+        <table tableName="ACT_RE_PROCDEF" domainObjectName="ActivitiProcess"
                enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="LEM_ACCOUNT_BALANCE" domainObjectName="AccountBalance"
-               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="LEM_ACCOUNT_DETAIL" domainObjectName="AccountDetail"
-               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false"></table>
+               enableUpdateByExample="false" selectByExampleQueryId="false"/>
     </context>
 </generatorConfiguration>

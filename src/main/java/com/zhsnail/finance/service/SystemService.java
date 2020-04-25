@@ -1,8 +1,7 @@
 package com.zhsnail.finance.service;
 
-import com.zhsnail.finance.entity.Permission;
-import com.zhsnail.finance.entity.Role;
-import com.zhsnail.finance.entity.User;
+import com.github.pagehelper.PageInfo;
+import com.zhsnail.finance.entity.*;
 
 import java.util.List;
 import java.util.Map;
@@ -55,4 +54,12 @@ public interface SystemService {
      * @return user实体
      */
     User findUserInfo(String userName);
+
+    ImportResult findImResult(String fileId);
+
+    void saveImresult(ImportResult importResult);
+
+    PageInfo<Role> findAllRole(PageEntity pageEntity);
+
+    PageInfo<User> findAllUser(PageEntity pageEntity);
 }

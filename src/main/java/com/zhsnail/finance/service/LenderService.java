@@ -1,5 +1,6 @@
 package com.zhsnail.finance.service;
 
+import com.zhsnail.finance.common.Result;
 import com.zhsnail.finance.entity.Account;
 import com.zhsnail.finance.vo.AccountVo;
 
@@ -23,7 +24,7 @@ public interface LenderService {
      * 删除会计科目
      * @param id 会计科目id
      */
-    void deleteAccount(String id);
+    Result deleteAccount(String id);
 
     /**
      * 根据条件查找所有的会计科目并生成树形表格所需的会计科目数据
@@ -31,4 +32,15 @@ public interface LenderService {
      * @return 树形表格所需会计科目数据
      */
     List<Map> findArrangeAccount(AccountVo accountVo);
+
+    /**
+     * 查找上一级的所有会计科目
+     * @param level 级次
+     * @return 会计科目
+     */
+    List<Account> findUpAccount(String level);
+
+    List<AccountVo> exportAccount(AccountVo accountVo);
+
+    void execBatchInsert(List<Account> accounts);
 }

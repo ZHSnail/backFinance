@@ -1,6 +1,8 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.AccountDetail;
+import com.zhsnail.finance.vo.AccountDetailVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 
 public class AccountDetailSqlProvider {
@@ -62,6 +64,21 @@ public class AccountDetailSqlProvider {
         
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
+        return sql.toString();
+    }
+
+    public String selectAllConditionSql(AccountDetailVo accountDetailVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("LEM_ACCOUNT_DETAIL");
+        if (accountDetailVo!=null){
+            if (StringUtils.isNotBlank(accountDetailVo.getAccountId())){
+                sql.WHERE("account_id = #{accountId,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(accountDetailVo.getAccountPeriod())){
+                sql.WHERE("account_period = #{accountPeriod,jdbcType=VARCHAR}");
+            }
+        }
         return sql.toString();
     }
 }

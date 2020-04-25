@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 @Configuration
-public class ActivitiDataSourceConfig extends AbstractProcessEngineAutoConfiguration {
+public class ActivitiConfig extends AbstractProcessEngineAutoConfiguration {
     @Resource
     private ActivitiDataSourceProperties activitiDataSourceProperties;
 
@@ -42,6 +42,8 @@ public class ActivitiDataSourceConfig extends AbstractProcessEngineAutoConfigura
         configuration.setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
         configuration.setJobExecutorActivate(true);
         configuration.setTransactionManager(transactionManager());
+        configuration.setLabelFontName("宋体");
+        configuration.setLabelFontName("宋体");
         return configuration;
     }
 

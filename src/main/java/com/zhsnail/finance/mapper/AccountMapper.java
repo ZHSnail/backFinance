@@ -64,7 +64,57 @@ public interface AccountMapper {
     int updateByPrimaryKey(Account record);
 
     @SelectProvider(type=AccountSqlProvider.class, method="selectAllConditionSql")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="account_name", property="accountName", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="level", property="level", jdbcType=JdbcType.VARCHAR),
+            @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_cash", property="isCash", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_bank", property="isBank", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR)
+    })
     List<Account> findAllByCondition(AccountVo accountVo);
 
+    @Select("select * from LEM_ACCOUNT where level < #{level,jdbcType=VARCHAR} and is_detail = FALSE")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="account_name", property="accountName", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="level", property="level", jdbcType=JdbcType.VARCHAR),
+            @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_cash", property="isCash", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_bank", property="isBank", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR)
+    })
+    List<Account> findUpperAccount(String level);
 
+    @Select("select * from LEM_ACCOUNT where parent_id = #{parentId,jdbcType=VARCHAR}")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="account_name", property="accountName", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="level", property="level", jdbcType=JdbcType.VARCHAR),
+            @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_cash", property="isCash", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_bank", property="isBank", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR)
+    })
+    List<Account> findByParentId(String parentId);
+
+    @InsertProvider(type=AccountSqlProvider.class, method="batchinsertSql")
+    void batchInsert(List<Account> accounts);
+
+    @Select("select * from LEM_ACCOUNT where code = #{code,jdbcType=VARCHAR} and is_detail = TRUE")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="account_name", property="accountName", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="level", property="level", jdbcType=JdbcType.VARCHAR),
+            @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_cash", property="isCash", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_bank", property="isBank", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR)
+    })
+    Account findBycode(String code);
 }

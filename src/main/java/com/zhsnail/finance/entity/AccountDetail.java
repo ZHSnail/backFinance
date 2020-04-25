@@ -15,6 +15,26 @@ public class AccountDetail {
 
     private String accountId;
 
+    private Voucher voucher;
+
+    private AccountBalance accountBalance;
+
+    public AccountBalance getAccountBalance() {
+        return accountBalance;
+    }
+
+    public void setAccountBalance(AccountBalance accountBalance) {
+        this.accountBalance = accountBalance;
+    }
+
+    public Voucher getVoucher() {
+        return voucher;
+    }
+
+    public void setVoucher(Voucher voucher) {
+        this.voucher = voucher;
+    }
+
     public String getId() {
         return id;
     }

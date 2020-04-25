@@ -43,10 +43,11 @@ public class ShiroConfiguration {
         map.put("/diagram-viewer/**","anon");
         map.put("/editor-app/**","anon");
         map.put("/modeler.html","anon");
+        map.put("/excelTemplate/**","anon");
         map.put("/stencilset.json","anon");
         map.put("/system/login","anon");
         map.put("/system/loginOut","anon");
-        //登出
+        //登出*
         map.put("/logout","logout");
         //对所有用户认证
         map.put("/**","authc");

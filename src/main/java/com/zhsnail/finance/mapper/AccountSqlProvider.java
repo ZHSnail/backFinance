@@ -2,7 +2,12 @@ package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.Account;
 import com.zhsnail.finance.vo.AccountVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
+
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
 
 public class AccountSqlProvider {
 
@@ -86,12 +91,30 @@ public class AccountSqlProvider {
         SQL sql = new SQL();
         sql.SELECT("*");
         sql.FROM("LEM_ACCOUNT");
-        if (accountVo.getCode() != null){
-            sql.WHERE("code = #{code,jdbcType=VARCHAR}");
-        }
-        if (accountVo.getAccountName() != null){
-            sql.WHERE("accountName like concat('%',#{accountName},'%')");
+        if (accountVo!=null){
+            if (StringUtils.isNotBlank(accountVo.getCode())){
+                sql.WHERE("code like concat('%', #{code,jdbcType=VARCHAR},'%')");
+            }
+            if (StringUtils.isNotBlank(accountVo.getAccountName())){
+                sql.WHERE("account_name like concat('%',#{accountName,jdbcType=VARCHAR},'%')");
+            }
         }
         return sql.toString();
+    }
+
+    public String batchinsertSql(Map<String,List<Account>> map ){
+        List<Account> accounts = map.get("list");
+        StringBuilder sb = new StringBuilder();
+        sb.append("INSERT INTO LEM_ACCOUNT ");
+        sb.append("(id, account_name,code,level,parent_id,is_cash,is_bank,is_detail) ");
+        sb.append("VALUES ");
+        MessageFormat mf = new MessageFormat("(#'{'list[{0}].id},#'{'list[{0}].accountName}, #'{'list[{0}].code},#'{'list[{0}].level},#'{'list[{0}].parentId},#'{'list[{0}].isCash},#'{'list[{0}].isBank},#'{'list[{0}].isDetail})");
+        for (int i = 0; i < accounts.size(); i++) {
+            sb.append(mf.format(new Object[]{i}));
+            if (i < accounts.size() - 1) {
+                sb.append(",");
+            }
+        }
+        return sb.toString();
     }
 }

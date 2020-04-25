@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
 import org.apache.ibatis.type.JdbcType;
 
+import java.util.List;
+
 public interface UserMapper {
     @Delete({
         "delete from SYM_USER",
@@ -112,4 +114,13 @@ public interface UserMapper {
             @Result(property = "roles",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.RoleMapper.findByUserId",fetchType = FetchType.LAZY))
     })
     User findUserInfo(String name);
+
+    @Select({
+            "select * from SYM_USER"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="user_name", property="userName", jdbcType=JdbcType.VARCHAR),
+    })
+    List<User> findAllUser();
 }

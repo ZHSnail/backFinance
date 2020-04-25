@@ -64,6 +64,18 @@ public interface RoleMapper {
     })
     List<Role> findByUserId(String userId);
 
+    @Select({
+            "select",
+            "id, role_name, memo",
+            "from SYM_ROLE"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="role_name", property="roleName", jdbcType=JdbcType.VARCHAR),
+            @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR)
+    })
+    List<Role> findAllRole();
+
     /*@Select({
             "select * from SYM_ROLE where id = #{id,jdbcType=VARCHAR}"
     })

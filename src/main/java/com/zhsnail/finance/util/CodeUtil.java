@@ -18,8 +18,6 @@ public class CodeUtil {
      * @return
      */
     public static String getId(){
-        String id = UUID.randomUUID().toString();
-        String uId = id.replaceAll("-", "");
-        return uId.replaceAll("[a-zA-Z]","" );
+        return Long.toString(snowflakeIdWorker.nextId());
     }
 }
