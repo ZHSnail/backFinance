@@ -6,6 +6,7 @@ import com.zhsnail.finance.common.SystemControllerLog;
 import com.zhsnail.finance.common.SystemLog;
 import com.zhsnail.finance.service.ActivityService;
 import com.zhsnail.finance.service.TestServiceImpl;
+import com.zhsnail.finance.util.CodeUtil;
 import com.zhsnail.finance.util.MongoUtil;
 import org.activiti.engine.*;
 import org.activiti.engine.impl.persistence.entity.VariableInstance;
@@ -65,12 +66,13 @@ public class aController {
         //获取流程开始时的变量
         Map<String, VariableInstance> variableInstances = runtimeService.getVariableInstances(task.getExecutionId());
         taskService.complete(task.getId());*/
-        Object principal = SecurityUtils.getSubject().getPrincipal();
-//        activityService.runStart("duogerenwu","4564154165416541",map);
-        activityService.runStart("duogerenwu","54987987987987987987987",null);
-//        activityService.runRefuse("duogerenwu","4564154165416541",null);
-        TaskQuery taskQuery = taskService.createTaskQuery().processInstanceBusinessKey("4564154165416541");
-        Task task = taskQuery.singleResult();
+//        Object principal = SecurityUtils.getSubject().getPrincipal();
+        activityService.runStart("testRole", CodeUtil.getId(),map);
+//        List<Task> list = taskService.createTaskQuery().taskAssignee("1").list();
+//        activityService.runApprove("testRole","704003229381296128",null);
+//        activityService.runRefuse("testRole","703982952584839168",null);
+/*        TaskQuery taskQuery = taskService.createTaskQuery().processInstanceBusinessKey("5778798798798798798798798797987");
+        Task task = taskQuery.singleResult()*/;
         return new Result();
     }
 }

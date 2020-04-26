@@ -46,6 +46,7 @@ public class ShiroConfiguration {
         map.put("/excelTemplate/**","anon");
         map.put("/stencilset.json","anon");
         map.put("/system/login","anon");
+        map.put("/activiti/image","anon");
         map.put("/system/loginOut","anon");
         //登出*
         map.put("/logout","logout");

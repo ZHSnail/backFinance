@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -212,5 +213,16 @@ public class ActivityController {
     public Result deleteDeployment(@PathVariable String deploymentId){
         repositoryService.deleteDeployment(deploymentId, true);
         return new Result(true,"删除成功");
+    }
+
+    @GetMapping("/image")
+    public void viewActivityImage(HttpServletResponse response,@RequestParam String workKey, @RequestParam String businessKey) throws IOException {
+        InputStream inputStream = activityService.resourceImage(workKey, businessKey);
+        // 输出资源内容到相应对象
+        byte[] b = new byte[1024];
+        int len;
+        while ((len = inputStream.read(b, 0, 1024)) != -1) {
+            response.getOutputStream().write(b, 0, len);
+        }
     }
 }

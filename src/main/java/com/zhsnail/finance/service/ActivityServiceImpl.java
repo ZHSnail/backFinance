@@ -39,6 +39,7 @@ import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.activiti.image.ProcessDiagramGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -78,6 +79,8 @@ public class ActivityServiceImpl implements ActivityService {
     private ActivitiModelMapper activitiModelMapper;
     @Autowired
     private ActivitiDeploymentMapper activitiDeploymentMapper;
+    @Autowired
+    ProcessEngineConfiguration processEngineConfiguration;
 
     @Override
     public PageInfo<ActivitiModel> findAllModel(ModelVo modelVo) {
@@ -117,8 +120,10 @@ public class ActivityServiceImpl implements ActivityService {
             variables.put(DICT.BUSINESSKEY, businessKey);
             // 工作流ID
             variables.put(DICT.WORKKEY, workKey);
+            //TODO 需要放拒绝后原先的用户的id
+            variables.put("applyUser","userID");
             //已经停留在申请了，所以直接完成该节点
-//            taskService.complete(task.getId(), variables);
+            taskService.complete(task.getId(), variables);
         } else {
             // 否则，启动流程
             // 设置流程常用变量
@@ -130,11 +135,14 @@ public class ActivityServiceImpl implements ActivityService {
             variables.put(DICT.WORKKEY, workKey);
             // 绑定流程启动人
             identityService.setAuthenticatedUserId("123");
+            //TODO 需要放用户的id
+            variables.put("applyUser","userID");
             processInstance = runtimeService.startProcessInstanceByKey(workKey, businessKey, variables);
             //自动跳过第一步审批
             Task task = taskService.createTaskQuery().processInstanceBusinessKey(businessKey).singleResult();
             taskService.complete(task.getId(), variables);
         }
+        log.info("开启workKey为{}工作流========================工作流的businessKey为：{}",workKey,businessKey);
         return processInstance;
     }
 
@@ -164,6 +172,7 @@ public class ActivityServiceImpl implements ActivityService {
             }
             taskService.complete(task.getId(), variables);
         }
+        log.info("审批通过workKey:{}的工作流businessKey:{}",workKey,businessKey);
     }
 
     /**
@@ -262,7 +271,6 @@ public class ActivityServiceImpl implements ActivityService {
         } else {
             variables.put(DICT.BUSINESSKEY, businessKey);
             variables.put(DICT.ACTION, DICT.REFUSE);
-            TaskEntity task1 = new TaskEntity(CodeUtil.getId());//(TaskEntity)taskService.newTask(DataUtil.generateID());
             ActivityImpl startActivityByKey = findStartActivityByKey(workKey);
             try {
                 backProcess(task.getId(),startActivityByKey.getId(),variables);
@@ -271,6 +279,7 @@ public class ActivityServiceImpl implements ActivityService {
                 throw new BaseRuningTimeException(e);
             }
         }
+        log.info("拒绝workKey:{}的工作流businessKey:{}",workKey,businessKey);
     }
 
 
@@ -329,6 +338,59 @@ public class ActivityServiceImpl implements ActivityService {
         return activityImplTemp;
     }
 
+    @Override
+    public InputStream resourceImage(String workKey, String businessKey) {
+        ProcessInstance processInstance = findProcessInstanceByBusinessKey(workKey, businessKey);
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstance.getProcessDefinitionId());
+        ProcessDefinitionEntity processDefinition = (ProcessDefinitionEntity) repositoryService.createProcessDefinitionQuery().processDefinitionId(processInstance.getProcessDefinitionId()).singleResult();
+        List<String> activeActivityIds = runtimeService.getActiveActivityIds(processInstance.getProcessInstanceId());
+        List<String> highLightedFlows = getHighLightedFlows(processDefinition, processInstance.getId());
+        ProcessDiagramGenerator diagramGenerator = processEngineConfiguration.getProcessDiagramGenerator();
+        String activityFontName=processEngineConfiguration.getActivityFontName();
+        String labelFontName=processEngineConfiguration.getLabelFontName();
+        InputStream imageStream =diagramGenerator.generateDiagram(bpmnModel, "png", activeActivityIds, highLightedFlows,activityFontName,labelFontName,null, null, 1.0);
+        return imageStream;
+    }
+
+    /**
+     * 高亮工作流连线
+     * @param processDefinition 流程定义
+     * @param processInstanceId 开启流程后的实体
+     * @return
+     */
+    private List<String> getHighLightedFlows(ProcessDefinitionEntity processDefinition, String processInstanceId) {
+        List<String> highLightedFlows = new ArrayList<String>();
+        List<HistoricActivityInstance> historicActivityInstances = historyService
+                .createHistoricActivityInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .orderByHistoricActivityInstanceStartTime().asc().list();
+
+        List<String> historicActivityInstanceList = new ArrayList<String>();
+        for (HistoricActivityInstance hai : historicActivityInstances) {
+            historicActivityInstanceList.add(hai.getActivityId());
+        }
+
+        // add current activities to list
+        List<String> highLightedActivities = runtimeService.getActiveActivityIds(processInstanceId);
+        historicActivityInstanceList.addAll(highLightedActivities);
+
+        // activities and their sequence-flows
+        for (ActivityImpl activity : processDefinition.getActivities()) {
+            int index = historicActivityInstanceList.indexOf(activity.getId());
+
+            if (index >= 0 && index + 1 < historicActivityInstanceList.size()) {
+                List<PvmTransition> pvmTransitionList = activity
+                        .getOutgoingTransitions();
+                for (PvmTransition pvmTransition : pvmTransitionList) {
+                    String destinationFlowId = pvmTransition.getDestination().getId();
+                    if (destinationFlowId.equals(historicActivityInstanceList.get(index + 1))) {
+                        highLightedFlows.add(pvmTransition.getId());
+                    }
+                }
+            }
+        }
+        return highLightedFlows;
+    }
     /**
      * 查找第一个节点
      * @return
@@ -676,4 +738,6 @@ public class ActivityServiceImpl implements ActivityService {
             pvmTransitionList.add(pvmTransition);
         }
     }
+
+
 }

@@ -92,7 +92,7 @@ public class SystemController {
     }
 
     @PostMapping("/easyUpload")
-    public Result upliadAccountTemplate(@RequestParam(name="file") MultipartFile multipartFile){
+    public Result uploadAccountTemplate(@RequestParam(name="file") MultipartFile multipartFile){
         try {
             Appendix appendix = new Appendix();
             appendix.setName(multipartFile.getOriginalFilename());
@@ -126,7 +126,7 @@ public class SystemController {
             outputStream.write(appendix.getContent());
         } catch (IOException e) {
             e.printStackTrace();
-            throw new BaseRuningTimeException("导出文件异常");
+            throw new BaseRuningTimeException("写出文件异常");
         }
     }
     @GetMapping("/importResult/{fileId}")

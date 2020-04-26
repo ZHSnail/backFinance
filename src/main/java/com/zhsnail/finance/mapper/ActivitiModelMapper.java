@@ -80,7 +80,7 @@ public interface ActivitiModelMapper {
     int updateByPrimaryKey(ActivitiModel record);
 
     @Select({
-            "select * from ACT_RE_MODEL"
+            "select * from ACT_RE_MODEL order by CREATE_TIME_ DESC"
     })
     @Results({
             @Result(column="ID_", property="id", jdbcType=JdbcType.VARCHAR, id=true),

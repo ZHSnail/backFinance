@@ -10,6 +10,7 @@ import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -79,7 +80,7 @@ public interface ActivityService {
      * @param businessKey 业务ID
      * @return processInstance对象
      */
-    ProcessInstance findProcessInstanceByBusinessKey(String workKey,String businessKey );
+    ProcessInstance findProcessInstanceByBusinessKey(String workKey,String businessKey);
 
     /**
      * 查找HistoricProcessInstance对象
@@ -101,4 +102,6 @@ public interface ActivityService {
      * @return
      */
     ActivityImpl findEndActivityByProcessDefineId(String processDefineId);
+
+    InputStream resourceImage(String workKey,String businessKey);
 }

@@ -43,7 +43,7 @@ public class ActivitiConfig extends AbstractProcessEngineAutoConfiguration {
         configuration.setJobExecutorActivate(true);
         configuration.setTransactionManager(transactionManager());
         configuration.setLabelFontName("宋体");
-        configuration.setLabelFontName("宋体");
+        configuration.setActivityFontName("宋体");
         return configuration;
     }
 
