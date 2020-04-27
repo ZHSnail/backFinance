@@ -113,4 +113,11 @@ public interface ActivityService {
      */
     List<HistoricActivityInstance> findHistoricActivityInstanceList(String workKey,String businessKey);
 
+    /**
+     * 查找审核信息
+     * @param workKey 工作流key
+     * @param businessKey 业务id
+     * @return 页面所需的审核信息
+     */
+    List<Map<String, Object>> findApproveMsg(String workKey,String businessKey);
 }

@@ -10,6 +10,7 @@ import com.zhsnail.finance.entity.ActivitiModel;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
 import com.zhsnail.finance.mapper.ActivitiDeploymentMapper;
 import com.zhsnail.finance.mapper.ActivitiModelMapper;
+import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.JsonUtil;
 import com.zhsnail.finance.vo.DeployMentVo;
 import com.zhsnail.finance.vo.ModelVo;
@@ -31,6 +32,7 @@ import org.activiti.engine.impl.pvm.process.TransitionImpl;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.apache.commons.collections4.CollectionUtils;
@@ -159,7 +161,7 @@ public class ActivityServiceImpl implements ActivityService {
                 // 设置操作为最后一步审批
                 variables.put(DICT.ACTION, DICT.LAST_APPROVE);
             }
-            taskService.addComment(task.getId(),task.getProcessInstanceId(),"通过", JsonUtil.obj2String(variables.get(DICT.COMMENT)));
+            taskService.addComment(task.getId(),task.getProcessInstanceId(),"通过",variables.get(DICT.COMMENT) == null ? "": JsonUtil.obj2String(variables.get(DICT.COMMENT)));
             taskService.complete(task.getId(), variables);
         }
         log.info("审批通过workKey:{}的工作流businessKey:{}", workKey, businessKey);
@@ -221,8 +223,8 @@ public class ActivityServiceImpl implements ActivityService {
             variables.put(DICT.ACTION,DICT.REVOKE);
             ActivityImpl startActivityByKey = findStartActivityByKey(workKey);
             try {
+                taskService.addComment(task.getId(),task.getProcessInstanceId(),"撤回",variables.get(DICT.COMMENT) == null ? "": JsonUtil.obj2String(variables.get(DICT.COMMENT)));
                 backProcess(task.getId(), startActivityByKey.getId(), variables);
-                taskService.addComment(task.getId(),task.getProcessInstanceId(),"撤回",JsonUtil.obj2String(variables.get(DICT.COMMENT)));
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new BaseRuningTimeException(e);
@@ -267,7 +269,7 @@ public class ActivityServiceImpl implements ActivityService {
             variables.put(DICT.ACTION, DICT.REFUSE);
             ActivityImpl startActivityByKey = findStartActivityByKey(workKey);
             try {
-                taskService.addComment(task.getId(),task.getProcessInstanceId(),"拒绝",JsonUtil.obj2String(variables.get(DICT.COMMENT)));
+                taskService.addComment(task.getId(),task.getProcessInstanceId(),"拒绝",variables.get(DICT.COMMENT) == null ? "": JsonUtil.obj2String(variables.get(DICT.COMMENT)));
                 backProcess(task.getId(), startActivityByKey.getId(), variables);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -321,6 +323,31 @@ public class ActivityServiceImpl implements ActivityService {
             }
         }
         return activityImplTemp;
+    }
+
+    @Override
+    public List<Map<String, Object>> findApproveMsg(String workKey, String businessKey) {
+        if (StringUtils.isEmpty(workKey) || StringUtils.isEmpty(businessKey)){
+            throw new BaseRuningTimeException("workKey或businessKey不能为空");
+        }
+        HistoricProcessInstance processInstance = historyService.createHistoricProcessInstanceQuery().processDefinitionKey(workKey).processInstanceBusinessKey(businessKey).singleResult();
+        HistoricProcessInstanceEntity historicProcessInstanceEntity = (HistoricProcessInstanceEntity) processInstance;
+        //流程实例id
+        String processInstanceId = historicProcessInstanceEntity.getProcessInstanceId();
+        List<HistoricActivityInstance> historicActivityInstanceList = historyService
+                .createHistoricActivityInstanceQuery().processInstanceId(processInstanceId)
+                .orderByHistoricActivityInstanceStartTime().desc().list();
+        List<Map<String, Object>> maps = BeanUtil.objectsToMaps(historicActivityInstanceList);
+        List<Comment> commentList = taskService.getProcessInstanceComments(processInstanceId);
+        for (Map map : maps){
+            List<Comment> comments = commentList.stream().filter(comment -> comment.getTaskId().equals(map.get("taskId"))).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(comments)){
+                map.put("comment",comments.get(0));
+            }
+            //TODO 根据分配的用户插入审批角色
+        }
+        //过滤开始节点和结束节点
+        return maps.stream().filter(map->!("startEvent".equals(map.get("activityType")) || "endEvent".equals(map.get("activityType")))).collect(Collectors.toList());
     }
 
     @Override

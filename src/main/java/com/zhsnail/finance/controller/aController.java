@@ -54,8 +54,7 @@ public class aController {
     },logical = Logical.OR)*/
     public Result test(){
         Map map = new HashMap<>();
-        map.put("applyUser","测试");
-        map.put("testAudi","审核测试");
+        map.put(DICT.COMMENT,"通过啦！！！");
 //        runtimeService.startProcessInstanceByKey("duogerenwu","98798798754165464",map);
         /*TaskQuery taskQuery = taskService.createTaskQuery().processInstanceBusinessKey("98798798754165464");
         Task task = taskQuery.singleResult();
@@ -68,22 +67,14 @@ public class aController {
         Map<String, VariableInstance> variableInstances = runtimeService.getVariableInstances(task.getExecutionId());
         taskService.complete(task.getId());*/
 //        Object principal = SecurityUtils.getSubject().getPrincipal();
-//        activityService.runStart("testRole", CodeUtil.getId(),map);
+//        activityService.runStart("testRole", CodeUtil.getId(),null);
 //        List<Task> list = taskService.createTaskQuery().taskAssignee("1").list();
-//        activityService.runApprove("testRole","704361484217483264",null);
-        List<HistoricActivityInstance> historicActivityInstanceList = activityService.findHistoricActivityInstanceList("testRole", "704386857927966720");
-        List<Comment> commentList = taskService.getProcessInstanceComments("75001");
-        List<Map<String, Object>> maps = BeanUtil.objectsToMaps(historicActivityInstanceList);
-        for (Map map1:maps){
-            List<Comment> comments = commentList.stream().filter(comment -> comment.getTaskId().equals(map1.get("taskId"))).collect(Collectors.toList());
-            if (CollectionUtils.isNotEmpty(comments)){
-                map1.put("comment",comments.get(0));
-            }
-        }
-        //        activityService.runRevoke("testRole","704364813727301632",null);
-//        activityService.runRefuse("testRole","704361484217483264",null);
+//        activityService.runApprove("testRole","704462990006550528",map);
+        List<Map<String, Object>> testRole = activityService.findApproveMsg("testRole", "704462990006550528");
+//                activityService.runRevoke("testRole","704462990006550528",map);
+//        activityService.runRefuse("testRole","704462990006550528",map);
 /*        TaskQuery taskQuery = taskService.createTaskQuery().processInstanceBusinessKey("5778798798798798798798798797987");
         Task task = taskQuery.singleResult()*/;
-        return new Result(maps);
+        return new Result(testRole);
     }
 }
