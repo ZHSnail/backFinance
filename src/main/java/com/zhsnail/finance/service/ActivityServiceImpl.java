@@ -1,12 +1,8 @@
 package com.zhsnail.finance.service;
 
 
-import cn.hutool.extra.servlet.ServletUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.github.pagehelper.util.StringUtil;
 import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.common.ThreadLocalVariables;
 import com.zhsnail.finance.entity.ActivitiDeployment;
@@ -14,13 +10,10 @@ import com.zhsnail.finance.entity.ActivitiModel;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
 import com.zhsnail.finance.mapper.ActivitiDeploymentMapper;
 import com.zhsnail.finance.mapper.ActivitiModelMapper;
-import com.zhsnail.finance.util.CodeUtil;
+import com.zhsnail.finance.util.JsonUtil;
 import com.zhsnail.finance.vo.DeployMentVo;
 import com.zhsnail.finance.vo.ModelVo;
-import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
-import org.activiti.editor.constants.ModelDataJsonConstants;
-import org.activiti.editor.language.json.converter.BpmnJsonConverter;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
@@ -28,34 +21,28 @@ import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.bpmn.behavior.*;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.activiti.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
-import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.impl.pvm.PvmActivity;
 import org.activiti.engine.impl.pvm.PvmTransition;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.pvm.process.ProcessDefinitionImpl;
 import org.activiti.engine.impl.pvm.process.TransitionImpl;
-import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
-import org.activiti.image.ProcessDiagramGenerator;
+import org.activiti.image.impl.DefaultProcessDiagramGenerator;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
-import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
@@ -121,7 +108,8 @@ public class ActivityServiceImpl implements ActivityService {
             // 工作流ID
             variables.put(DICT.WORKKEY, workKey);
             //TODO 需要放拒绝后原先的用户的id
-            variables.put("applyUser","userID");
+            variables.put("applyUser", "userID");
+            taskService.addComment(task.getId(),processInstance.getProcessInstanceId(),"重新提交","");
             //已经停留在申请了，所以直接完成该节点
             taskService.complete(task.getId(), variables);
         } else {
@@ -136,13 +124,14 @@ public class ActivityServiceImpl implements ActivityService {
             // 绑定流程启动人
             identityService.setAuthenticatedUserId("123");
             //TODO 需要放用户的id
-            variables.put("applyUser","userID");
+            variables.put("applyUser", "userID");
             processInstance = runtimeService.startProcessInstanceByKey(workKey, businessKey, variables);
             //自动跳过第一步审批
             Task task = taskService.createTaskQuery().processInstanceBusinessKey(businessKey).singleResult();
+            taskService.addComment(task.getId(),processInstance.getProcessInstanceId(),"申请","");
             taskService.complete(task.getId(), variables);
         }
-        log.info("开启workKey为{}工作流========================工作流的businessKey为：{}",workKey,businessKey);
+        log.info("开启workKey为{}工作流========================工作流的businessKey为：{}", workKey, businessKey);
         return processInstance;
     }
 
@@ -170,9 +159,10 @@ public class ActivityServiceImpl implements ActivityService {
                 // 设置操作为最后一步审批
                 variables.put(DICT.ACTION, DICT.LAST_APPROVE);
             }
+            taskService.addComment(task.getId(),task.getProcessInstanceId(),"通过", JsonUtil.obj2String(variables.get(DICT.COMMENT)));
             taskService.complete(task.getId(), variables);
         }
-        log.info("审批通过workKey:{}的工作流businessKey:{}",workKey,businessKey);
+        log.info("审批通过workKey:{}的工作流businessKey:{}", workKey, businessKey);
     }
 
     /**
@@ -220,7 +210,7 @@ public class ActivityServiceImpl implements ActivityService {
         // 先清理线程变量
         ThreadLocalVariables.remove();
         //分割流程参数与业务参数
-        if(variables==null){
+        if (variables == null) {
             variables = new HashMap();
         }
         Task task = taskService.createTaskQuery().processInstanceBusinessKey(businessKey).singleResult();
@@ -228,13 +218,17 @@ public class ActivityServiceImpl implements ActivityService {
             throw new BaseRuningTimeException("任务节点不存在");
         } else {
             variables.put(DICT.BUSINESSKEY, businessKey);
-            variables.put(DICT.ACTION, DICT.REVOKE);
-            Task task1 = taskService.newTask();
-            taskService.complete(task1.getId(),variables);
-            taskService.deleteTask(task.getId(),true);
-            runtimeService.deleteProcessInstance(task.getProcessDefinitionId(),"");
-            historyService.deleteHistoricProcessInstance(task.getProcessDefinitionId());
+            variables.put(DICT.ACTION,DICT.REVOKE);
+            ActivityImpl startActivityByKey = findStartActivityByKey(workKey);
+            try {
+                backProcess(task.getId(), startActivityByKey.getId(), variables);
+                taskService.addComment(task.getId(),task.getProcessInstanceId(),"撤回",JsonUtil.obj2String(variables.get(DICT.COMMENT)));
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new BaseRuningTimeException(e);
+            }
         }
+        log.info("撤回workKey为:{}的工作流businessKey:{}", workKey, businessKey);
     }
 
     @Override
@@ -242,7 +236,7 @@ public class ActivityServiceImpl implements ActivityService {
         // 先清理线程变量
         ThreadLocalVariables.remove();
         //分割流程参数与业务参数
-        if(variables==null){
+        if (variables == null) {
             variables = new HashMap();
         }
         Task task = taskService.createTaskQuery().processInstanceBusinessKey(businessKey).singleResult();
@@ -251,8 +245,8 @@ public class ActivityServiceImpl implements ActivityService {
         } else {
             variables.put(DICT.BUSINESSKEY, businessKey);
             variables.put(DICT.ACTION, DICT.DELETE);
-            taskService.deleteTask(task.getId(),true);
-            runtimeService.deleteProcessInstance(task.getProcessDefinitionId(),"");
+            taskService.deleteTask(task.getId(), true);
+            runtimeService.deleteProcessInstance(task.getProcessDefinitionId(), "");
             historyService.deleteHistoricProcessInstance(task.getProcessDefinitionId());
         }
     }
@@ -262,7 +256,7 @@ public class ActivityServiceImpl implements ActivityService {
         // 先清理线程变量
         ThreadLocalVariables.remove();
         //分割流程参数与业务参数
-        if(variables==null){
+        if (variables == null) {
             variables = new HashMap();
         }
         Task task = taskService.createTaskQuery().processInstanceBusinessKey(businessKey).singleResult();
@@ -273,13 +267,14 @@ public class ActivityServiceImpl implements ActivityService {
             variables.put(DICT.ACTION, DICT.REFUSE);
             ActivityImpl startActivityByKey = findStartActivityByKey(workKey);
             try {
-                backProcess(task.getId(),startActivityByKey.getId(),variables);
+                taskService.addComment(task.getId(),task.getProcessInstanceId(),"拒绝",JsonUtil.obj2String(variables.get(DICT.COMMENT)));
+                backProcess(task.getId(), startActivityByKey.getId(), variables);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new BaseRuningTimeException(e);
             }
         }
-        log.info("拒绝workKey:{}的工作流businessKey:{}",workKey,businessKey);
+        log.info("拒绝workKey:{}的工作流businessKey:{}", workKey, businessKey);
     }
 
 
@@ -288,16 +283,6 @@ public class ActivityServiceImpl implements ActivityService {
         return runtimeService.createProcessInstanceQuery().processInstanceBusinessKey(businessKey, workKey).singleResult();
     }
 
-    @Override
-    public List<HistoricProcessInstance> findHistoricProcessInstanceByBusinessKey(String workKey, String businessKey) {
-        HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery();
-
-        if (StringUtils.isNotEmpty(workKey)) {
-            query.processDefinitionKey(workKey);
-        }
-        query.processInstanceBusinessKey(businessKey);
-        return query.list();
-    }
 
     @Override
     public ProcessDefinition findProcessDefinitionById(String processDefinitionId) {
@@ -339,84 +324,180 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
+    public List<HistoricActivityInstance> findHistoricActivityInstanceList(String workKey, String businessKey) {
+        if (StringUtils.isEmpty(workKey) || StringUtils.isEmpty(businessKey)){
+            throw new BaseRuningTimeException("workKey或businessKey不能为空");
+        }
+        HistoricProcessInstance processInstance = historyService.createHistoricProcessInstanceQuery().processDefinitionKey(workKey).processInstanceBusinessKey(businessKey).singleResult();
+        HistoricProcessInstanceEntity historicProcessInstanceEntity = (HistoricProcessInstanceEntity) processInstance;
+        //流程实例id
+        String processInstanceId = historicProcessInstanceEntity.getProcessInstanceId();
+        List<HistoricActivityInstance> historicActivityInstances = historyService
+                .createHistoricActivityInstanceQuery().processInstanceId(processInstanceId)
+                .orderByHistoricActivityInstanceStartTime().asc().list();
+        return historicActivityInstances;
+    }
+
+    @Override
     public InputStream resourceImage(String workKey, String businessKey) {
-        ProcessInstance processInstance = findProcessInstanceByBusinessKey(workKey, businessKey);
-        BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstance.getProcessDefinitionId());
-        ProcessDefinitionEntity processDefinition = (ProcessDefinitionEntity) repositoryService.createProcessDefinitionQuery().processDefinitionId(processInstance.getProcessDefinitionId()).singleResult();
-        List<String> activeActivityIds = runtimeService.getActiveActivityIds(processInstance.getProcessInstanceId());
-        List<String> highLightedFlows = getHighLightedFlows(processDefinition, processInstance.getId());
-        ProcessDiagramGenerator diagramGenerator = processEngineConfiguration.getProcessDiagramGenerator();
-        String activityFontName=processEngineConfiguration.getActivityFontName();
-        String labelFontName=processEngineConfiguration.getLabelFontName();
-        InputStream imageStream =diagramGenerator.generateDiagram(bpmnModel, "png", activeActivityIds, highLightedFlows,activityFontName,labelFontName,null, null, 1.0);
+        HistoricProcessInstance processInstance = historyService.createHistoricProcessInstanceQuery().processDefinitionKey(workKey).processInstanceBusinessKey(businessKey).singleResult();
+        HistoricProcessInstanceEntity historicProcessInstanceEntity = (HistoricProcessInstanceEntity) processInstance;
+        //流程实例id
+        String processInstanceId = historicProcessInstanceEntity.getProcessInstanceId();
+        //流程定义id
+        String procDefId = processInstance.getProcessDefinitionId();
+        //流程定义实体
+        ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService)
+                .getDeployedProcessDefinition(procDefId);
+        // 当前活动节点、活动线
+        List<String> activeActivityIds = new ArrayList<>(), highLightedFlows;
+        // 获得历史活动记录实体（通过启动时间正序排序，不然有的线可以绘制不出来）
+        List<HistoricActivityInstance> historicActivityInstances = historyService
+                .createHistoricActivityInstanceQuery().processInstanceId(processInstanceId)
+                .orderByHistoricActivityInstanceStartTime().asc().list();
+        // 如果流程已经结束，则得到结束节点
+        if (!isFinished(workKey, businessKey)) {
+            // 如果流程没有结束，则取当前活动节点
+            // 根据流程实例ID获得当前处于活动状态的ActivityId合集
+            Task task = taskService.createTaskQuery().processDefinitionKey(workKey).processInstanceBusinessKey(businessKey).singleResult();
+            Execution execution = runtimeService.createExecutionQuery().executionId(task.getExecutionId()).singleResult();
+            activeActivityIds = runtimeService.getActiveActivityIds(processInstanceId);
+            String activityId = execution.getActivityId();
+            activeActivityIds.add(activityId);
+            //拿到所有节点
+            List<ActivityImpl> activities = processDefinitionEntity.getActivities();
+            //前面的节点id
+            List<String> tempActiveActivityIds = new ArrayList<>();
+            getPreActivities(activityId,tempActiveActivityIds,activities);
+            activeActivityIds.addAll(tempActiveActivityIds);
+        }else {
+            for (HistoricActivityInstance historicActivityInstance : historicActivityInstances) {
+                activeActivityIds.add(historicActivityInstance.getActivityId());
+            }
+        }
+        // 计算活动线
+        highLightedFlows = getHighLightedFlows(processDefinitionEntity,activeActivityIds);
+        // 根据流程定义ID获得BpmnModel
+        BpmnModel bpmnModel = repositoryService
+                .getBpmnModel(procDefId);
+        // 输出资源内容到相应对象
+        InputStream imageStream = new DefaultProcessDiagramGenerator().generateDiagram(
+                bpmnModel,
+                "png",
+                activeActivityIds,
+                highLightedFlows,
+                "宋体",
+                "宋体",
+                "宋体",
+                processEngineConfiguration.getClassLoader(),
+                1.0);
         return imageStream;
     }
 
+    private boolean isFinished(String workKey, String businessKey) {
+        return historyService.createHistoricProcessInstanceQuery().finished().processDefinitionKey(workKey).processInstanceBusinessKey(businessKey).count() > 0;
+    }
+
     /**
-     * 高亮工作流连线
-     * @param processDefinition 流程定义
-     * @param processInstanceId 开启流程后的实体
+     * 获取前面所有已激活的任务节点id
+     * @param nowActivityId 当前已激活的任务id
+     * @param activeActivityIds 激活的任务idlist
+     * @param activities 流程定义的节点
+     */
+    private void getPreActivities(String nowActivityId,List<String> activeActivityIds,List<ActivityImpl> activities){
+        List<ActivityImpl> activityList = activities.stream().filter(activity -> activity.getId().equals(nowActivityId)).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(activityList)){
+            ActivityImpl activityImpl = activityList.get(0);
+            //所有进来的线
+            List<PvmTransition> incomingTransitions = activityImpl.getIncomingTransitions();
+            for(PvmTransition incomingTransition:incomingTransitions){
+                //进来的节点
+                PvmActivity source = incomingTransition.getSource();
+                activeActivityIds.add(source.getId());
+                getPreActivities(source.getId(),activeActivityIds,activities);
+            }
+        }
+    }
+
+    /**
+     * 获取当前激活的线
+     * @param processDefinitionEntity 流程定义实体
+     * @param activeActivityIds 已激活的节点id列表
      * @return
      */
-    private List<String> getHighLightedFlows(ProcessDefinitionEntity processDefinition, String processInstanceId) {
-        List<String> highLightedFlows = new ArrayList<String>();
-        List<HistoricActivityInstance> historicActivityInstances = historyService
-                .createHistoricActivityInstanceQuery()
-                .processInstanceId(processInstanceId)
-                .orderByHistoricActivityInstanceStartTime().asc().list();
-
-        List<String> historicActivityInstanceList = new ArrayList<String>();
-        for (HistoricActivityInstance hai : historicActivityInstances) {
-            historicActivityInstanceList.add(hai.getActivityId());
-        }
-
-        // add current activities to list
-        List<String> highLightedActivities = runtimeService.getActiveActivityIds(processInstanceId);
-        historicActivityInstanceList.addAll(highLightedActivities);
-
-        // activities and their sequence-flows
-        for (ActivityImpl activity : processDefinition.getActivities()) {
-            int index = historicActivityInstanceList.indexOf(activity.getId());
-
-            if (index >= 0 && index + 1 < historicActivityInstanceList.size()) {
-                List<PvmTransition> pvmTransitionList = activity
-                        .getOutgoingTransitions();
-                for (PvmTransition pvmTransition : pvmTransitionList) {
-                    String destinationFlowId = pvmTransition.getDestination().getId();
-                    if (destinationFlowId.equals(historicActivityInstanceList.get(index + 1))) {
-                        highLightedFlows.add(pvmTransition.getId());
-                    }
+    private List<String> getHighLightedFlows(
+            ProcessDefinitionEntity processDefinitionEntity,List<String> activeActivityIds) {
+        List<String> highFlows = new ArrayList<>();// 用以保存高亮的线flowId
+        for(String activeActivityId:activeActivityIds){
+            ActivityImpl activityImpl = processDefinitionEntity.findActivity(activeActivityId);
+            List<PvmTransition> pvmTransitions = activityImpl.getOutgoingTransitions();
+            // 对所有的线进行遍历
+            for (PvmTransition pvmTransition : pvmTransitions) {
+                // 如果取出的线的目标节点存在时间相同的节点里，保存该线的id，进行高亮显示
+                ActivityImpl pvmActivityImpl = (ActivityImpl) pvmTransition.getDestination();
+                if (activeActivityIds.contains(pvmActivityImpl.getId())) {
+                    highFlows.add(pvmTransition.getId());
                 }
             }
         }
-        return highLightedFlows;
+        return highFlows;
     }
+
+    /**
+     * 获取需要高亮的线
+     * @param processDefinitionEntity
+     * @param historicActivityInstances
+     * @return*/
+
+  /*  private List<String> getHighLightedFlows(
+            ProcessDefinitionEntity processDefinitionEntity,
+            List<HistoricActivityInstance> historicActivityInstances) {
+        List<String> highFlows = new ArrayList<>();// 用以保存高亮的线flowId
+        List<String> highActivitiImpl = new ArrayList<>();
+        for(HistoricActivityInstance historicActivityInstance : historicActivityInstances){
+            highActivitiImpl.add(historicActivityInstance.getActivityId());
+        }
+        for(HistoricActivityInstance historicActivityInstance : historicActivityInstances){
+            ActivityImpl activityImpl = processDefinitionEntity.findActivity(historicActivityInstance.getActivityId());
+            List<PvmTransition> pvmTransitions = activityImpl.getOutgoingTransitions();
+            // 对所有的线进行遍历
+            for (PvmTransition pvmTransition : pvmTransitions) {
+                // 如果取出的线的目标节点存在时间相同的节点里，保存该线的id，进行高亮显示
+                ActivityImpl pvmActivityImpl = (ActivityImpl) pvmTransition.getDestination();
+                if (highActivitiImpl.contains(pvmActivityImpl.getId())) {
+                    highFlows.add(pvmTransition.getId());
+                }
+            }
+        }
+        return highFlows;
+    }*/
+
+
     /**
      * 查找第一个节点
+     *
      * @return
      */
-    private ActivityImpl findStartActivityByKey(String workKey){
-        ActivityImpl activityImplTemp = null ;
+    private ActivityImpl findStartActivityByKey(String workKey) {
+        ActivityImpl activityImplTemp = null;
         ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionKey(workKey).latestVersion().singleResult();
-        ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) ((RepositoryServiceImpl)repositoryService).getDeployedProcessDefinition(processDefinition.getId());
+        ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition(processDefinition.getId());
         List<ActivityImpl> activities = processDefinitionEntity.getActivities();
         for (ActivityImpl activityImpl : activities) {
-            if(activityImpl.getActivityBehavior() instanceof NoneStartEventActivityBehavior){
+            if (activityImpl.getActivityBehavior() instanceof NoneStartEventActivityBehavior) {
                 activityImplTemp = activityImpl;
                 break;
             }
         }
         return activityImplTemp;
     }
+
     /**
      * 驳回流程
      *
-     * @param taskId
-     *            当前任务ID
-     * @param activityId
-     *            驳回节点ID
-     * @param variables
-     *            流程存储参数
+     * @param taskId     当前任务ID
+     * @param activityId 驳回节点ID
+     * @param variables  流程存储参数
      * @throws Exception
      */
     public void backProcess(String taskId, String activityId,
@@ -438,17 +519,14 @@ public class ActivityServiceImpl implements ActivityService {
             turnTransition(taskId, activityId, variables);
         }
     }
+
     /**
      * 迭代循环流程树结构，查询当前节点可驳回的任务节点
      *
-     * @param taskId
-     *            当前任务ID
-     * @param currActivity
-     *            当前活动节点
-     * @param rtnList
-     *            存储回退节点集合
-     * @param tempList
-     *            临时存储节点集合（存储一次迭代过程中的同级userTask节点）
+     * @param taskId       当前任务ID
+     * @param currActivity 当前活动节点
+     * @param rtnList      存储回退节点集合
+     * @param tempList     临时存储节点集合（存储一次迭代过程中的同级userTask节点）
      * @return 回退节点集合
      */
     private List<ActivityImpl> iteratorBackActivity(String taskId,
@@ -531,10 +609,8 @@ public class ActivityServiceImpl implements ActivityService {
     /**
      * 根据流入任务集合，查询最近一次的流入任务节点
      *
-     * @param processInstance
-     *            流程实例
-     * @param tempList
-     *            流入任务集合
+     * @param processInstance 流程实例
+     * @param tempList        流入任务集合
      * @return
      */
     private ActivityImpl filterNewestActivity(ProcessInstance processInstance,
@@ -572,11 +648,11 @@ public class ActivityServiceImpl implements ActivityService {
         }
         return null;
     }
+
     /**
      * 根据当前节点，查询输出流向是否为并行终点，如果为并行终点，则拼装对应的并行起点ID
      *
-     * @param activityImpl
-     *            当前节点
+     * @param activityImpl 当前节点
      * @return
      */
     private String findParallelGatewayId(ActivityImpl activityImpl) {
@@ -602,12 +678,10 @@ public class ActivityServiceImpl implements ActivityService {
     /**
      * 根据任务ID和节点ID获取活动节点 <br>
      *
-     * @param taskId 任务ID
-     * @param activityId
-     *            活动节点ID <br>
-     *            如果为null或""，则默认查询当前活动节点 <br>
-     *            如果为"end"，则查询结束节点 <br>
-     *
+     * @param taskId     任务ID
+     * @param activityId 活动节点ID <br>
+     *                   如果为null或""，则默认查询当前活动节点 <br>
+     *                   如果为"end"，则查询结束节点 <br>
      * @return
      * @throws Exception
      */
@@ -641,11 +715,11 @@ public class ActivityServiceImpl implements ActivityService {
 
         return activityImpl;
     }
+
     /**
      * 查询指定任务节点的最新记录
      *
-     * @param processInstance
-     *            流程实例
+     * @param processInstance 流程实例
      * @param activityId
      * @return
      */
@@ -668,12 +742,9 @@ public class ActivityServiceImpl implements ActivityService {
     /**
      * 流程转向操作
      *
-     * @param taskId
-     *            当前任务ID
-     * @param activityId
-     *            目标节点任务ID
-     * @param variables
-     *            流程变量
+     * @param taskId     当前任务ID
+     * @param activityId 目标节点任务ID
+     * @param variables  流程变量
      * @throws Exception
      */
     private void turnTransition(String taskId, String activityId,
@@ -698,11 +769,11 @@ public class ActivityServiceImpl implements ActivityService {
         // 还原以前流向
         restoreTransition(currActivity, oriPvmTransitionList);
     }
+
     /**
      * 清空指定活动节点流向
      *
-     * @param activityImpl
-     *            活动节点
+     * @param activityImpl 活动节点
      * @return 节点流向集合
      */
     private List<PvmTransition> clearTransition(ActivityImpl activityImpl) {
@@ -722,10 +793,8 @@ public class ActivityServiceImpl implements ActivityService {
     /**
      * 还原指定活动节点流向
      *
-     * @param activityImpl
-     *            活动节点
-     * @param oriPvmTransitionList
-     *            原有节点流向集合
+     * @param activityImpl         活动节点
+     * @param oriPvmTransitionList 原有节点流向集合
      */
     private void restoreTransition(ActivityImpl activityImpl,
                                    List<PvmTransition> oriPvmTransitionList) {

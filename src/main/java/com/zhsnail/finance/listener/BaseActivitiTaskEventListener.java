@@ -69,9 +69,9 @@ public abstract class BaseActivitiTaskEventListener implements ActivitiEventList
                 case DICT.REFUSE:
                     refuse(businessKey);
                     break;
-               /* case DICT.APPLY:
-                    apply(businessKey);
-                    break;*/
+                case DICT.REVOKE:
+                    revoke(businessKey);
+                    break;
             }
         }
     }
@@ -103,9 +103,16 @@ public abstract class BaseActivitiTaskEventListener implements ActivitiEventList
     public abstract void refuse(String businessKey);
 
     /**
-     * 提交申请时
+     * 提交申请
      *
      * @param businessKey
      */
     public abstract void apply(String businessKey);
+
+    /**
+     * 撤回
+     *
+     * @param businessKey
+     */
+    public abstract void revoke(String businessKey);
 }

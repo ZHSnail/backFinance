@@ -5,6 +5,7 @@ import com.zhsnail.finance.entity.ActivitiDeployment;
 import com.zhsnail.finance.entity.ActivitiModel;
 import com.zhsnail.finance.vo.DeployMentVo;
 import com.zhsnail.finance.vo.ModelVo;
+import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.repository.ProcessDefinition;
@@ -83,13 +84,6 @@ public interface ActivityService {
     ProcessInstance findProcessInstanceByBusinessKey(String workKey,String businessKey);
 
     /**
-     * 查找HistoricProcessInstance对象
-     * @param workKey 流程ID
-     * @param businessKey 业务ID
-     * @return HistoricProcessInstance对象
-     */
-    List<HistoricProcessInstance> findHistoricProcessInstanceByBusinessKey(String workKey, String businessKey);
-    /**
      * 查找processDefinition对象
      * @param processDefinitionId 流程定义ID
      * @return ProcessDefinition
@@ -103,5 +97,20 @@ public interface ActivityService {
      */
     ActivityImpl findEndActivityByProcessDefineId(String processDefineId);
 
+    /**
+     * 获取流程图片输入流
+     * @param workKey 工作流key
+     * @param businessKey 业务id
+     * @return 图片输入流
+     */
     InputStream resourceImage(String workKey,String businessKey);
+
+    /**
+     * 查找所有活动过的历史节点 启动时间正序排列
+     * @param workKey 工作流key
+     * @param businessKey 业务id
+     * @return 历史节点list
+     */
+    List<HistoricActivityInstance> findHistoricActivityInstanceList(String workKey,String businessKey);
+
 }

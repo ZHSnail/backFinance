@@ -21,4 +21,9 @@ public class testListener extends BaseActivitiTaskEventListener {
     public void apply(String businessKey) {
         System.out.println("提交申请-------------------------------");
     }
+
+    @Override
+    public void revoke(String businessKey) {
+        System.out.println("撤回申请-------------------------------");
+    }
 }

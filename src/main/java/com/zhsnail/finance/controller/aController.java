@@ -6,15 +6,17 @@ import com.zhsnail.finance.common.SystemControllerLog;
 import com.zhsnail.finance.common.SystemLog;
 import com.zhsnail.finance.service.ActivityService;
 import com.zhsnail.finance.service.TestServiceImpl;
+import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
 import com.zhsnail.finance.util.MongoUtil;
 import org.activiti.engine.*;
+import org.activiti.engine.history.HistoricActivityInstance;
+import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.impl.persistence.entity.VariableInstance;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.engine.task.DelegationState;
-import org.activiti.engine.task.Event;
-import org.activiti.engine.task.Task;
-import org.activiti.engine.task.TaskQuery;
+import org.activiti.engine.task.*;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -23,9 +25,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class aController {
@@ -67,12 +68,22 @@ public class aController {
         Map<String, VariableInstance> variableInstances = runtimeService.getVariableInstances(task.getExecutionId());
         taskService.complete(task.getId());*/
 //        Object principal = SecurityUtils.getSubject().getPrincipal();
-        activityService.runStart("testRole", CodeUtil.getId(),map);
+//        activityService.runStart("testRole", CodeUtil.getId(),map);
 //        List<Task> list = taskService.createTaskQuery().taskAssignee("1").list();
-//        activityService.runApprove("testRole","704003229381296128",null);
-//        activityService.runRefuse("testRole","703982952584839168",null);
+//        activityService.runApprove("testRole","704361484217483264",null);
+        List<HistoricActivityInstance> historicActivityInstanceList = activityService.findHistoricActivityInstanceList("testRole", "704386857927966720");
+        List<Comment> commentList = taskService.getProcessInstanceComments("75001");
+        List<Map<String, Object>> maps = BeanUtil.objectsToMaps(historicActivityInstanceList);
+        for (Map map1:maps){
+            List<Comment> comments = commentList.stream().filter(comment -> comment.getTaskId().equals(map1.get("taskId"))).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(comments)){
+                map1.put("comment",comments.get(0));
+            }
+        }
+        //        activityService.runRevoke("testRole","704364813727301632",null);
+//        activityService.runRefuse("testRole","704361484217483264",null);
 /*        TaskQuery taskQuery = taskService.createTaskQuery().processInstanceBusinessKey("5778798798798798798798798797987");
         Task task = taskQuery.singleResult()*/;
-        return new Result();
+        return new Result(maps);
     }
 }
