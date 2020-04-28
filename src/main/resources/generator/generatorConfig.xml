@@ -47,7 +47,8 @@
                              targetPackage="com.zhsnail.finance.mapper" targetProject="src/main/java">
         </javaClientGenerator>
 
-        <table tableName="ACT_RE_PROCDEF" domainObjectName="ActivitiProcess"
+
+        <table tableName="CAM_PROFESSION" domainObjectName="Profession"
                enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false" selectByExampleQueryId="false"/>
     </context>
