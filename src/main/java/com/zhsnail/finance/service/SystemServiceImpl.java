@@ -9,7 +9,9 @@ import com.zhsnail.finance.entity.User;
 import com.zhsnail.finance.mapper.ImportResultMapper;
 import com.zhsnail.finance.mapper.RoleMapper;
 import com.zhsnail.finance.mapper.UserMapper;
+import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
+import com.zhsnail.finance.vo.RoleVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,9 +77,10 @@ public class SystemServiceImpl implements SystemService {
     }
 
     @Override
-    public PageInfo<Role> findAllRole(PageEntity pageEntity) {
-        PageHelper.startPage(pageEntity.getPageNum(),pageEntity.getPageSize(),true);
-        List<Role> roleList = roleMapper.findAllRole();
+    public PageInfo<Role> findAllRole(RoleVo roleVo) {
+        PageHelper.startPage(roleVo.getPageNum(),roleVo.getPageSize(),true);
+//        List<Role> roleList = roleMapper.findAllRole();
+        List<Role> roleList = roleMapper.findAllByCondition(roleVo);
         PageInfo<Role> rolePageInfo = new PageInfo<>(roleList);
         return rolePageInfo;
     }
@@ -88,5 +91,25 @@ public class SystemServiceImpl implements SystemService {
         List<User> allUser = userMapper.findAllUser();
         PageInfo<User> userPageInfo = new PageInfo<>(allUser);
         return userPageInfo;
+    }
+
+    @Override
+    public void deleteRole(String id) {
+        roleMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public void updateRole(RoleVo roleVo) {
+        Role role = new Role();
+        BeanUtil.copyProperties(role,roleVo);
+        roleMapper.updateByPrimaryKeySelective(role);
+    }
+
+    @Override
+    public void saveRole(RoleVo roleVo) {
+        Role role = new Role();
+        BeanUtil.copyProperties(role,roleVo);
+        role.setId(CodeUtil.getId());
+        roleMapper.insert(role);
     }
 }

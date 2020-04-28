@@ -11,7 +11,10 @@ import com.zhsnail.finance.exception.BaseRuningTimeException;
 import com.zhsnail.finance.service.FileService;
 import com.zhsnail.finance.service.SystemService;
 import com.zhsnail.finance.util.ExcelUtils;
+import com.zhsnail.finance.util.JsonUtil;
 import com.zhsnail.finance.util.MD5Util;
+import com.zhsnail.finance.vo.RoleVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
@@ -134,11 +137,12 @@ public class SystemController {
         return new Result(systemService.findImResult(fileId));
     }
     @GetMapping("/roleList")
-    public Result findAllRole(@RequestParam String pageNum,@RequestParam String pageSize){
-        PageEntity pageEntity = new PageEntity();
-        pageEntity.setPageNum(Integer.valueOf(pageNum));
-        pageEntity.setPageSize(Integer.valueOf(pageSize));
-        PageInfo<Role> allRole = systemService.findAllRole(pageEntity);
+    public Result findAllRole(@RequestParam String params){
+        RoleVo roleVo = new RoleVo();
+        if(StringUtils.isNotBlank(params)){
+            roleVo = JsonUtil.string2Obj(params,RoleVo.class);
+        }
+        PageInfo<Role> allRole = systemService.findAllRole(roleVo);
         return new Result(allRole);
     }
     @GetMapping("/userList")
@@ -148,5 +152,22 @@ public class SystemController {
         pageEntity.setPageSize(Integer.valueOf(pageSize));
         PageInfo<User> allUser = systemService.findAllUser(pageEntity);
         return new Result(allUser);
+    }
+
+    @DeleteMapping("/role/{id}")
+    public Result deleteRole(@PathVariable String id){
+        systemService.deleteRole(id);
+        return new Result(true,"成功删除角色");
+    }
+    @PostMapping("/role")
+    public Result saveRole(@RequestBody RoleVo roleVo){
+        systemService.saveRole(roleVo);
+        return new Result(true,"添加角色成功");
+    }
+
+    @PutMapping("/role")
+    public Result updateRole(@RequestBody RoleVo roleVo){
+        systemService.updateRole(roleVo);
+        return new Result(true,"修改角色成功");
     }
 }

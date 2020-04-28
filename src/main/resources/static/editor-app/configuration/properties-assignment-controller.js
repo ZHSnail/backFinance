@@ -173,10 +173,13 @@ var KisBpmAssignmentPopupCtrl = ['$scope', '$http', function ($scope, $http) {
         $http({
             method: 'GET',
             url: ACTIVITI.CONFIG.contextRoot + url,
-            params: {
-                'pageNum': pageNum,
-                'pageSize': pageSize,
-            },
+            params:
+                {
+                    params: JSON.stringify({
+                        'pageNum': pageNum,
+                        'pageSize': pageSize,
+                    })
+                },
         }).then(function successCallback(response) {
             $scope.gridData = response.data.obj.list;
             $scope.totalServerItems = response.data.obj.total;
@@ -193,24 +196,24 @@ var KisBpmAssignmentPopupCtrl = ['$scope', '$http', function ($scope, $http) {
         enablePaging: true,
         pagingOptions: $scope.pagingOptions,
         totalServerItems: 'totalServerItems',
-        i18n:'zh-cn',
+        i18n: 'zh-cn',
         showFooter: true,
         showSelectionCheckbox: false,
-        columnDefs : $scope.columnDataName,
+        columnDefs: $scope.columnDataName,
         beforeSelectionChange: function (event) {
             var data = event.entity.id;
 
-            if($scope.selectType == 0){//选代理人
+            if ($scope.selectType == 0) {//选代理人
                 event.entity.checked = !event.selected;
                 $scope.assignment.assignee = data;
-            }else if($scope.selectType == 1){//候选人
+            } else if ($scope.selectType == 1) {//候选人
                 var obj = {value: data};
-                if(!array_contain($scope.assignment.candidateUsers, obj.value)){
+                if (!array_contain($scope.assignment.candidateUsers, obj.value)) {
                     $scope.assignment.candidateUsers.push(obj);
                 }
-            }else if($scope.selectType == 2){//候选组
+            } else if ($scope.selectType == 2) {//候选组
                 var obj = {value: event.entity.id};
-                if(!array_contain($scope.assignment.candidateGroups, obj.value)){
+                if (!array_contain($scope.assignment.candidateGroups, obj.value)) {
                     $scope.assignment.candidateGroups.push(obj);
                 }
             }
@@ -260,15 +263,15 @@ var KisBpmAssignmentPopupCtrl = ['$scope', '$http', function ($scope, $http) {
     $scope.selectCandidate = function () {
         $scope.selectType = 1;
         $scope.selectTitle = '选择审批角色';
-		$scope.getPagedDataAsync($scope.pagingOptions.currentPage, $scope.pagingOptions.pageSize)
-	};
+        $scope.getPagedDataAsync($scope.pagingOptions.currentPage, $scope.pagingOptions.pageSize)
+    };
 
     //候选组
     $scope.selectGroup = function () {
         $scope.selectType = 2;
         $scope.selectTitle = '选择审批角色';
-		$scope.getPagedDataAsync($scope.pagingOptions.currentPage, $scope.pagingOptions.pageSize)
-	};
+        $scope.getPagedDataAsync($scope.pagingOptions.currentPage, $scope.pagingOptions.pageSize)
+    };
 
     //声明----如果有此 contains 直接用最好
     function array_contain(array, obj) {

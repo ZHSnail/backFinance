@@ -1,6 +1,7 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.Role;
+import com.zhsnail.finance.vo.RoleVo;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
 import org.apache.ibatis.type.JdbcType;
@@ -75,6 +76,14 @@ public interface RoleMapper {
             @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR)
     })
     List<Role> findAllRole();
+
+    @SelectProvider(type=RoleSqlProvider.class, method="selectAllConditionSql")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="role_name", property="roleName", jdbcType=JdbcType.VARCHAR),
+            @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR)
+    })
+    List<Role> findAllByCondition(RoleVo roleVo);
 
     /*@Select({
             "select * from SYM_ROLE where id = #{id,jdbcType=VARCHAR}"

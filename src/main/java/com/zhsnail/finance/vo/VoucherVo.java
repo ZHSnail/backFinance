@@ -41,4 +41,139 @@ public class VoucherVo extends PageEntity {
     //备注
     private String memo;
 
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getBizId() {
+        return bizId;
+    }
+
+    public void setBizId(String bizId) {
+        this.bizId = bizId;
+    }
+
+    public String getModule() {
+        return module;
+    }
+
+    public void setModule(String module) {
+        this.module = module;
+    }
+
+    public String getPostingStatus() {
+        return postingStatus;
+    }
+
+    public void setPostingStatus(String postingStatus) {
+        this.postingStatus = postingStatus;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getOriginator() {
+        return originator;
+    }
+
+    public void setOriginator(String originator) {
+        this.originator = originator;
+    }
+
+    public String getAuditer() {
+        return auditer;
+    }
+
+    public void setAuditer(String auditer) {
+        this.auditer = auditer;
+    }
+
+    public String getKeeper() {
+        return keeper;
+    }
+
+    public void setKeeper(String keeper) {
+        this.keeper = keeper;
+    }
+
+    public Date getPostingDate() {
+        return postingDate;
+    }
+
+    public void setPostingDate(Date postingDate) {
+        this.postingDate = postingDate;
+    }
+
+    public String getBizType() {
+        return bizType;
+    }
+
+    public void setBizType(String bizType) {
+        this.bizType = bizType;
+    }
+
+    public BigDecimal getDebitTotal() {
+        return debitTotal;
+    }
+
+    public void setDebitTotal(BigDecimal debitTotal) {
+        this.debitTotal = debitTotal;
+    }
+
+    public String getAccountPeriod() {
+        return accountPeriod;
+    }
+
+    public void setAccountPeriod(String accountPeriod) {
+        this.accountPeriod = accountPeriod;
+    }
+
+    public Date getBizDate() {
+        return bizDate;
+    }
+
+    public void setBizDate(Date bizDate) {
+        this.bizDate = bizDate;
+    }
+
+    public String getDealType() {
+        return dealType;
+    }
+
+    public void setDealType(String dealType) {
+        this.dealType = dealType;
+    }
+
+    public BigDecimal getCreditTotal() {
+        return creditTotal;
+    }
+
+    public void setCreditTotal(BigDecimal creditTotal) {
+        this.creditTotal = creditTotal;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
 }

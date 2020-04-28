@@ -3,12 +3,14 @@ package com.zhsnail.finance.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.pagehelper.PageInfo;
+import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.common.Result;
 import com.zhsnail.finance.entity.ActivitiDeployment;
 import com.zhsnail.finance.entity.ActivitiModel;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
 import com.zhsnail.finance.service.ActivityService;
 import com.zhsnail.finance.util.JsonUtil;
+import com.zhsnail.finance.vo.ActivitiComment;
 import com.zhsnail.finance.vo.DeployMentVo;
 import com.zhsnail.finance.vo.ModelVo;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
@@ -224,5 +226,35 @@ public class ActivityController {
         while ((len = inputStream.read(b, 0, 1024)) != -1) {
             response.getOutputStream().write(b, 0, len);
         }
+    }
+
+    @GetMapping("/record")
+    public Result findActivitiRecord(@RequestParam String workKey, @RequestParam String businessKey){
+        List<Map<String, Object>> approveMsg = activityService.findApproveMsg(workKey, businessKey);
+        return new Result(approveMsg);
+    }
+
+    @PostMapping("/approve")
+    public Result approve(@RequestBody ActivitiComment activitiComment){
+        Map map = new HashMap<>();
+        map.put(DICT.COMMENT,activitiComment.getComment());
+        activityService.runApprove(activitiComment.getWorkKey(),activitiComment.getBusinessKey(),map);
+        return new Result(true,"审核成功");
+    }
+
+    @PostMapping("/revoke")
+    public Result revoke(@RequestBody ActivitiComment activitiComment){
+        Map map = new HashMap<>();
+        map.put(DICT.COMMENT,activitiComment.getComment());
+        activityService.runRevoke(activitiComment.getWorkKey(),activitiComment.getBusinessKey(),map);
+        return new Result(true,"撤回成功");
+    }
+
+    @PostMapping("/refuse")
+    public Result refuse(@RequestBody ActivitiComment activitiComment){
+        Map map = new HashMap<>();
+        map.put(DICT.COMMENT,activitiComment.getComment());
+        activityService.runRefuse(activitiComment.getWorkKey(),activitiComment.getBusinessKey(),map);
+        return new Result(true,"已拒绝");
     }
 }

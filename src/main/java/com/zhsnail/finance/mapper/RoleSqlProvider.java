@@ -1,6 +1,9 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.Role;
+import com.zhsnail.finance.vo.AccountVo;
+import com.zhsnail.finance.vo.RoleVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 
 import java.util.Map;
@@ -43,9 +46,15 @@ public class RoleSqlProvider {
         return sql.toString();
     }
 
-    public String selectByIds(Map params){
+    public String selectAllConditionSql(RoleVo roleVo){
         SQL sql = new SQL();
-
+        sql.SELECT("*");
+        sql.FROM("SYM_ROLE");
+        if (roleVo!=null){
+            if (StringUtils.isNotBlank(roleVo.getRoleName())){
+                sql.WHERE("role_name like concat('%', #{roleName,jdbcType=VARCHAR},'%')");
+            }
+        }
         return sql.toString();
     }
 }
