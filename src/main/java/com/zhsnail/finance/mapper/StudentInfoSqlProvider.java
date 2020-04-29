@@ -10,27 +10,27 @@ public class StudentInfoSqlProvider {
         sql.INSERT_INTO("CAM_STUDENT_INFO");
         
         if (record.getId() != null) {
-            sql.VALUES("ID", "#{id,jdbcType=VARCHAR}");
+            sql.VALUES("id", "#{id,jdbcType=VARCHAR}");
         }
         
         if (record.getName() != null) {
-            sql.VALUES("NAME", "#{name,jdbcType=VARCHAR}");
+            sql.VALUES("name", "#{name,jdbcType=VARCHAR}");
         }
         
         if (record.getStuNo() != null) {
-            sql.VALUES("STU_NO", "#{stuNo,jdbcType=VARCHAR}");
+            sql.VALUES("stu_no", "#{stuNo,jdbcType=VARCHAR}");
         }
         
         if (record.getStuClass() != null) {
-            sql.VALUES("STU_CLASS", "#{stuClass,jdbcType=VARCHAR}");
+            sql.VALUES("stu_class", "#{stuClass,jdbcType=VARCHAR}");
         }
         
         if (record.getDormId() != null) {
-            sql.VALUES("DORM_ID", "#{dormId,jdbcType=VARCHAR}");
+            sql.VALUES("dorm_id", "#{dormId,jdbcType=VARCHAR}");
         }
         
         if (record.getProfessionId() != null) {
-            sql.VALUES("PROFESSION_ID", "#{professionId,jdbcType=VARCHAR}");
+            sql.VALUES("profession_id", "#{professionId,jdbcType=VARCHAR}");
         }
         
         return sql.toString();
@@ -41,26 +41,26 @@ public class StudentInfoSqlProvider {
         sql.UPDATE("CAM_STUDENT_INFO");
         
         if (record.getName() != null) {
-            sql.SET("NAME = #{name,jdbcType=VARCHAR}");
+            sql.SET("name = #{name,jdbcType=VARCHAR}");
         }
         
         if (record.getStuNo() != null) {
-            sql.SET("STU_NO = #{stuNo,jdbcType=VARCHAR}");
+            sql.SET("stu_no = #{stuNo,jdbcType=VARCHAR}");
         }
         
         if (record.getStuClass() != null) {
-            sql.SET("STU_CLASS = #{stuClass,jdbcType=VARCHAR}");
+            sql.SET("stu_class = #{stuClass,jdbcType=VARCHAR}");
         }
         
         if (record.getDormId() != null) {
-            sql.SET("DORM_ID = #{dormId,jdbcType=VARCHAR}");
+            sql.SET("dorm_id = #{dormId,jdbcType=VARCHAR}");
         }
         
         if (record.getProfessionId() != null) {
-            sql.SET("PROFESSION_ID = #{professionId,jdbcType=VARCHAR}");
+            sql.SET("profession_id = #{professionId,jdbcType=VARCHAR}");
         }
         
-        sql.WHERE("ID = #{id,jdbcType=VARCHAR}");
+        sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
         return sql.toString();
     }

@@ -14,14 +14,14 @@ import org.apache.ibatis.type.JdbcType;
 public interface StudentInfoMapper {
     @Delete({
         "delete from CAM_STUDENT_INFO",
-        "where ID = #{id,jdbcType=VARCHAR}"
+        "where id = #{id,jdbcType=VARCHAR}"
     })
     int deleteByPrimaryKey(String id);
 
     @Insert({
-        "insert into CAM_STUDENT_INFO (ID, NAME, ",
-        "STU_NO, STU_CLASS, ",
-        "DORM_ID, PROFESSION_ID)",
+        "insert into CAM_STUDENT_INFO (id, name, ",
+        "stu_no, stu_class, ",
+        "dorm_id, profession_id)",
         "values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, ",
         "#{stuNo,jdbcType=VARCHAR}, #{stuClass,jdbcType=VARCHAR}, ",
         "#{dormId,jdbcType=VARCHAR}, #{professionId,jdbcType=VARCHAR})"
@@ -33,17 +33,17 @@ public interface StudentInfoMapper {
 
     @Select({
         "select",
-        "ID, NAME, STU_NO, STU_CLASS, DORM_ID, PROFESSION_ID",
+        "id, name, stu_no, stu_class, dorm_id, profession_id",
         "from CAM_STUDENT_INFO",
-        "where ID = #{id,jdbcType=VARCHAR}"
+        "where id = #{id,jdbcType=VARCHAR}"
     })
     @Results({
-        @Result(column="ID", property="id", jdbcType=JdbcType.VARCHAR, id=true),
-        @Result(column="NAME", property="name", jdbcType=JdbcType.VARCHAR),
-        @Result(column="STU_NO", property="stuNo", jdbcType=JdbcType.VARCHAR),
-        @Result(column="STU_CLASS", property="stuClass", jdbcType=JdbcType.VARCHAR),
-        @Result(column="DORM_ID", property="dormId", jdbcType=JdbcType.VARCHAR),
-        @Result(column="PROFESSION_ID", property="professionId", jdbcType=JdbcType.VARCHAR)
+        @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+        @Result(column="stu_no", property="stuNo", jdbcType=JdbcType.VARCHAR),
+        @Result(column="stu_class", property="stuClass", jdbcType=JdbcType.VARCHAR),
+        @Result(column="dorm_id", property="dormId", jdbcType=JdbcType.VARCHAR),
+        @Result(column="profession_id", property="professionId", jdbcType=JdbcType.VARCHAR)
     })
     StudentInfo selectByPrimaryKey(String id);
 
@@ -52,12 +52,12 @@ public interface StudentInfoMapper {
 
     @Update({
         "update CAM_STUDENT_INFO",
-        "set NAME = #{name,jdbcType=VARCHAR},",
-          "STU_NO = #{stuNo,jdbcType=VARCHAR},",
-          "STU_CLASS = #{stuClass,jdbcType=VARCHAR},",
-          "DORM_ID = #{dormId,jdbcType=VARCHAR},",
-          "PROFESSION_ID = #{professionId,jdbcType=VARCHAR}",
-        "where ID = #{id,jdbcType=VARCHAR}"
+        "set name = #{name,jdbcType=VARCHAR},",
+          "stu_no = #{stuNo,jdbcType=VARCHAR},",
+          "stu_class = #{stuClass,jdbcType=VARCHAR},",
+          "dorm_id = #{dormId,jdbcType=VARCHAR},",
+          "profession_id = #{professionId,jdbcType=VARCHAR}",
+        "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(StudentInfo record);
 }

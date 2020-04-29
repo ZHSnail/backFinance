@@ -1,6 +1,9 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.Profession;
+import com.zhsnail.finance.vo.AccountVo;
+import com.zhsnail.finance.vo.ProfessionVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 
 public class ProfessionSqlProvider {
@@ -10,23 +13,23 @@ public class ProfessionSqlProvider {
         sql.INSERT_INTO("CAM_PROFESSION");
         
         if (record.getId() != null) {
-            sql.VALUES("ID", "#{id,jdbcType=VARCHAR}");
+            sql.VALUES("id", "#{id,jdbcType=VARCHAR}");
         }
         
         if (record.getName() != null) {
-            sql.VALUES("NAME", "#{name,jdbcType=VARCHAR}");
+            sql.VALUES("name", "#{name,jdbcType=VARCHAR}");
         }
         
         if (record.getIsLeaf() != null) {
-            sql.VALUES("IS_LEAF", "#{isLeaf,jdbcType=VARCHAR}");
+            sql.VALUES("is_leaf", "#{isLeaf,jdbcType=VARCHAR}");
         }
         
         if (record.getParentId() != null) {
-            sql.VALUES("PARENT_ID", "#{parentId,jdbcType=VARCHAR}");
+            sql.VALUES("parent_id", "#{parentId,jdbcType=VARCHAR}");
         }
         
         if (record.getGrade() != null) {
-            sql.VALUES("GRADE", "#{grade,jdbcType=VARCHAR}");
+            sql.VALUES("grade", "#{grade,jdbcType=VARCHAR}");
         }
         
         return sql.toString();
@@ -37,23 +40,35 @@ public class ProfessionSqlProvider {
         sql.UPDATE("CAM_PROFESSION");
         
         if (record.getName() != null) {
-            sql.SET("NAME = #{name,jdbcType=VARCHAR}");
+            sql.SET("name = #{name,jdbcType=VARCHAR}");
         }
         
         if (record.getIsLeaf() != null) {
-            sql.SET("IS_LEAF = #{isLeaf,jdbcType=VARCHAR}");
+            sql.SET("is_leaf = #{isLeaf,jdbcType=VARCHAR}");
         }
         
         if (record.getParentId() != null) {
-            sql.SET("PARENT_ID = #{parentId,jdbcType=VARCHAR}");
+            sql.SET("parent_id = #{parentId,jdbcType=VARCHAR}");
         }
         
         if (record.getGrade() != null) {
-            sql.SET("GRADE = #{grade,jdbcType=VARCHAR}");
+            sql.SET("grade = #{grade,jdbcType=VARCHAR}");
         }
         
-        sql.WHERE("ID = #{id,jdbcType=VARCHAR}");
+        sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
+        return sql.toString();
+    }
+
+    public String selectAllConditionSql(ProfessionVo professionVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("CAM_PROFESSION");
+        if (professionVo!=null){
+            if (StringUtils.isNotBlank(professionVo.getName())){
+                sql.WHERE("name like concat('%', #{name,jdbcType=VARCHAR},'%')");
+            }
+        }
         return sql.toString();
     }
 }

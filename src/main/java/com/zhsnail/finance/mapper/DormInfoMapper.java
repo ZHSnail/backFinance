@@ -16,13 +16,13 @@ import java.util.List;
 public interface DormInfoMapper {
     @Delete({
         "delete from CAM_DORM_INFO",
-        "where ID = #{id,jdbcType=VARCHAR}"
+        "where id = #{id,jdbcType=VARCHAR}"
     })
     int deleteByPrimaryKey(String id);
 
     @Insert({
-        "insert into CAM_DORM_INFO (ID, DORM_NUMBER, ",
-        "BUILD_NUMBER)",
+        "insert into CAM_DORM_INFO (id, dorm_number, ",
+        "build_number)",
         "values (#{id,jdbcType=VARCHAR}, #{dormNumber,jdbcType=VARCHAR}, ",
         "#{buildNumber,jdbcType=VARCHAR})"
     })
@@ -33,14 +33,14 @@ public interface DormInfoMapper {
 
     @Select({
         "select",
-        "ID, DORM_NUMBER, BUILD_NUMBER",
+        "id, dorm_number, build_number",
         "from CAM_DORM_INFO",
-        "where ID = #{id,jdbcType=VARCHAR}"
+        "where id = #{id,jdbcType=VARCHAR}"
     })
     @Results({
-        @Result(column="ID", property="id", jdbcType=JdbcType.VARCHAR, id=true),
-        @Result(column="DORM_NUMBER", property="dormNumber", jdbcType=JdbcType.VARCHAR),
-        @Result(column="BUILD_NUMBER", property="buildNumber", jdbcType=JdbcType.VARCHAR)
+        @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="dorm_number", property="dormNumber", jdbcType=JdbcType.VARCHAR),
+        @Result(column="build_number", property="buildNumber", jdbcType=JdbcType.VARCHAR)
     })
     DormInfo selectByPrimaryKey(String id);
 
@@ -49,9 +49,9 @@ public interface DormInfoMapper {
 
     @Update({
         "update CAM_DORM_INFO",
-        "set DORM_NUMBER = #{dormNumber,jdbcType=VARCHAR},",
-          "BUILD_NUMBER = #{buildNumber,jdbcType=VARCHAR}",
-        "where ID = #{id,jdbcType=VARCHAR}"
+        "set dorm_number = #{dormNumber,jdbcType=VARCHAR},",
+          "build_number = #{buildNumber,jdbcType=VARCHAR}",
+        "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(DormInfo record);
 
@@ -59,9 +59,9 @@ public interface DormInfoMapper {
             "select * from CAM_DORM_INFO",
     })
     @Results({
-            @Result(column="ID", property="id", jdbcType=JdbcType.VARCHAR, id=true),
-            @Result(column="DORM_NUMBER", property="dormNumber", jdbcType=JdbcType.VARCHAR),
-            @Result(column="BUILD_NUMBER", property="buildNumber", jdbcType=JdbcType.VARCHAR)
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="dorm_number", property="dormNumber", jdbcType=JdbcType.VARCHAR),
+            @Result(column="build_number", property="buildNumber", jdbcType=JdbcType.VARCHAR)
     })
     List<DormInfo> findAll();
 }

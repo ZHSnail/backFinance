@@ -10,15 +10,15 @@ public class DormInfoSqlProvider {
         sql.INSERT_INTO("CAM_DORM_INFO");
         
         if (record.getId() != null) {
-            sql.VALUES("ID", "#{id,jdbcType=VARCHAR}");
+            sql.VALUES("id", "#{id,jdbcType=VARCHAR}");
         }
         
         if (record.getDormNumber() != null) {
-            sql.VALUES("DORM_NUMBER", "#{dormNumber,jdbcType=VARCHAR}");
+            sql.VALUES("dorm_number", "#{dormNumber,jdbcType=VARCHAR}");
         }
         
         if (record.getBuildNumber() != null) {
-            sql.VALUES("BUILD_NUMBER", "#{buildNumber,jdbcType=VARCHAR}");
+            sql.VALUES("build_number", "#{buildNumber,jdbcType=VARCHAR}");
         }
         
         return sql.toString();
@@ -29,14 +29,14 @@ public class DormInfoSqlProvider {
         sql.UPDATE("CAM_DORM_INFO");
         
         if (record.getDormNumber() != null) {
-            sql.SET("DORM_NUMBER = #{dormNumber,jdbcType=VARCHAR}");
+            sql.SET("dorm_number = #{dormNumber,jdbcType=VARCHAR}");
         }
         
         if (record.getBuildNumber() != null) {
-            sql.SET("BUILD_NUMBER = #{buildNumber,jdbcType=VARCHAR}");
+            sql.SET("build_number = #{buildNumber,jdbcType=VARCHAR}");
         }
         
-        sql.WHERE("ID = #{id,jdbcType=VARCHAR}");
+        sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
         return sql.toString();
     }
