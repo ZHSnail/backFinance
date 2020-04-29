@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
 
+import java.util.List;
+
 public interface DormInfoMapper {
     @Delete({
         "delete from CAM_DORM_INFO",
@@ -52,4 +54,14 @@ public interface DormInfoMapper {
         "where ID = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(DormInfo record);
+
+    @Select({
+            "select * from CAM_DORM_INFO",
+    })
+    @Results({
+            @Result(column="ID", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="DORM_NUMBER", property="dormNumber", jdbcType=JdbcType.VARCHAR),
+            @Result(column="BUILD_NUMBER", property="buildNumber", jdbcType=JdbcType.VARCHAR)
+    })
+    List<DormInfo> findAll();
 }
