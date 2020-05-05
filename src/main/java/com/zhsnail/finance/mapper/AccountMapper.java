@@ -116,5 +116,18 @@ public interface AccountMapper {
             @Result(column="is_bank", property="isBank", jdbcType=JdbcType.VARCHAR),
             @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR)
     })
-    Account findBycode(String code);
+    Account findByCode(String code);
+
+    @Select("select * from LEM_ACCOUNT where is_detail = 'TRUE' ")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="account_name", property="accountName", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="level", property="level", jdbcType=JdbcType.VARCHAR),
+            @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_cash", property="isCash", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_bank", property="isBank", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR)
+    })
+    List<Account> findAllDetailAccount();
 }

@@ -43,4 +43,10 @@ public interface LenderService {
     List<AccountVo> exportAccount(AccountVo accountVo);
 
     void execBatchInsert(List<Account> accounts);
+
+    /**
+     * 查询所有可选的会计科目
+     * @return
+     */
+    List<Account> findDetailAccount();
 }

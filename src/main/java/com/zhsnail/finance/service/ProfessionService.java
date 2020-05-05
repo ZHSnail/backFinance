@@ -5,6 +5,7 @@ import com.zhsnail.finance.entity.Profession;
 import com.zhsnail.finance.vo.ProfessionVo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProfessionService {
     /**
@@ -45,4 +46,10 @@ public interface ProfessionService {
      */
     Profession findByParentId(String parentId);
 
+    /**
+     * 生成级联选择的专业
+     * @param isObj 是否生成对象
+     * @return 级联选择
+     */
+    List<Map> generateProession(boolean isObj);
 }

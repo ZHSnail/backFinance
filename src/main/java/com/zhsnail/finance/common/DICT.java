@@ -38,6 +38,18 @@ public interface DICT {
      */
     String STATUS_FINSH = "FINSH";
     /**
+     * 收费方式----面向宿舍
+     */
+    String FEE_METHOD_DORM = "DORM";
+    /**
+     * 收费方式----面向专业
+     */
+    String FEE_METHOD_MAJOR = "MAJOR";
+    /**
+     * 收费方式----面向角色
+     */
+    String FEE_METHOD_ROLE = "ROLE";
+    /**
      * 审批意见
      */
     public static final String COMMENT = "comment";
@@ -89,4 +101,5 @@ public interface DICT {
      * 拒绝
      */
     public static final String REFUSE = "refuse";
+
 }

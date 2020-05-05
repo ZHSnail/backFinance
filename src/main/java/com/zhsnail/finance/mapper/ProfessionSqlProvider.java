@@ -68,7 +68,11 @@ public class ProfessionSqlProvider {
             if (StringUtils.isNotBlank(professionVo.getName())){
                 sql.WHERE("name like concat('%', #{name,jdbcType=VARCHAR},'%')");
             }
+            if (StringUtils.isNotBlank(professionVo.getIsLeaf())){
+                sql.WHERE("is_leaf = #{isLeaf,jdbcType=VARCHAR}");
+            }
         }
+        sql.ORDER_BY("id");
         return sql.toString();
     }
 }

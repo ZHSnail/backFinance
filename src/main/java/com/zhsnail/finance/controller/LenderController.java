@@ -5,6 +5,7 @@ import com.zhsnail.finance.common.Appendix;
 import com.zhsnail.finance.common.Result;
 import com.zhsnail.finance.entity.Account;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
+import com.zhsnail.finance.listener.AccountImportListener;
 import com.zhsnail.finance.service.AccountBalanceService;
 import com.zhsnail.finance.service.AccountDetailService;
 import com.zhsnail.finance.service.FileService;
@@ -53,6 +54,12 @@ public class LenderController {
         return new Result(arrangeAccount);
     }
 
+    @GetMapping("/allAccount")
+    public Result findAllAccount(){
+        List<Account> accountList = lenderService.findDetailAccount();
+        return new Result(accountList);
+    }
+
     @GetMapping("/lastAccounts/{level}")
     public Result findUpAccount(@PathVariable("level") String level){
         List<Account> accounts = lenderService.findUpAccount(level);
@@ -73,7 +80,7 @@ public class LenderController {
         if (!".xlsx".equals(appendix.getSuffix())){
             throw new BaseRuningTimeException("当前上传的文件格式不正确，请重新上传");
         }else {
-            TaskUtil.importData(id,2);
+            TaskUtil.importData(id,2,new AccountImportListener(id));
         }
     }
 

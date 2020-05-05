@@ -3,6 +3,7 @@ package com.zhsnail.finance.mapper;
 import com.zhsnail.finance.entity.Profession;
 import com.zhsnail.finance.vo.ProfessionVo;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
 import org.apache.ibatis.type.JdbcType;
 
 import java.util.List;
@@ -72,7 +73,7 @@ public interface ProfessionMapper {
             "select",
             "id, name, is_leaf, parent_id, grade",
             "from CAM_PROFESSION",
-            "where parent_id = #{parentId,jdbcType=VARCHAR}"
+            "where parent_id = #{parentId,jdbcType=VARCHAR} order by id "
     })
     @Results({
             @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
@@ -89,7 +90,8 @@ public interface ProfessionMapper {
             @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
             @Result(column="is_leaf", property="isLeaf", jdbcType=JdbcType.VARCHAR),
             @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
-            @Result(column="grade", property="grade", jdbcType=JdbcType.VARCHAR)
+            @Result(column="grade", property="grade", jdbcType=JdbcType.VARCHAR),
+            @Result(column="id",property="total",one=@One(select="com.zhsnail.finance.mapper.StudentInfoMapper.countByProfessionId",fetchType= FetchType.EAGER)),
     })
     List<Profession> findAllByCondition(ProfessionVo professionVo);
 }

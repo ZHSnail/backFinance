@@ -27,7 +27,7 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
 
     @Override
     public PageInfo<AccountBalanceVo> findByCondition(AccountBalanceVo accountBalanceVo) {
-        Account account = accountMapper.findBycode(accountBalanceVo.getAccountCode());
+        Account account = accountMapper.findByCode(accountBalanceVo.getAccountCode());
         if (account !=null){
             accountBalanceVo.setAccountId(account.getId());
         }
@@ -58,7 +58,7 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
 
     @Override
     public List<AccountBalanceVo> exportByCondition(AccountBalanceVo accountBalanceVo) {
-        Account account = accountMapper.findBycode(accountBalanceVo.getAccountCode());
+        Account account = accountMapper.findByCode(accountBalanceVo.getAccountCode());
         if (account !=null){
             accountBalanceVo.setAccountId(account.getId());
         }

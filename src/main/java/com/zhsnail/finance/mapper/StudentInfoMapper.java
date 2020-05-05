@@ -1,15 +1,12 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.StudentInfo;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import com.zhsnail.finance.vo.StudentInfoVo;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
 import org.apache.ibatis.type.JdbcType;
+
+import java.util.List;
 
 public interface StudentInfoMapper {
     @Delete({
@@ -60,4 +57,29 @@ public interface StudentInfoMapper {
         "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(StudentInfo record);
+
+    @SelectProvider(type=StudentInfoSqlProvider.class, method="selectAllConditionSql")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="stu_no", property="stuNo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="stu_class", property="stuClass", jdbcType=JdbcType.VARCHAR),
+            @Result(column="dorm_id", property="dormId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="profession_id", property="professionId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="profession_id", property="profession",one = @One(select = "com.zhsnail.finance.mapper.ProfessionMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
+            @Result(column="dorm_id", property="dormInfo",one = @One(select = "com.zhsnail.finance.mapper.DormInfoMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
+    })
+    List<StudentInfo> findAllByCondition(StudentInfoVo studentInfoVo);
+
+    @Results(id = "totalMap", value = {
+            @Result(column = "total", javaType = Integer.class)
+    })
+    @Select({"SELECT COUNT(*) AS total FROM CAM_STUDENT_INFO where profession_id = #{professionId,jdbcType=VARCHAR}"})
+    Integer countByProfessionId(String professionId);
+
+    @Results(id = "totalMap", value = {
+            @Result(column = "total", javaType = Integer.class)
+    })
+    @Select({"SELECT COUNT(*) AS total FROM CAM_STUDENT_INFO where dorm_id = #{dormId,jdbcType=VARCHAR}"})
+    Integer countByDormId(String dormId);
 }

@@ -117,13 +117,15 @@ public class AccountImportListener extends AnalysisEventListener<Map<Integer, St
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         saveData();
         succString="成功保存"+save_size+"条数据";
+        if (save_size == 0){
+            errString.add("表格数据为空");
+        }
         ImportResult importResult = new ImportResult();
         importResult.setFileId(fileId);
         importResult.setId(CodeUtil.getId());
         importResult.setErrResult(JsonUtil.obj2String(errString));
         importResult.setSuccResult(JsonUtil.obj2String(succString));
         systemService.saveImresult(importResult);
-
         LOGGER.info("所有数据解析完成！");
     }
 

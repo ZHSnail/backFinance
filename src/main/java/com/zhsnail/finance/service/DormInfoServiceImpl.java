@@ -38,10 +38,15 @@ public class DormInfoServiceImpl implements DormInfoService {
     }
 
     @Override
-    public PageInfo<DormInfo> findAll(DormInfoVo dormInfoVo) {
+    public PageInfo<DormInfo> findByCondition(DormInfoVo dormInfoVo) {
         PageHelper.startPage(dormInfoVo.getPageNum(),dormInfoVo.getPageSize(),true);
         List<DormInfo> dormInfoList = dormInfoMapper.findAll();
         PageInfo<DormInfo> pageInfo = new PageInfo<>(dormInfoList);
         return pageInfo;
+    }
+
+    @Override
+    public List<DormInfo> findAll() {
+        return dormInfoMapper.findAll();
     }
 }

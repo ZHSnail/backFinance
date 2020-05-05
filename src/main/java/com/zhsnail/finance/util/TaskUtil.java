@@ -1,6 +1,9 @@
 package com.zhsnail.finance.util;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.event.Listener;
+import com.alibaba.excel.read.builder.ExcelReaderBuilder;
+import com.alibaba.excel.read.listener.ReadListener;
 import com.zhsnail.finance.common.Appendix;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
 import com.zhsnail.finance.listener.AccountImportListener;
@@ -24,17 +27,18 @@ public class TaskUtil {
      * 异步导入excel
      * @param fileId 文件id
      */
-    public static void importData(String fileId){
-        threadPoolTaskExecutor.execute(new ImportDataThread(fileId,fileService));
+    public static void importData(String fileId,ReadListener readListener){
+        threadPoolTaskExecutor.execute(new ImportDataThread(fileId,fileService,readListener));
     }
+
 
     /**
      * 异步导入excel
      * @param fileId 文件id
      * @param headRowNumber 跳过行头
      */
-    public static void importData(String fileId,Integer headRowNumber){
-        threadPoolTaskExecutor.execute(new ImportDataThread(fileId,fileService,headRowNumber));
+    public static void importData(String fileId,Integer headRowNumber,ReadListener readListener){
+        threadPoolTaskExecutor.execute(new ImportDataThread(fileId,fileService,headRowNumber,readListener));
     }
 
     /**
@@ -44,17 +48,22 @@ public class TaskUtil {
         private String fileId;
         private FileService fileService;
         private Integer headRowNumber;
+        private ReadListener readListener;
 
-        ImportDataThread(String fileId, FileService fileService) {
+        ImportDataThread(String fileId, FileService fileService,ReadListener readListener) {
             this.fileId=fileId;
             this.fileService = fileService;
+            this.readListener = readListener;
+
         }
 
-        ImportDataThread(String fileId, FileService fileService,Integer headRowNumber) {
+        ImportDataThread(String fileId, FileService fileService, Integer headRowNumber, ReadListener readListener) {
             this.fileId=fileId;
             this.fileService = fileService;
             this.headRowNumber = headRowNumber;
+            this.readListener = readListener;
         }
+
         @Override
         public void run() {
             LOGGER.info("=============>开始执行导入Excel数据");
@@ -62,9 +71,10 @@ public class TaskUtil {
             if (appendix !=null){
                 InputStream in = new ByteArrayInputStream(appendix.getContent());
                 if (headRowNumber != null){
-                    EasyExcel.read(in, new AccountImportListener(appendix.getId())).headRowNumber(headRowNumber).sheet().doRead();
+                    EasyExcel.read(in, readListener).headRowNumber(headRowNumber).sheet().doRead();
                 }else {
-                    EasyExcel.read(in, new AccountImportListener(appendix.getId())).sheet().doRead();
+//                    EasyExcel.read(in, new AccountImportListener(appendix.getId())).sheet().doRead();
+                    EasyExcel.read(in, readListener).sheet().doRead();
                 }
                 fileService.deleteFile(fileId);
                 LOGGER.info("=============>结束执行导入Excel数据");

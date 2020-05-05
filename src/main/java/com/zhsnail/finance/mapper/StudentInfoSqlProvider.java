@@ -1,6 +1,8 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.StudentInfo;
+import com.zhsnail.finance.vo.StudentInfoVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 
 public class StudentInfoSqlProvider {
@@ -62,6 +64,25 @@ public class StudentInfoSqlProvider {
         
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
+        return sql.toString();
+    }
+
+    public String selectAllConditionSql(StudentInfoVo studentInfoVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("CAM_STUDENT_INFO");
+        if (studentInfoVo!=null){
+            if (StringUtils.isNotBlank(studentInfoVo.getName())){
+                sql.WHERE("name like concat('%', #{name,jdbcType=VARCHAR},'%')");
+            }
+            if (StringUtils.isNotBlank(studentInfoVo.getProfessionId())){
+                sql.WHERE("profession_id = #{professionId,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(studentInfoVo.getDormId())){
+                sql.WHERE("dorm_id = #{dormId,jdbcType=VARCHAR}");
+            }
+        }
+        sql.ORDER_BY("id");
         return sql.toString();
     }
 }

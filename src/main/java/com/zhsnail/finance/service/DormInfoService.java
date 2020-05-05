@@ -4,6 +4,8 @@ import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.entity.DormInfo;
 import com.zhsnail.finance.vo.DormInfoVo;
 
+import java.util.List;
+
 public interface DormInfoService {
     /**
      * 删除宿舍信息
@@ -28,5 +30,11 @@ public interface DormInfoService {
      * @param dormInfoVo 宿舍信息
      * @return
      */
-    PageInfo<DormInfo> findAll(DormInfoVo dormInfoVo);
+    PageInfo<DormInfo> findByCondition(DormInfoVo dormInfoVo);
+
+    /**
+     * 查询所有信息
+     * @return
+     */
+    List<DormInfo> findAll();
 }

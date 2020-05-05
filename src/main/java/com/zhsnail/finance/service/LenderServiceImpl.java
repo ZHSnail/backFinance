@@ -115,6 +115,13 @@ public class LenderServiceImpl implements LenderService {
 
     @Override
     public void execBatchInsert(List<Account> accounts) {
-        accountMapper.batchInsert(accounts);
+        if (CollectionUtils.isNotEmpty(accounts)){
+            accountMapper.batchInsert(accounts);
+        }
+    }
+
+    @Override
+    public List<Account> findDetailAccount() {
+        return accountMapper.findAllDetailAccount();
     }
 }

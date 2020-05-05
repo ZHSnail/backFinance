@@ -1,14 +1,8 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.DormInfo;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
 import org.apache.ibatis.type.JdbcType;
 
 import java.util.List;
@@ -61,7 +55,8 @@ public interface DormInfoMapper {
     @Results({
             @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
             @Result(column="dorm_number", property="dormNumber", jdbcType=JdbcType.VARCHAR),
-            @Result(column="build_number", property="buildNumber", jdbcType=JdbcType.VARCHAR)
+            @Result(column="build_number", property="buildNumber", jdbcType=JdbcType.VARCHAR),
+            @Result(column="id",property="total",one=@One(select="com.zhsnail.finance.mapper.StudentInfoMapper.countByDormId",fetchType= FetchType.EAGER)),
     })
     List<DormInfo> findAll();
 }

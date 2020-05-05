@@ -123,4 +123,16 @@ public interface UserMapper {
             @Result(column="user_name", property="userName", jdbcType=JdbcType.VARCHAR),
     })
     List<User> findAllUser();
+
+    @Delete({
+            "delete from SYM_USER",
+            "where student_id = #{studentId,jdbcType=VARCHAR}"
+    })
+    int deleteByStudentId(String studentId);
+
+    @Delete({
+            "delete from SYM_USER",
+            "where staff_id = #{staffId,jdbcType=VARCHAR}"
+    })
+    int deleteByStaffId(String staffId);
 }

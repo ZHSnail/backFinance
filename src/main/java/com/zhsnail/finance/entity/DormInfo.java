@@ -6,6 +6,16 @@ public class DormInfo {
     private String dormNumber;
     //楼号
     private String buildNumber;
+    //学生人数
+    private Integer total;
+
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
+    }
 
     public String getId() {
         return id;

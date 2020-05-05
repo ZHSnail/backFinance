@@ -1,6 +1,10 @@
-package com.zhsnail.finance.entity;
+package com.zhsnail.finance.vo;
 
-public class StudentInfo {
+import com.zhsnail.finance.entity.DormInfo;
+import com.zhsnail.finance.entity.PageEntity;
+import com.zhsnail.finance.entity.Profession;
+
+public class StudentInfoVo extends PageEntity {
     private String id;
     //学生名
     private String name;
@@ -12,18 +16,10 @@ public class StudentInfo {
     private String dormId;
     //专业id
     private String professionId;
-
-    private Profession profession;
-
+    //专业信息
     private DormInfo dormInfo;
-
-    public Profession getProfession() {
-        return profession;
-    }
-
-    public void setProfession(Profession profession) {
-        this.profession = profession;
-    }
+    //宿舍信息
+    private Profession profession;
 
     public DormInfo getDormInfo() {
         return dormInfo;
@@ -33,12 +29,20 @@ public class StudentInfo {
         this.dormInfo = dormInfo;
     }
 
+    public Profession getProfession() {
+        return profession;
+    }
+
+    public void setProfession(Profession profession) {
+        this.profession = profession;
+    }
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+        this.id = id;
     }
 
     public String getName() {
@@ -46,7 +50,7 @@ public class StudentInfo {
     }
 
     public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+        this.name = name;
     }
 
     public String getStuNo() {
@@ -54,7 +58,7 @@ public class StudentInfo {
     }
 
     public void setStuNo(String stuNo) {
-        this.stuNo = stuNo == null ? null : stuNo.trim();
+        this.stuNo = stuNo;
     }
 
     public String getStuClass() {
@@ -62,7 +66,7 @@ public class StudentInfo {
     }
 
     public void setStuClass(String stuClass) {
-        this.stuClass = stuClass == null ? null : stuClass.trim();
+        this.stuClass = stuClass;
     }
 
     public String getDormId() {
@@ -70,7 +74,7 @@ public class StudentInfo {
     }
 
     public void setDormId(String dormId) {
-        this.dormId = dormId == null ? null : dormId.trim();
+        this.dormId = dormId;
     }
 
     public String getProfessionId() {
@@ -78,6 +82,6 @@ public class StudentInfo {
     }
 
     public void setProfessionId(String professionId) {
-        this.professionId = professionId == null ? null : professionId.trim();
+        this.professionId = professionId;
     }
 }

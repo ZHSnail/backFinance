@@ -10,6 +10,16 @@ public class Profession {
     private String parentId;
     //年级
     private String grade;
+    //学生人数
+    private Integer total;
+
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
+    }
 
     public String getId() {
         return id;

@@ -6,10 +6,13 @@ import com.zhsnail.finance.common.Appendix;
 import com.zhsnail.finance.common.Result;
 import com.zhsnail.finance.entity.PageEntity;
 import com.zhsnail.finance.entity.Role;
+import com.zhsnail.finance.entity.StudentInfo;
 import com.zhsnail.finance.entity.User;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
 import com.zhsnail.finance.service.FileService;
+import com.zhsnail.finance.service.StudentInfoService;
 import com.zhsnail.finance.service.SystemService;
+import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.ExcelUtils;
 import com.zhsnail.finance.util.JsonUtil;
 import com.zhsnail.finance.util.MD5Util;
@@ -40,6 +43,8 @@ public class SystemController {
     private SystemService systemService;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private StudentInfoService studentInfoService;
     @PostMapping("/login")
     public Result checkUser(@RequestBody User user){
         Map map = new HashMap();
@@ -53,6 +58,16 @@ public class SystemController {
                 map.put("token",sessionId);
                 //设置session三小时过期
                 SecurityUtils.getSubject().getSession().setTimeout(10800000);
+                User loginUser = systemService.findUser(user.getUserName());
+                if (StringUtils.isNotBlank(loginUser.getStudentId())){
+                    //存当前登陆用户
+                    StudentInfo studentInfo = studentInfoService.findById(loginUser.getStudentId());
+                    Map userInfo = BeanUtil.beanToMap(studentInfo);
+                    map.put("userInfo", userInfo);
+                    subject.getSession().setAttribute("userInfo",studentInfo);
+                }
+                if (StringUtils.isNotBlank(loginUser.getStaffId())){
+                }
             }
         }catch (LockedAccountException e){
             Result result = new Result(false, e.getMessage());
