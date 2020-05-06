@@ -3,6 +3,7 @@ package com.zhsnail.finance.controller;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.common.Appendix;
+import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.common.Result;
 import com.zhsnail.finance.entity.PageEntity;
 import com.zhsnail.finance.entity.Role;
@@ -63,8 +64,9 @@ public class SystemController {
                     //存当前登陆用户
                     StudentInfo studentInfo = studentInfoService.findById(loginUser.getStudentId());
                     Map userInfo = BeanUtil.beanToMap(studentInfo);
+                    userInfo.put(DICT.LOGIN_STUDENT,DICT.LOGIN_STAFF);
                     map.put("userInfo", userInfo);
-                    subject.getSession().setAttribute("userInfo",studentInfo);
+                    subject.getSession().setAttribute("userInfo",userInfo);
                 }
                 if (StringUtils.isNotBlank(loginUser.getStaffId())){
                 }

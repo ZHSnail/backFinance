@@ -38,6 +38,14 @@ public interface DICT {
      */
     String STATUS_FINSH = "FINSH";
     /**
+     * 当前登录是学生
+     */
+    String LOGIN_STUDENT = "STUDENT";
+    /**
+     * 当前登录是员工
+     */
+    String LOGIN_STAFF = "STAFF";
+    /**
      * 收费方式----面向宿舍
      */
     String FEE_METHOD_DORM = "DORM";

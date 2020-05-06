@@ -1,14 +1,8 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.PayNotice;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
 import org.apache.ibatis.type.JdbcType;
 
 public interface PayNoticeMapper {
@@ -70,7 +64,8 @@ public interface PayNoticeMapper {
         @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="creater", property="creater", jdbcType=JdbcType.VARCHAR),
         @Result(column="updater", property="updater", jdbcType=JdbcType.VARCHAR),
-        @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP)
+        @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP),
+        @Result(column="fee_kind_id",property="feeKind",one=@One(select="com.zhsnail.finance.mapper.FeeKindMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
     })
     PayNotice selectByPrimaryKey(String id);
 

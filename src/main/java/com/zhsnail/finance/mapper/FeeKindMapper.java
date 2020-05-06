@@ -70,7 +70,8 @@ public interface FeeKindMapper {
             @Result(column="time_mold", property="timeMold", jdbcType=JdbcType.VARCHAR),
             @Result(column="fee_method", property="feeMethod", jdbcType=JdbcType.VARCHAR),
             @Result(column="state", property="state", jdbcType=JdbcType.VARCHAR),
-            @Result(column="account_id", property="accountId", jdbcType=JdbcType.VARCHAR)
+            @Result(column="account_id", property="accountId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="account_id",property="account",one=@One(select="com.zhsnail.finance.mapper.AccountMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
     })
     List<FeeKind> findAll();
 

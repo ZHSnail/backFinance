@@ -71,15 +71,45 @@ public interface StudentInfoMapper {
     })
     List<StudentInfo> findAllByCondition(StudentInfoVo studentInfoVo);
 
-    @Results(id = "totalMap", value = {
+    @Results({
             @Result(column = "total", javaType = Integer.class)
     })
     @Select({"SELECT COUNT(*) AS total FROM CAM_STUDENT_INFO where profession_id = #{professionId,jdbcType=VARCHAR}"})
     Integer countByProfessionId(String professionId);
 
-    @Results(id = "totalMap", value = {
+    @Results(value = {
             @Result(column = "total", javaType = Integer.class)
     })
     @Select({"SELECT COUNT(*) AS total FROM CAM_STUDENT_INFO where dorm_id = #{dormId,jdbcType=VARCHAR}"})
     Integer countByDormId(String dormId);
+    @Select({
+            "select",
+            "id, name, stu_no, stu_class, dorm_id, profession_id",
+            "from CAM_STUDENT_INFO",
+            "where profession_id = #{professionId,jdbcType=VARCHAR}"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="stu_no", property="stuNo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="stu_class", property="stuClass", jdbcType=JdbcType.VARCHAR),
+            @Result(column="dorm_id", property="dormId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="profession_id", property="professionId", jdbcType=JdbcType.VARCHAR)
+    })
+    List<StudentInfo> findByProfessionId(String professionId);
+    @Select({
+            "select",
+            "id, name, stu_no, stu_class, dorm_id, profession_id",
+            "from CAM_STUDENT_INFO",
+            "where dorm_id = #{dormId,jdbcType=VARCHAR}"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="stu_no", property="stuNo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="stu_class", property="stuClass", jdbcType=JdbcType.VARCHAR),
+            @Result(column="dorm_id", property="dormId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="profession_id", property="professionId", jdbcType=JdbcType.VARCHAR)
+    })
+    List<StudentInfo> findByDormId(String dormId);
 }

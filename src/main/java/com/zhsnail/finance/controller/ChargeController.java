@@ -6,15 +6,9 @@ import com.zhsnail.finance.entity.DormInfo;
 import com.zhsnail.finance.entity.FeeKind;
 import com.zhsnail.finance.entity.Profession;
 import com.zhsnail.finance.entity.StudentInfo;
-import com.zhsnail.finance.service.DormInfoService;
-import com.zhsnail.finance.service.FeeKindService;
-import com.zhsnail.finance.service.ProfessionService;
-import com.zhsnail.finance.service.StudentInfoService;
+import com.zhsnail.finance.service.*;
 import com.zhsnail.finance.util.JsonUtil;
-import com.zhsnail.finance.vo.DormInfoVo;
-import com.zhsnail.finance.vo.FeeKindVo;
-import com.zhsnail.finance.vo.ProfessionVo;
-import com.zhsnail.finance.vo.StudentInfoVo;
+import com.zhsnail.finance.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +27,8 @@ public class ChargeController {
     private StudentInfoService studentInfoService;
     @Autowired
     private FeeKindService feeKindService;
+    @Autowired
+    private PayNoticeService payNoticeService;
 
     @GetMapping("/dormInfoList")
     public Result findDormInfoByCondition(@RequestParam String params) {
@@ -178,5 +174,11 @@ public class ChargeController {
     public Result  findAllFeeKind(){
         List<FeeKind> feeKindList = feeKindService.findAll();
         return new Result(feeKindList);
+    }
+
+    @PostMapping("/savePayNotice")
+    public Result saveOrUpdatePayNotice(@RequestBody PayNoticeVo payNoticeVo){
+        payNoticeService.saveOrUpdate(payNoticeVo);
+        return new Result("StudentPageInfo");
     }
 }

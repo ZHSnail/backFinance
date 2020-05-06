@@ -3,6 +3,10 @@ package com.zhsnail.finance.mapper;
 import com.zhsnail.finance.entity.PayDetail;
 import org.apache.ibatis.jdbc.SQL;
 
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
+
 public class PayDetailSqlProvider {
 
     public String insertSelective(PayDetail record) {
@@ -57,6 +61,10 @@ public class PayDetailSqlProvider {
             sql.VALUES("update_time", "#{updateTime,jdbcType=TIMESTAMP}");
         }
         
+        if (record.getPayNoticeId() != null) {
+            sql.VALUES("pay_notice_id", "#{payNoticeId,jdbcType=VARCHAR}");
+        }
+        
         return sql.toString();
     }
 
@@ -108,8 +116,32 @@ public class PayDetailSqlProvider {
             sql.SET("update_time = #{updateTime,jdbcType=TIMESTAMP}");
         }
         
+        if (record.getPayNoticeId() != null) {
+            sql.SET("pay_notice_id = #{payNoticeId,jdbcType=VARCHAR}");
+        }
+        
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
         return sql.toString();
+    }
+
+    public String batchinsertSql(Map<String, List<PayDetail>> map ){
+        List<PayDetail> payDetails = map.get("list");
+        StringBuilder sb = new StringBuilder();
+        sb.append("INSERT INTO CAM_PAY_DETAIL ");
+        sb.append("(id, memo,amount,pay_date,status,fee_method,code,user_id,create_time,creater,updater,update_time,pay_notice_id) ");
+        sb.append("VALUES ");
+        MessageFormat mf = new MessageFormat("(#'{'list[{0}].id},#'{'list[{0}].memo}, " +
+                "#'{'list[{0}].amount},#'{'list[{0}].payDate},#'{'list[{0}].status}," +
+                "#'{'list[{0}].feeMethod},#'{'list[{0}].code},#'{'list[{0}].userId}," +
+                "#'{'list[{0}].createTime},#'{'list[{0}].creater},#'{'list[{0}].updater}," +
+                "#'{'list[{0}].updateTime},#'{'list[{0}].payNoticeId})");
+        for (int i = 0; i < payDetails.size(); i++) {
+            sb.append(mf.format(new Object[]{i}));
+            if (i < payDetails.size() - 1) {
+                sb.append(",");
+            }
+        }
+        return sb.toString();
     }
 }

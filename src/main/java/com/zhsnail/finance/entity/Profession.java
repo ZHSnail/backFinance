@@ -1,5 +1,7 @@
 package com.zhsnail.finance.entity;
 
+import java.util.List;
+
 public class Profession {
     private String id;
     //专业名
@@ -12,6 +14,16 @@ public class Profession {
     private String grade;
     //学生人数
     private Integer total;
+    //学生
+    private List<StudentInfo> studentInfos;
+
+    public List<StudentInfo> getStudentInfos() {
+        return studentInfos;
+    }
+
+    public void setStudentInfos(List<StudentInfo> studentInfos) {
+        this.studentInfos = studentInfos;
+    }
 
     public Integer getTotal() {
         return total;

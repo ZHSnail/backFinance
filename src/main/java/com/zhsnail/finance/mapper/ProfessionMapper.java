@@ -94,4 +94,24 @@ public interface ProfessionMapper {
             @Result(column="id",property="total",one=@One(select="com.zhsnail.finance.mapper.StudentInfoMapper.countByProfessionId",fetchType= FetchType.EAGER)),
     })
     List<Profession> findAllByCondition(ProfessionVo professionVo);
+
+    @Select({
+            "<script>",
+            "select * ",
+            "from CAM_PROFESSION",
+            "where id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="is_leaf", property="isLeaf", jdbcType=JdbcType.VARCHAR),
+            @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="grade", property="grade", jdbcType=JdbcType.VARCHAR),
+            @Result(property = "studentInfos",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.StudentInfoMapper.findByProfessionId",fetchType = FetchType.LAZY))
+    })
+    List<Profession> findByIds(@Param("ids") List<String> ids);
 }

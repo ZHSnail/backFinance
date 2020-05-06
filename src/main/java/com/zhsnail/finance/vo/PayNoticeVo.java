@@ -1,54 +1,56 @@
-package com.zhsnail.finance.entity;
+package com.zhsnail.finance.vo;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
-public class PayNotice {
+public class PayNoticeVo {
     private String id;
-
+    //总金额
     private BigDecimal totalAmount;
-
+    //会计科目id
     private String accountId;
-
+    //收费机构
     private String org;
-
+    //备注
     private String memo;
-
+    //总人数
     private String totalUser;
-
+    //收费金额
     private BigDecimal amount;
-
-    private String feeScope;
-
+    //收费范围
+    private List<Map> feeScope;
+    //状态
     private String status;
-
+    //收费类别id
     private String feeKindId;
-
+    //单号
     private String code;
-
+    //收费单位
     private String period;
-
+    //缴费期限
     private Date deadLineMax;
-
+    //缴费期限
     private Date deadLineMin;
-
+    //收费单详情
     private String payDetailId;
-
+    //创建时间
     private Date createTime;
-
+    //创建人
     private String creater;
-
+    //更新人
     private String updater;
-
+    //更新时间
     private Date updateTime;
 
-    private FeeKind feeKind;
+    private Map feeKind;
 
-    public FeeKind getFeeKind() {
+    public Map getFeeKind() {
         return feeKind;
     }
 
-    public void setFeeKind(FeeKind feeKind) {
+    public void setFeeKind(Map feeKind) {
         this.feeKind = feeKind;
     }
 
@@ -57,7 +59,7 @@ public class PayNotice {
     }
 
     public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+        this.id = id;
     }
 
     public BigDecimal getTotalAmount() {
@@ -73,7 +75,7 @@ public class PayNotice {
     }
 
     public void setAccountId(String accountId) {
-        this.accountId = accountId == null ? null : accountId.trim();
+        this.accountId = accountId;
     }
 
     public String getOrg() {
@@ -81,7 +83,7 @@ public class PayNotice {
     }
 
     public void setOrg(String org) {
-        this.org = org == null ? null : org.trim();
+        this.org = org;
     }
 
     public String getMemo() {
@@ -89,7 +91,7 @@ public class PayNotice {
     }
 
     public void setMemo(String memo) {
-        this.memo = memo == null ? null : memo.trim();
+        this.memo = memo;
     }
 
     public String getTotalUser() {
@@ -97,7 +99,7 @@ public class PayNotice {
     }
 
     public void setTotalUser(String totalUser) {
-        this.totalUser = totalUser == null ? null : totalUser.trim();
+        this.totalUser = totalUser;
     }
 
     public BigDecimal getAmount() {
@@ -108,12 +110,12 @@ public class PayNotice {
         this.amount = amount;
     }
 
-    public String getFeeScope() {
+    public List<Map> getFeeScope() {
         return feeScope;
     }
 
-    public void setFeeScope(String feeScope) {
-        this.feeScope = feeScope == null ? null : feeScope.trim();
+    public void setFeeScope(List<Map> feeScope) {
+        this.feeScope = feeScope;
     }
 
     public String getStatus() {
@@ -121,7 +123,7 @@ public class PayNotice {
     }
 
     public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
+        this.status = status;
     }
 
     public String getFeeKindId() {
@@ -129,7 +131,7 @@ public class PayNotice {
     }
 
     public void setFeeKindId(String feeKindId) {
-        this.feeKindId = feeKindId == null ? null : feeKindId.trim();
+        this.feeKindId = feeKindId;
     }
 
     public String getCode() {
@@ -137,7 +139,7 @@ public class PayNotice {
     }
 
     public void setCode(String code) {
-        this.code = code == null ? null : code.trim();
+        this.code = code;
     }
 
     public String getPeriod() {
@@ -145,7 +147,7 @@ public class PayNotice {
     }
 
     public void setPeriod(String period) {
-        this.period = period == null ? null : period.trim();
+        this.period = period;
     }
 
     public Date getDeadLineMax() {
@@ -169,7 +171,7 @@ public class PayNotice {
     }
 
     public void setPayDetailId(String payDetailId) {
-        this.payDetailId = payDetailId == null ? null : payDetailId.trim();
+        this.payDetailId = payDetailId;
     }
 
     public Date getCreateTime() {
@@ -185,7 +187,7 @@ public class PayNotice {
     }
 
     public void setCreater(String creater) {
-        this.creater = creater == null ? null : creater.trim();
+        this.creater = creater;
     }
 
     public String getUpdater() {
@@ -193,7 +195,7 @@ public class PayNotice {
     }
 
     public void setUpdater(String updater) {
-        this.updater = updater == null ? null : updater.trim();
+        this.updater = updater;
     }
 
     public Date getUpdateTime() {
