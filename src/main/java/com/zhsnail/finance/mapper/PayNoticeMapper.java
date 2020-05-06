@@ -1,6 +1,7 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.PayNotice;
+import com.zhsnail.finance.vo.PayNoticeVo;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
 import org.apache.ibatis.type.JdbcType;
@@ -95,4 +96,28 @@ public interface PayNoticeMapper {
         "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(PayNotice record);
+
+    @SelectProvider(type=PayNoticeSqlProvider.class, method="findTaskListSql")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="total_amount", property="totalAmount", jdbcType=JdbcType.DECIMAL),
+            @Result(column="account_id", property="accountId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="org", property="org", jdbcType=JdbcType.VARCHAR),
+            @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="total_user", property="totalUser", jdbcType=JdbcType.VARCHAR),
+            @Result(column="amount", property="amount", jdbcType=JdbcType.DECIMAL),
+            @Result(column="fee_scope", property="feeScope", jdbcType=JdbcType.VARCHAR),
+            @Result(column="status", property="status", jdbcType=JdbcType.VARCHAR),
+            @Result(column="fee_kind_id", property="feeKindId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="period", property="period", jdbcType=JdbcType.VARCHAR),
+            @Result(column="dead_line_max", property="deadLineMax", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="dead_line_min", property="deadLineMin", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="pay_detail_id", property="payDetailId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="creater", property="creater", jdbcType=JdbcType.VARCHAR),
+            @Result(column="updater", property="updater", jdbcType=JdbcType.VARCHAR),
+            @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP),
+    })
+    PayNotice findTaskList(PayNoticeVo payNoticeVo);
 }

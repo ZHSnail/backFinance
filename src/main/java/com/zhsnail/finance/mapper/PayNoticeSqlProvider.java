@@ -1,6 +1,10 @@
 package com.zhsnail.finance.mapper;
 
+import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.entity.PayNotice;
+import com.zhsnail.finance.vo.AccountDetailVo;
+import com.zhsnail.finance.vo.PayNoticeVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 
 public class PayNoticeSqlProvider {
@@ -166,6 +170,22 @@ public class PayNoticeSqlProvider {
         
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
+        return sql.toString();
+    }
+
+    public String findTaskListSql(PayNoticeVo payNoticeVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("CAM_PAY_NOTICE");
+        if (payNoticeVo!=null){
+            if (StringUtils.isNotBlank(payNoticeVo.getCreater())){
+                sql.WHERE("creater = #{creater,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("status in ("+ DICT.STATUS_DRAFT+","
+                +DICT.STATUS_BACK+"," +
+                ""+DICT.STATUS_CMT+","
+                +")");
         return sql.toString();
     }
 }

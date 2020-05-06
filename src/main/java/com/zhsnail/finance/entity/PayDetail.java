@@ -5,20 +5,22 @@ import java.util.Date;
 
 public class PayDetail {
     private String id;
-
+    //备注
     private String memo;
-
+    //付款金额
     private BigDecimal amount;
-
+    //付款日期
     private Date payDate;
-
+    //付款状态
     private String status;
-
+    //收费方式
     private String feeMethod;
-
+    //单号
     private String code;
-
+    //用户id
     private String userId;
+    //缴费通知单id
+    private String payNoticeId;
 
     private Date createTime;
 
@@ -27,8 +29,6 @@ public class PayDetail {
     private String updater;
 
     private Date updateTime;
-
-    private String payNoticeId;
 
     public String getId() {
         return id;

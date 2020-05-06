@@ -44,14 +44,14 @@ public class PayNoticeVo {
     //更新时间
     private Date updateTime;
 
-    private Map feeKind;
+    private Map feeKindList;
 
-    public Map getFeeKind() {
-        return feeKind;
+    public Map getFeeKindList() {
+        return feeKindList;
     }
 
-    public void setFeeKind(Map feeKind) {
-        this.feeKind = feeKind;
+    public void setFeeKindList(Map feeKindList) {
+        this.feeKindList = feeKindList;
     }
 
     public String getId() {

@@ -2,44 +2,46 @@ package com.zhsnail.finance.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class PayNotice {
     private String id;
-
+    //总金额
     private BigDecimal totalAmount;
-
+    //会计科目id
     private String accountId;
-
+    //收费机构
     private String org;
-
+    //备注
     private String memo;
-
+    //总人数
     private String totalUser;
-
+    //收费金额
     private BigDecimal amount;
-
+    //收费范围 如果是面向宿舍收费，则存dormId 如果是面向专业收费，则存professionId
     private String feeScope;
-
+    //状态
     private String status;
-
+    //收费类别id
     private String feeKindId;
-
+    //单号
     private String code;
-
+    //收费单位
     private String period;
-
+    //缴费期限
     private Date deadLineMax;
-
+    //缴费期限
     private Date deadLineMin;
-
+    //收费单详情
     private String payDetailId;
-
+    //创建时间
     private Date createTime;
-
+    //创建人
     private String creater;
-
+    //更新人
     private String updater;
-
+    //更新时间
     private Date updateTime;
 
     private FeeKind feeKind;
