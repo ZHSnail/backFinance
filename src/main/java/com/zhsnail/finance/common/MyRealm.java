@@ -4,6 +4,8 @@ import com.zhsnail.finance.entity.Operation;
 import com.zhsnail.finance.entity.Role;
 import com.zhsnail.finance.entity.User;
 import com.zhsnail.finance.service.SystemService;
+import com.zhsnail.finance.util.CommonUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -14,7 +16,9 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MyRealm extends AuthorizingRealm {
     @Autowired
@@ -25,7 +29,11 @@ public class MyRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         String name= (String) principalCollection.getPrimaryPrincipal();
         User userInfo = systemService.findUserInfo(name);
-        List<Role> roles = userInfo.getRoles();
+        List<Role> roles = new ArrayList<>();
+        if (StringUtils.isNotBlank(userInfo.getStudentId())){
+            roles = systemService.findStudentInfoById(userInfo.getStudentId()).getRoles();
+        }
+        //TODO 分配角色和权限
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
         //添加角色和权限
         for (Role role:roles){

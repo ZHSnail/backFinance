@@ -11,6 +11,7 @@ import com.zhsnail.finance.exception.BaseRuningTimeException;
 import com.zhsnail.finance.mapper.ActivitiDeploymentMapper;
 import com.zhsnail.finance.mapper.ActivitiModelMapper;
 import com.zhsnail.finance.util.BeanUtil;
+import com.zhsnail.finance.util.CommonUtil;
 import com.zhsnail.finance.util.JsonUtil;
 import com.zhsnail.finance.vo.DeployMentVo;
 import com.zhsnail.finance.vo.ModelVo;
@@ -123,10 +124,10 @@ public class ActivityServiceImpl implements ActivityService {
             variables.put(DICT.BUSINESSKEY, businessKey);
             // 工作流ID
             variables.put(DICT.WORKKEY, workKey);
+            Map currentUser = CommonUtil.getCurrentUser();
             // 绑定流程启动人
-            identityService.setAuthenticatedUserId("123");
-            //TODO 需要放用户的id
-            variables.put("applyUser", "userID");
+            identityService.setAuthenticatedUserId((String) currentUser.get("id"));
+            variables.put("applyUser",(String) currentUser.get("id"));
             processInstance = runtimeService.startProcessInstanceByKey(workKey, businessKey, variables);
             //自动跳过第一步审批
             Task task = taskService.createTaskQuery().processInstanceBusinessKey(businessKey).singleResult();
@@ -279,6 +280,22 @@ public class ActivityServiceImpl implements ActivityService {
         log.info("拒绝workKey:{}的工作流businessKey:{}", workKey, businessKey);
     }
 
+    @Override
+    public List<String> findCmtTask(String workkey, String roleId) {
+        List<Task> tasks = taskService.createTaskQuery().taskAssignee(roleId).processDefinitionKey(workkey).orderByTaskCreateTime().desc().list();
+        List<String> list = new ArrayList<>();
+        for (Task task : tasks){
+            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(task.getProcessInstanceId()).singleResult();
+            list.add(processInstance.getBusinessKey());
+        }
+        return list.stream().distinct().collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteFlow(String workKey, String businessKey) {
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceBusinessKey(businessKey).processDefinitionKey(workKey).singleResult();
+        runtimeService.deleteProcessInstance(processInstance.getProcessInstanceId(),"");
+    }
 
     @Override
     public ProcessInstance findProcessInstanceByBusinessKey(String workKey, String businessKey) {

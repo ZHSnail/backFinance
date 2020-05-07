@@ -19,10 +19,10 @@ public interface RoleUserMapper {
     int deleteByPrimaryKey(String id);
 
     @Insert({
-        "insert into SYM_ROLE_USER (id, role_id, ",
-        "user_id)",
-        "values (#{id,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR}, ",
-        "#{userId,jdbcType=VARCHAR})"
+        "insert into SYM_ROLE_USER (id, biz_id, ",
+        "role_id)",
+        "values (#{id,jdbcType=VARCHAR}, #{bizId,jdbcType=VARCHAR}, ",
+        "#{roleId,jdbcType=VARCHAR})"
     })
     int insert(RoleUser record);
 
@@ -31,14 +31,14 @@ public interface RoleUserMapper {
 
     @Select({
         "select",
-        "id, role_id, user_id",
+        "id, biz_id, role_id",
         "from SYM_ROLE_USER",
         "where id = #{id,jdbcType=VARCHAR}"
     })
     @Results({
         @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
-        @Result(column="role_id", property="roleId", jdbcType=JdbcType.VARCHAR),
-        @Result(column="user_id", property="userId", jdbcType=JdbcType.VARCHAR)
+        @Result(column="biz_id", property="bizId", jdbcType=JdbcType.VARCHAR),
+        @Result(column="role_id", property="roleId", jdbcType=JdbcType.VARCHAR)
     })
     RoleUser selectByPrimaryKey(String id);
 
@@ -47,8 +47,8 @@ public interface RoleUserMapper {
 
     @Update({
         "update SYM_ROLE_USER",
-        "set role_id = #{roleId,jdbcType=VARCHAR},",
-          "user_id = #{userId,jdbcType=VARCHAR}",
+        "set biz_id = #{bizId,jdbcType=VARCHAR},",
+          "role_id = #{roleId,jdbcType=VARCHAR}",
         "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(RoleUser record);

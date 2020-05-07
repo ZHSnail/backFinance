@@ -42,12 +42,12 @@ public interface SystemService {
      */
     User findUserById(String id);
 
-    /**
+   /* *//**
      * 根据用户id查找角色
      * @param userId 用户id
      * @return List<Role>
-     */
-    List<Role> findRoleList(String userId);
+     *//*
+    List<Role> findRoleList(String userId);*/
 
     /**
      * 查询用户的权限及菜单
@@ -77,4 +77,6 @@ public interface SystemService {
     void updateRole(RoleVo roleVo);
 
     void saveRole(RoleVo roleVo);
+
+    StudentInfo findStudentInfoById(String id);
 }

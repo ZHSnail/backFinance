@@ -1,5 +1,7 @@
 package com.zhsnail.finance.service;
 
+import com.github.pagehelper.PageInfo;
+import com.zhsnail.finance.entity.PageEntity;
 import com.zhsnail.finance.entity.PayNotice;
 import com.zhsnail.finance.vo.PayNoticeVo;
 
@@ -49,5 +51,7 @@ public interface PayNoticeService {
      * 查询任务列表 草稿、审核中、已完成
      * @return
      */
-    List<Map> findTaskList();
+    Map findTaskMapList();
+
+    PageInfo<PayNotice> findCmtTaskList(PageEntity pageEntity);
 }

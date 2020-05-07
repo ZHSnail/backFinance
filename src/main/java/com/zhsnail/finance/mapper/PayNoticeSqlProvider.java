@@ -182,10 +182,10 @@ public class PayNoticeSqlProvider {
                 sql.WHERE("creater = #{creater,jdbcType=VARCHAR}");
             }
         }
-        sql.WHERE("status in ("+ DICT.STATUS_DRAFT+","
-                +DICT.STATUS_BACK+"," +
-                ""+DICT.STATUS_CMT+","
-                +")");
+        sql.WHERE("status in ( '"+DICT.STATUS_DRAFT+"' , '"
+                +DICT.STATUS_BACK+"' , '" +
+                DICT.STATUS_CMT+"' , '"+DICT.STATUS_EXE
+                +"' )");
         return sql.toString();
     }
 }

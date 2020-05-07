@@ -120,4 +120,19 @@ public interface ActivityService {
      * @return 页面所需的审核信息
      */
     List<Map<String, Object>> findApproveMsg(String workKey,String businessKey);
+
+    /**
+     * 查找所有的待审核信息
+     * @param workkey 工作流key
+     * @param roleId 角色id
+     * @return 业务id列表
+     */
+    List<String> findCmtTask(String workkey,String roleId);
+
+    /**
+     * 删除代办任务
+     * @param workKey 工作流key
+     * @param businessKey 业务id
+     */
+    void deleteFlow(String workKey,String businessKey);
 }

@@ -3,9 +3,9 @@ package com.zhsnail.finance.entity;
 public class RoleUser {
     private String id;
 
-    private String roleId;
+    private String bizId;
 
-    private String userId;
+    private String roleId;
 
     public String getId() {
         return id;
@@ -15,19 +15,19 @@ public class RoleUser {
         this.id = id == null ? null : id.trim();
     }
 
+    public String getBizId() {
+        return bizId;
+    }
+
+    public void setBizId(String bizId) {
+        this.bizId = bizId == null ? null : bizId.trim();
+    }
+
     public String getRoleId() {
         return roleId;
     }
 
     public void setRoleId(String roleId) {
         this.roleId = roleId == null ? null : roleId.trim();
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId == null ? null : userId.trim();
     }
 }

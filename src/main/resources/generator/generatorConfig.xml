@@ -48,10 +48,7 @@
         </javaClientGenerator>
 
 
-        <table tableName="CAM_PAY_DETAIL" domainObjectName="PayDetail"
-               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false"/>
-        <table tableName="CAM_PAY_NOTICE" domainObjectName="PayNotice"
+        <table tableName="SYM_ROLE_USER" domainObjectName="RoleUser"
                enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false" selectByExampleQueryId="false"/>
     </context>

@@ -89,7 +89,8 @@ public interface UserMapper {
             @Result(column="staff_id", property="staffId", jdbcType=JdbcType.VARCHAR)
     })
     User findUserByUserName(String userName);
-    @Select({
+
+    /*@Select({
             "select * from SYM_USER where id = #{id,jdbcType=VARCHAR}"
     })
     @Results({
@@ -100,7 +101,7 @@ public interface UserMapper {
             @Result(column="staff_id", property="staffId", jdbcType=JdbcType.VARCHAR),
             @Result(property = "roles",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.RoleMapper.findByUserId",fetchType = FetchType.LAZY))
     })
-    User findUserRoleById(String id);
+    User findUserRoleById(String id);*/
 
     @Select({
             "select * from SYM_USER where user_name = #{name,jdbcType=VARCHAR}"
@@ -111,7 +112,6 @@ public interface UserMapper {
             @Result(column="psw", property="psw", jdbcType=JdbcType.VARCHAR),
             @Result(column="student_id", property="studentId", jdbcType=JdbcType.VARCHAR),
             @Result(column="staff_id", property="staffId", jdbcType=JdbcType.VARCHAR),
-            @Result(property = "roles",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.RoleMapper.findByUserId",fetchType = FetchType.LAZY))
     })
     User findUserInfo(String name);
 

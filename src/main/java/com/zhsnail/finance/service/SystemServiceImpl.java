@@ -2,12 +2,10 @@ package com.zhsnail.finance.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.zhsnail.finance.entity.ImportResult;
-import com.zhsnail.finance.entity.PageEntity;
-import com.zhsnail.finance.entity.Role;
-import com.zhsnail.finance.entity.User;
+import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.mapper.ImportResultMapper;
 import com.zhsnail.finance.mapper.RoleMapper;
+import com.zhsnail.finance.mapper.StudentInfoMapper;
 import com.zhsnail.finance.mapper.UserMapper;
 import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
@@ -28,6 +26,8 @@ public class SystemServiceImpl implements SystemService {
     private RoleMapper roleMapper;
     @Autowired
     private ImportResultMapper importResultMapper;
+    @Autowired
+    private StudentInfoMapper studentInfoMapper;
 
     @Override
     public User findUserByStaId(String staffId) {
@@ -55,10 +55,15 @@ public class SystemServiceImpl implements SystemService {
         return userMapper.selectByPrimaryKey(id);
     }
 
-    @Override
+   /* @Override
     public List<Role> findRoleList(String userId) {
         User user = userMapper.findUserRoleById(userId);
         return user.getRoles();
+    }*/
+
+    @Override
+    public StudentInfo findStudentInfoById(String id) {
+        return studentInfoMapper.selectByPrimaryKey(id);
     }
 
     @Override

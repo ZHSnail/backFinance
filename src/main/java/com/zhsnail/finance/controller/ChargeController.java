@@ -2,10 +2,7 @@ package com.zhsnail.finance.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.common.Result;
-import com.zhsnail.finance.entity.DormInfo;
-import com.zhsnail.finance.entity.FeeKind;
-import com.zhsnail.finance.entity.Profession;
-import com.zhsnail.finance.entity.StudentInfo;
+import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.service.*;
 import com.zhsnail.finance.util.JsonUtil;
 import com.zhsnail.finance.vo.*;
@@ -179,6 +176,38 @@ public class ChargeController {
     @PostMapping("/savePayNotice")
     public Result saveOrUpdatePayNotice(@RequestBody PayNoticeVo payNoticeVo){
         payNoticeService.saveOrUpdate(payNoticeVo);
-        return new Result("StudentPageInfo");
+        return new Result(true,"保存成功");
+    }
+
+    @PostMapping("/commitPayNotice")
+    public Result commitPayNotice(@RequestBody PayNoticeVo payNoticeVo){
+        payNoticeService.commit(payNoticeVo);
+        return new Result(true,"提交成功");
+    }
+
+    @GetMapping("/PayNoticeTaskList")
+    public Result getPayNoticeTaskList(){
+        Map taskMapList = payNoticeService.findTaskMapList();
+        return new Result(taskMapList);
+    }
+
+    @GetMapping("/payNotice/{id}")
+    public Result findPayNotice(@PathVariable String id){
+        return new Result(payNoticeService.findById(id));
+    }
+
+    @DeleteMapping("/payNotice/{id}")
+    public Result deletePayNotice(@PathVariable String id){
+        payNoticeService.deletePayNotice(id);
+        return new Result(true,"删除成功");
+    }
+
+    @GetMapping("/payNoticeCmtList")
+    public Result getPayNoticeCmtList(@RequestParam String params){
+        PageEntity pageEntity = new PageEntity();
+        if(StringUtils.isNotBlank(params)){
+            pageEntity = JsonUtil.string2Obj(params,PageEntity.class);
+        }
+        return new Result(payNoticeService.findCmtTaskList(pageEntity));
     }
 }

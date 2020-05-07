@@ -64,7 +64,7 @@ public class SystemController {
                     //存当前登陆用户
                     StudentInfo studentInfo = studentInfoService.findById(loginUser.getStudentId());
                     Map userInfo = BeanUtil.beanToMap(studentInfo);
-                    userInfo.put(DICT.LOGIN_STUDENT,DICT.LOGIN_STAFF);
+                    userInfo.put(DICT.LOGIN,DICT.LOGIN_STUDENT);
                     map.put("userInfo", userInfo);
                     subject.getSession().setAttribute("userInfo",userInfo);
                 }

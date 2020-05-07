@@ -13,12 +13,12 @@ public class RoleUserSqlProvider {
             sql.VALUES("id", "#{id,jdbcType=VARCHAR}");
         }
         
-        if (record.getRoleId() != null) {
-            sql.VALUES("role_id", "#{roleId,jdbcType=VARCHAR}");
+        if (record.getBizId() != null) {
+            sql.VALUES("biz_id", "#{bizId,jdbcType=VARCHAR}");
         }
         
-        if (record.getUserId() != null) {
-            sql.VALUES("user_id", "#{userId,jdbcType=VARCHAR}");
+        if (record.getRoleId() != null) {
+            sql.VALUES("role_id", "#{roleId,jdbcType=VARCHAR}");
         }
         
         return sql.toString();
@@ -28,12 +28,12 @@ public class RoleUserSqlProvider {
         SQL sql = new SQL();
         sql.UPDATE("SYM_ROLE_USER");
         
-        if (record.getRoleId() != null) {
-            sql.SET("role_id = #{roleId,jdbcType=VARCHAR}");
+        if (record.getBizId() != null) {
+            sql.SET("biz_id = #{bizId,jdbcType=VARCHAR}");
         }
         
-        if (record.getUserId() != null) {
-            sql.SET("user_id = #{userId,jdbcType=VARCHAR}");
+        if (record.getRoleId() != null) {
+            sql.SET("role_id = #{roleId,jdbcType=VARCHAR}");
         }
         
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");

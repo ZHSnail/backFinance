@@ -14,6 +14,10 @@ public interface DICT {
      */
     String BOOLEAN_STATE_FALSE = "FALSE";
     /**
+     * 缴费通知工作流申请
+     */
+    String PAY_NOTICE_WORK_KEY="payNoticeReq";
+    /**
      * 申请单状态 -- 退回
      */
     String STATUS_BACK = "BACK";
@@ -37,6 +41,10 @@ public interface DICT {
      * 已完成
      */
     String STATUS_FINSH = "FINSH";
+    /**
+     * 当前登录的key
+     */
+    String LOGIN = "LOGIN";
     /**
      * 当前登录是学生
      */

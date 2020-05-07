@@ -40,7 +40,8 @@ public interface StudentInfoMapper {
         @Result(column="stu_no", property="stuNo", jdbcType=JdbcType.VARCHAR),
         @Result(column="stu_class", property="stuClass", jdbcType=JdbcType.VARCHAR),
         @Result(column="dorm_id", property="dormId", jdbcType=JdbcType.VARCHAR),
-        @Result(column="profession_id", property="professionId", jdbcType=JdbcType.VARCHAR)
+        @Result(column="profession_id", property="professionId", jdbcType=JdbcType.VARCHAR),
+        @Result(property = "roles",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.RoleMapper.findByBizId",fetchType = FetchType.EAGER))
     })
     StudentInfo selectByPrimaryKey(String id);
 

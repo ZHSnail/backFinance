@@ -54,16 +54,16 @@ public interface RoleMapper {
             "select * from SYM_ROLE " ,
             "where id in (" ,
             "select role_id from SYM_ROLE_USER " ,
-             "where user_id = #{userId,jdbcType=VARCHAR})",
+             "where biz_id = #{bizId,jdbcType=VARCHAR})",
     })
     @Results({
             @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
             @Result(column="role_name", property="roleName", jdbcType=JdbcType.VARCHAR),
             @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
-            @Result(property = "permissions",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.PermissionMapper.findByRoleId",fetchType = FetchType.LAZY)),
-            @Result(property = "operations",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.OperationMapper.findByRoleId",fetchType = FetchType.LAZY))
+            @Result(property = "permissions",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.PermissionMapper.findByRoleId",fetchType = FetchType.EAGER)),
+            @Result(property = "operations",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.OperationMapper.findByRoleId",fetchType = FetchType.EAGER))
     })
-    List<Role> findByUserId(String userId);
+    List<Role> findByBizId(String bizId);
 
     @Select({
             "select",
