@@ -113,4 +113,60 @@ public interface StudentInfoMapper {
             @Result(column="profession_id", property="professionId", jdbcType=JdbcType.VARCHAR)
     })
     List<StudentInfo> findByDormId(String dormId);
+
+    @Select({
+            "<script>",
+            "select * ",
+            "from CAM_STUDENT_INFO",
+            "where dorm_id in",
+            "<foreach collection='dormIds' item='dormId' open='(' separator=',' close=')'>",
+            "#{dormId}",
+            "</foreach>",
+            "</script>"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="stu_no", property="stuNo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="stu_class", property="stuClass", jdbcType=JdbcType.VARCHAR),
+            @Result(column="dorm_id", property="dormId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="profession_id", property="professionId", jdbcType=JdbcType.VARCHAR)
+    })
+    List<StudentInfo> findByDormIds(@Param("dormIds") List<String> dormIds);
+
+    @Select({
+            "<script>",
+            "select * ",
+            "from CAM_STUDENT_INFO",
+            "where profession_id in",
+            "<foreach collection='professionIds' item='professionId' open='(' separator=',' close=')'>",
+            "#{professionId}",
+            "</foreach>",
+            "</script>"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="stu_no", property="stuNo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="stu_class", property="stuClass", jdbcType=JdbcType.VARCHAR),
+            @Result(column="dorm_id", property="dormId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="profession_id", property="professionId", jdbcType=JdbcType.VARCHAR)
+    })
+    List<StudentInfo> findByProfessionIds(@Param("professionIds") List<String> professionIds);
+
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="stu_no", property="stuNo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="stu_class", property="stuClass", jdbcType=JdbcType.VARCHAR),
+            @Result(column="dorm_id", property="dormId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="profession_id", property="professionId", jdbcType=JdbcType.VARCHAR)
+    })
+    @Select({
+            "select",
+            "id, name, stu_no, stu_class, dorm_id, profession_id",
+            "from CAM_STUDENT_INFO",
+            "where name like concat('%', #{name,jdbcType=VARCHAR},'%')"
+    })
+    List<StudentInfo> findByName(String name);
 }

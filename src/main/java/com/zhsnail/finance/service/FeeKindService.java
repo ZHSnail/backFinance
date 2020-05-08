@@ -8,26 +8,26 @@ import java.util.List;
 
 public interface FeeKindService {
     /**
-     * 删除宿舍信息
-     * @param id 宿舍信息id
+     * 删除费用类别
+     * @param id 费用类别id
      */
     void deleteFeeKind(String id);
 
     /**
-     * 修改宿舍信息
-     * @param feeKindVo 宿舍信息
+     * 修改费用类别
+     * @param feeKindVo 费用类别
      */
     void updateFeeKind(FeeKindVo feeKindVo);
 
     /**
-     * 保存宿舍信息
-     * @param feeKindVo 宿舍信息
+     * 保存费用类别
+     * @param feeKindVo 费用类别
      */
     void saveFeeKind(FeeKindVo feeKindVo);
 
     /**
-     * 分页查询所有宿舍信息
-     * @param feeKindVo 宿舍信息
+     * 分页查询所有费用类别
+     * @param feeKindVo 费用类别
      * @return
      */
     PageInfo<FeeKind> findByCondition(FeeKindVo feeKindVo);

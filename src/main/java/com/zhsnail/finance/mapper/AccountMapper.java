@@ -18,11 +18,11 @@ public interface AccountMapper {
         "insert into LEM_ACCOUNT (id, account_name, ",
         "code, level, parent_id, ",
         "is_cash, is_bank, ",
-        "is_detail)",
+        "is_detail, type)",
         "values (#{id,jdbcType=VARCHAR}, #{accountName,jdbcType=VARCHAR}, ",
         "#{code,jdbcType=VARCHAR}, #{level,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, ",
         "#{isCash,jdbcType=VARCHAR}, #{isBank,jdbcType=VARCHAR}, ",
-        "#{isDetail,jdbcType=VARCHAR})"
+        "#{isDetail,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR})"
     })
     int insert(Account record);
 
@@ -31,7 +31,7 @@ public interface AccountMapper {
 
     @Select({
         "select",
-        "id, account_name, code, level, parent_id, is_cash, is_bank, is_detail",
+        "id, account_name, code, level, parent_id, is_cash, is_bank, is_detail, type",
         "from LEM_ACCOUNT",
         "where id = #{id,jdbcType=VARCHAR}"
     })
@@ -43,7 +43,8 @@ public interface AccountMapper {
         @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
         @Result(column="is_cash", property="isCash", jdbcType=JdbcType.VARCHAR),
         @Result(column="is_bank", property="isBank", jdbcType=JdbcType.VARCHAR),
-        @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR)
+        @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR),
+        @Result(column="type", property="type", jdbcType=JdbcType.VARCHAR)
     })
     Account selectByPrimaryKey(String id);
 
@@ -58,7 +59,8 @@ public interface AccountMapper {
           "parent_id = #{parentId,jdbcType=VARCHAR},",
           "is_cash = #{isCash,jdbcType=VARCHAR},",
           "is_bank = #{isBank,jdbcType=VARCHAR},",
-          "is_detail = #{isDetail,jdbcType=VARCHAR}",
+          "is_detail = #{isDetail,jdbcType=VARCHAR},",
+          "type = #{type,jdbcType=VARCHAR}",
         "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(Account record);
@@ -72,7 +74,8 @@ public interface AccountMapper {
             @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
             @Result(column="is_cash", property="isCash", jdbcType=JdbcType.VARCHAR),
             @Result(column="is_bank", property="isBank", jdbcType=JdbcType.VARCHAR),
-            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR)
+            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR),
+            @Result(column="type", property="type", jdbcType=JdbcType.VARCHAR)
     })
     List<Account> findAllByCondition(AccountVo accountVo);
 
@@ -85,7 +88,8 @@ public interface AccountMapper {
             @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
             @Result(column="is_cash", property="isCash", jdbcType=JdbcType.VARCHAR),
             @Result(column="is_bank", property="isBank", jdbcType=JdbcType.VARCHAR),
-            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR)
+            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR),
+            @Result(column="type", property="type", jdbcType=JdbcType.VARCHAR)
     })
     List<Account> findUpperAccount(String level);
 
@@ -98,7 +102,8 @@ public interface AccountMapper {
             @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
             @Result(column="is_cash", property="isCash", jdbcType=JdbcType.VARCHAR),
             @Result(column="is_bank", property="isBank", jdbcType=JdbcType.VARCHAR),
-            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR)
+            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR),
+            @Result(column="type", property="type", jdbcType=JdbcType.VARCHAR)
     })
     List<Account> findByParentId(String parentId);
 
@@ -114,7 +119,8 @@ public interface AccountMapper {
             @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
             @Result(column="is_cash", property="isCash", jdbcType=JdbcType.VARCHAR),
             @Result(column="is_bank", property="isBank", jdbcType=JdbcType.VARCHAR),
-            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR)
+            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR),
+            @Result(column="type", property="type", jdbcType=JdbcType.VARCHAR)
     })
     Account findByCode(String code);
 
@@ -127,7 +133,8 @@ public interface AccountMapper {
             @Result(column="parent_id", property="parentId", jdbcType=JdbcType.VARCHAR),
             @Result(column="is_cash", property="isCash", jdbcType=JdbcType.VARCHAR),
             @Result(column="is_bank", property="isBank", jdbcType=JdbcType.VARCHAR),
-            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR)
+            @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR),
+            @Result(column="type", property="type", jdbcType=JdbcType.VARCHAR)
     })
     List<Account> findAllDetailAccount();
 }

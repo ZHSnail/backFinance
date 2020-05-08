@@ -57,6 +57,7 @@ public class ExcelUtils {
             response.reset();
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
+            e.printStackTrace();
             try {
                 response.getWriter().print(JsonUtil.obj2String(new Result(false,"导出excel文件失败")));
             }catch (Exception a){

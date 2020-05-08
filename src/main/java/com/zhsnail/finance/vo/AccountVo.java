@@ -15,6 +15,8 @@ public class AccountVo{
     private String accountName;
     @ExcelProperty({"会计科目表","科目编码"})
     private String code;
+    @ExcelProperty(value = {"会计科目表","会计科目类型"},converter = CustomStringStringConverter.class)
+    private String type;
     @ExcelProperty({"会计科目表","级次"})
     private String level;
     @ExcelIgnore
@@ -28,6 +30,13 @@ public class AccountVo{
     @ExcelProperty(value = {"会计科目表","是否明细"},converter = CustomStringStringConverter.class)
     private String isDetail;
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getParentName() {
         return parentName;

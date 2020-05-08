@@ -65,7 +65,7 @@ public class AccountImportListener extends AnalysisEventListener<Map<Integer, St
             list.add(data);
         }else {
             Integer currentRowNum = analysisContext.getCurrentRowNum();
-            throw new BaseRuningTimeException("第"+currentRowNum+"行数据有误！");
+            throw new BaseRuningTimeException("第"+(currentRowNum+1)+"行数据有误！");
         }
         if (list.size() >= BATCH_COUNT) {
             saveData();
@@ -92,7 +92,7 @@ public class AccountImportListener extends AnalysisEventListener<Map<Integer, St
         }else {
             if (StringUtils.isBlank(data.get(0))||StringUtils.isBlank(data.get(1))
                     ||StringUtils.isBlank(data.get(2))||StringUtils.isBlank(data.get(4))
-                    ||StringUtils.isBlank(data.get(5))||StringUtils.isBlank(data.get(6))){
+                    ||StringUtils.isBlank(data.get(5))||StringUtils.isBlank(data.get(6))||StringUtils.isBlank(data.get(7))){
                 return false;
             }
         }
@@ -111,6 +111,16 @@ public class AccountImportListener extends AnalysisEventListener<Map<Integer, St
                 data.put(i,DICT.BOOLEAN_STATE_FALSE);
             }
         }
+        Map<String, String> map = new HashMap<>();
+        map.put("资产类",DICT.ACCOUNT_TYPE_ASSETS);
+        map.put("成本类",DICT.ACCOUNT_TYPE_COST);
+        map.put("费用类",DICT.ACCOUNT_TYPE_EXPENSES);
+        map.put("负债类",DICT.ACCOUNT_TYPE_LIABILITIES);
+        map.put("所有者权益类",DICT.ACCOUNT_TYPE_OWNER);
+        map.put("收入类",DICT.ACCOUNT_TYPE_INCOME);
+        String s = data.get(7);
+        String s1 = map.get(s);
+        data.put(7,s1);
         return true;
     }
     @Override
@@ -149,6 +159,7 @@ public class AccountImportListener extends AnalysisEventListener<Map<Integer, St
         headList.add("是否明细*");
         headList.add("是否现金*");
         headList.add("是否银行*");
+        headList.add("科目类型*");
 
         Iterator<Integer> iterator = headMap.keySet().iterator();
         while (iterator.hasNext()){
@@ -197,6 +208,7 @@ public class AccountImportListener extends AnalysisEventListener<Map<Integer, St
             account.setIsDetail(map.get(4));
             account.setIsCash(map.get(5));
             account.setIsBank(map.get(6));
+            account.setType(map.get(7));
             accountList.add(account);
         }
         save_size += list.size();

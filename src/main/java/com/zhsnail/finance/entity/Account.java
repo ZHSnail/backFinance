@@ -17,6 +17,8 @@ public class Account {
 
     private String isDetail;
 
+    private String type;
+
     public String getId() {
         return id;
     }
@@ -79,5 +81,13 @@ public class Account {
 
     public void setIsDetail(String isDetail) {
         this.isDetail = isDetail == null ? null : isDetail.trim();
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type == null ? null : type.trim();
     }
 }

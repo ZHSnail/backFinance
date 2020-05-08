@@ -5,6 +5,8 @@ import com.zhsnail.finance.common.Result;
 import com.zhsnail.finance.common.SystemControllerLog;
 import com.zhsnail.finance.common.SystemLog;
 import com.zhsnail.finance.service.ActivityService;
+import com.zhsnail.finance.service.PayNoticeService;
+import com.zhsnail.finance.service.PayNoticeServiceImpl;
 import com.zhsnail.finance.service.TestServiceImpl;
 import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
@@ -48,6 +50,8 @@ public class aController {
     private TestServiceImpl testService;
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private PayNoticeService payNoticeService;
     @GetMapping("/test")
     /*@RequiresRoles(value = {
         "xx",DICT.SYS_ROLE_NAME
@@ -70,11 +74,12 @@ public class aController {
 //        activityService.runStart("testRole", CodeUtil.getId(),null);
 //        List<Task> list = taskService.createTaskQuery().taskAssignee("1").list();
 //        activityService.runApprove("testRole","704462990006550528",map);
-        List<Map<String, Object>> testRole = activityService.findApproveMsg("testRole", "704462990006550528");
+//        List<Map<String, Object>> testRole = activityService.findApproveMsg("testRole", "704462990006550528");
 //                activityService.runRevoke("testRole","704462990006550528",map);
 //        activityService.runRefuse("testRole","704462990006550528",map);
 /*        TaskQuery taskQuery = taskService.createTaskQuery().processInstanceBusinessKey("5778798798798798798798798797987");
         Task task = taskQuery.singleResult()*/;
-        return new Result(testRole);
+        payNoticeService.lastApprove("");
+        return new Result("testRole");
     }
 }

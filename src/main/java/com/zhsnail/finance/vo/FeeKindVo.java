@@ -13,10 +13,46 @@ public class FeeKindVo extends PageEntity {
     private String feeMethod;
     //状态
     private String state;
-    //会计科目id
-    private String accountId;
-    //会计科目
-    private Account account;
+    //借方科目id
+    private String debitAccountId;
+    //贷方科目id
+    private String creditAccountId;
+    //借方科目
+    private Account debitAccount;
+    //贷方科目
+    private Account creditAccount;
+
+    public String getDebitAccountId() {
+        return debitAccountId;
+    }
+
+    public void setDebitAccountId(String debitAccountId) {
+        this.debitAccountId = debitAccountId;
+    }
+
+    public String getCreditAccountId() {
+        return creditAccountId;
+    }
+
+    public void setCreditAccountId(String creditAccountId) {
+        this.creditAccountId = creditAccountId;
+    }
+
+    public Account getDebitAccount() {
+        return debitAccount;
+    }
+
+    public void setDebitAccount(Account debitAccount) {
+        this.debitAccount = debitAccount;
+    }
+
+    public Account getCreditAccount() {
+        return creditAccount;
+    }
+
+    public void setCreditAccount(Account creditAccount) {
+        this.creditAccount = creditAccount;
+    }
 
     public String getId() {
         return id;
@@ -56,21 +92,5 @@ public class FeeKindVo extends PageEntity {
 
     public void setState(String state) {
         this.state = state;
-    }
-
-    public String getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
     }
 }

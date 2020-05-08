@@ -14,6 +14,38 @@ public interface DICT {
      */
     String BOOLEAN_STATE_FALSE = "FALSE";
     /**
+     * 资产类会计科目
+     */
+    String ACCOUNT_TYPE_ASSETS="ASSETS";
+    /**
+     * 成本类会计科目
+     */
+    String ACCOUNT_TYPE_COST="COST";
+    /**
+     * 费用类会计科目
+     */
+    String ACCOUNT_TYPE_EXPENSES="EXPENSES";
+    /**
+     * 负债类会计科目
+     */
+    String ACCOUNT_TYPE_LIABILITIES="LIABILITIES";
+    /**
+     * 所有者权益类会计科目
+     */
+    String ACCOUNT_TYPE_OWNER="OWNER";
+    /**
+     * 收入类会计科目
+     */
+    String ACCOUNT_TYPE_INCOME="INCOME";
+    /**
+     * 未付款
+     */
+    String PAY_DETAIL_STATUS_UNPAID = "UNPAID";
+    /**
+     * 已付款
+     */
+    String PAY_DETAIL_STATUS_PAID = "PAID";
+    /**
      * 缴费通知工作流申请
      */
     String PAY_NOTICE_WORK_KEY="payNoticeReq";

@@ -3,12 +3,10 @@ package com.zhsnail.finance.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.common.DICT;
-import com.zhsnail.finance.entity.PageEntity;
-import com.zhsnail.finance.entity.PayNotice;
-import com.zhsnail.finance.entity.Role;
-import com.zhsnail.finance.entity.StudentInfo;
+import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.mapper.PayDetailMapper;
 import com.zhsnail.finance.mapper.PayNoticeMapper;
+import com.zhsnail.finance.mapper.StudentInfoMapper;
 import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
 import com.zhsnail.finance.util.CommonUtil;
@@ -31,6 +29,8 @@ public class PayNoticeServiceImpl implements PayNoticeService {
     private PayDetailMapper payDetailMapper;
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private StudentInfoMapper studentInfoMapper;
 
     @Override
     public void saveOrUpdate(PayNoticeVo payNoticeVo) {
@@ -52,8 +52,6 @@ public class PayNoticeServiceImpl implements PayNoticeService {
         List<String> feeScopeIdList = feeScopeList.stream().map(map ->(String)map.get("id")).collect(Collectors.toList());
         payNotice.setFeeKindId((String) payNoticeVo.getFeeKindList().get("id"));
         payNotice.setFeeScope(JsonUtil.obj2String(feeScopeIdList));
-        Map account = (Map) payNoticeVo.getFeeKindList().get("account");
-        payNotice.setAccountId((String) account.get("id"));
         Map userInfo = (Map)SecurityUtils.getSubject().getSession().getAttribute("userInfo");
         if (StringUtils.isNotBlank(payNoticeVo.getId())){
             payNotice.setUpdateTime(new Date());
@@ -94,7 +92,42 @@ public class PayNoticeServiceImpl implements PayNoticeService {
     @Override
     public void lastApprove(String id) {
         PayNotice payNotice = payNoticeMapper.selectByPrimaryKey(id);
-
+        payNotice.setStatus(DICT.STATUS_EXE);
+        FeeKind feeKind = payNotice.getFeeKind();
+        String feeScope = payNotice.getFeeScope();
+        List feeScopeList = JsonUtil.getListByJsonArray(feeScope);
+        List<StudentInfo> studentInfoList = new ArrayList<>();
+        if (DICT.FEE_METHOD_DORM.equals(feeKind.getFeeMethod())){
+            if (CollectionUtils.isNotEmpty(feeScopeList)){
+                studentInfoList = studentInfoMapper.findByDormIds(feeScopeList);
+            }
+        }
+        if (DICT.FEE_METHOD_MAJOR.equals(feeKind.getFeeMethod())){
+            if (CollectionUtils.isNotEmpty(feeScopeList)){
+                studentInfoList = studentInfoMapper.findByProfessionIds(feeScopeList);
+            }
+        }
+        if (CollectionUtils.isNotEmpty(studentInfoList)){
+            List<PayDetail> payDetailList = new ArrayList<>();
+            for (StudentInfo studentInfo : studentInfoList){
+                PayDetail payDetail = new PayDetail();
+                payDetail.setId(CodeUtil.getId());
+                payDetail.setAmount(payNotice.getAmount());
+                payDetail.setCode(CodeUtil.getCode(CommonUtil.toPinyin(feeKind.getName(),true)));
+                payDetail.setStatus(DICT.PAY_DETAIL_STATUS_UNPAID);
+                payDetail.setFeeMethod(feeKind.getFeeMethod());
+                payDetail.setPayNoticeId(payNotice.getId());
+                payDetail.setUserId(studentInfo.getId());
+                payDetail.setMemo(payNotice.getMemo());
+                payDetail.setCreater((String) CommonUtil.getCurrentUser().get("id"));
+                payDetail.setCreateTime(new Date());
+                payDetailList.add(payDetail);
+            }
+            if (CollectionUtils.isNotEmpty(payDetailList)){
+                payDetailMapper.batchInsert(payDetailList);
+            }
+        }
+        payNoticeMapper.updateByPrimaryKeySelective(payNotice);
     }
 
     @Override
@@ -160,5 +193,45 @@ public class PayNoticeServiceImpl implements PayNoticeService {
             return pageInfo;
         }
         return new PageInfo<>(new ArrayList<PayNotice>());
+    }
+
+    @Override
+    public PageInfo<PayNotice> findListByCondition(PayNoticeVo payNoticeVo) {
+        PageHelper.startPage(payNoticeVo.getPageNum(),payNoticeVo.getPageSize(),true);
+        List<PayNotice> payNoticeList = payNoticeMapper.findAllByCondition(payNoticeVo);
+        payNoticeList.forEach(payNotice -> {
+            String name = (String) CommonUtil.findUserInfo(payNotice.getCreater()).get("name");
+            payNotice.setCreater(name);
+        });
+        PageInfo<PayNotice> payNoticePageInfo = new PageInfo<>(payNoticeList);
+        return payNoticePageInfo;
+    }
+
+    @Override
+    public List<PayNoticeVo> exportPayNoticeVo(PayNoticeVo payNoticeVo) {
+        List<PayNotice> payNoticeList = payNoticeMapper.findAllByCondition(payNoticeVo);
+        List<PayNoticeVo> payNoticeVoList = new ArrayList<>();
+        for (PayNotice payNotice : payNoticeList){
+            PayNoticeVo temp = new PayNoticeVo();
+            Map<String, Object> map = BeanUtil.beanToMap(payNotice);
+            map.put("feeScope",new ArrayList<>());
+            BeanUtil.copyProperties(temp,map);
+            String name = (String) CommonUtil.findUserInfo(payNotice.getCreater()).get("name");
+            temp.setCreater(name);
+            temp.setFeeKindId(payNotice.getFeeKind().getName());
+            if (DICT.STATUS_EXE.equals(payNotice.getStatus())){
+                temp.setStatus("正在进行收费");
+            }
+            if (DICT.STATUS_FINSH.equals(payNotice.getStatus())){
+                temp.setStatus("收费已完成");
+            }
+            if (DICT.STATUS_CMT.equals(payNotice.getStatus())){
+                temp.setStatus("待审核通过");
+            }
+            temp.setDebitAccount(payNotice.getFeeKind().getDebitAccount().getAccountName());
+            temp.setCreditAccount(payNotice.getFeeKind().getCreditAccount().getAccountName());
+            payNoticeVoList.add(temp);
+        }
+        return payNoticeVoList;
     }
 }

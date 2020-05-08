@@ -47,6 +47,10 @@ public class AccountSqlProvider {
             sql.VALUES("is_detail", "#{isDetail,jdbcType=VARCHAR}");
         }
         
+        if (record.getType() != null) {
+            sql.VALUES("type", "#{type,jdbcType=VARCHAR}");
+        }
+        
         return sql.toString();
     }
 
@@ -82,6 +86,10 @@ public class AccountSqlProvider {
             sql.SET("is_detail = #{isDetail,jdbcType=VARCHAR}");
         }
         
+        if (record.getType() != null) {
+            sql.SET("type = #{type,jdbcType=VARCHAR}");
+        }
+        
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
         return sql.toString();
@@ -102,13 +110,13 @@ public class AccountSqlProvider {
         return sql.toString();
     }
 
-    public String batchinsertSql(Map<String,List<Account>> map ){
+    public String batchinsertSql(Map<String, List<Account>> map ){
         List<Account> accounts = map.get("list");
         StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO LEM_ACCOUNT ");
-        sb.append("(id, account_name,code,level,parent_id,is_cash,is_bank,is_detail) ");
+        sb.append("(id, account_name,code,level,parent_id,is_cash,is_bank,is_detail,type) ");
         sb.append("VALUES ");
-        MessageFormat mf = new MessageFormat("(#'{'list[{0}].id},#'{'list[{0}].accountName}, #'{'list[{0}].code},#'{'list[{0}].level},#'{'list[{0}].parentId},#'{'list[{0}].isCash},#'{'list[{0}].isBank},#'{'list[{0}].isDetail})");
+        MessageFormat mf = new MessageFormat("(#'{'list[{0}].id},#'{'list[{0}].accountName}, #'{'list[{0}].code},#'{'list[{0}].level},#'{'list[{0}].parentId},#'{'list[{0}].isCash},#'{'list[{0}].isBank},#'{'list[{0}].isDetail},#'{'list[{0}].type})");
         for (int i = 0; i < accounts.size(); i++) {
             sb.append(mf.format(new Object[]{i}));
             if (i < accounts.size() - 1) {

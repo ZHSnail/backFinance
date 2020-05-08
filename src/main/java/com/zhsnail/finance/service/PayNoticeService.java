@@ -53,5 +53,25 @@ public interface PayNoticeService {
      */
     Map findTaskMapList();
 
+    /**
+     * 分页查询待审批的流程
+     * @param pageEntity
+     * @return
+     */
     PageInfo<PayNotice> findCmtTaskList(PageEntity pageEntity);
+
+    /**
+     * 条件分页查询
+     * @param payNoticeVo
+     * @return
+     */
+    PageInfo<PayNotice> findListByCondition(PayNoticeVo payNoticeVo);
+
+    /**
+     * 导出缴费通知
+     * @param payNoticeVo
+     * @return
+     */
+    List<PayNoticeVo> exportPayNoticeVo(PayNoticeVo payNoticeVo);
+
 }

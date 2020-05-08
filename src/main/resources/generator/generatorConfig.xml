@@ -48,7 +48,7 @@
         </javaClientGenerator>
 
 
-        <table tableName="SYM_ROLE_USER" domainObjectName="RoleUser"
+        <table tableName="LEM_ACCOUNT" domainObjectName="Account"
                enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false" selectByExampleQueryId="false"/>
     </context>

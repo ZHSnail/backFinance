@@ -10,17 +10,29 @@ public class FeeKind {
     private String feeMethod;
     //状态
     private String state;
-    //会计科目id
-    private String accountId;
-    //会计科目
-    private Account account;
+    //借方科目id
+    private String debitAccountId;
+    //贷方科目id
+    private String creditAccountId;
+    //借方科目
+    private Account debitAccount;
+    //贷方科目
+    private Account creditAccount;
 
-    public Account getAccount() {
-        return account;
+    public Account getDebitAccount() {
+        return debitAccount;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setDebitAccount(Account debitAccount) {
+        this.debitAccount = debitAccount;
+    }
+
+    public Account getCreditAccount() {
+        return creditAccount;
+    }
+
+    public void setCreditAccount(Account creditAccount) {
+        this.creditAccount = creditAccount;
     }
 
     public String getId() {
@@ -63,11 +75,19 @@ public class FeeKind {
         this.state = state == null ? null : state.trim();
     }
 
-    public String getAccountId() {
-        return accountId;
+    public String getDebitAccountId() {
+        return debitAccountId;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId == null ? null : accountId.trim();
+    public void setDebitAccountId(String debitAccountId) {
+        this.debitAccountId = debitAccountId == null ? null : debitAccountId.trim();
+    }
+
+    public String getCreditAccountId() {
+        return creditAccountId;
+    }
+
+    public void setCreditAccountId(String creditAccountId) {
+        this.creditAccountId = creditAccountId == null ? null : creditAccountId.trim();
     }
 }

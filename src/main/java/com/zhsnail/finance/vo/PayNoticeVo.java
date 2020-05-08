@@ -1,50 +1,107 @@
 package com.zhsnail.finance.vo;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
+import com.zhsnail.finance.entity.PageEntity;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class PayNoticeVo {
+public class PayNoticeVo extends PageEntity {
+    @ExcelIgnore
     private String id;
-    //总金额
-    private BigDecimal totalAmount;
-    //会计科目id
-    private String accountId;
+    //单号
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","单号"})
+    private String code;
+    //收费类别id
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","收费类别"})
+    private String feeKindId;
+    //创建人
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","发起人"})
+    private String creater;
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","收费机构"})
     //收费机构
     private String org;
-    //备注
-    private String memo;
+    //状态
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","状态"})
+    private String status;
+    //会计科目id
+    @ExcelIgnore
+    private String accountId;
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","借方会计科目"})
+    private String debitAccount;
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","贷方会计科目"})
+    private String creditAccount;
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","应收总金额"})
+    //总金额
+    private BigDecimal totalAmount;
     //总人数
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","待缴费总人数"})
     private String totalUser;
     //收费金额
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","收费金额"})
     private BigDecimal amount;
-    //收费范围
-    private List<Map> feeScope;
-    //状态
-    private String status;
-    //收费类别id
-    private String feeKindId;
-    //单号
-    private String code;
-    //收费单位
-    private String period;
     //缴费期限
-    private Date deadLineMax;
-    //缴费期限
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","开始缴费日期"})
     private Date deadLineMin;
+    //缴费期限
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","结束缴费日期"})
+    private Date deadLineMax;
+    //备注
+    @ColumnWidth(20)
+    @ExcelProperty({"缴费通知申请","备注"})
+    private String memo;
+    //收费范围
+    @ExcelIgnore
+    private List<Map> feeScope;
+    //收费单位
+    @ExcelIgnore
+    private String period;
     //收费单详情
+    @ExcelIgnore
     private String payDetailId;
     //创建时间
+    @ExcelIgnore
     private Date createTime;
-    //创建人
-    private String creater;
     //更新人
+    @ExcelIgnore
     private String updater;
     //更新时间
+    @ExcelIgnore
     private Date updateTime;
-
+    @ExcelIgnore
     private Map feeKindList;
+
+    public String getDebitAccount() {
+        return debitAccount;
+    }
+
+    public void setDebitAccount(String debitAccount) {
+        this.debitAccount = debitAccount;
+    }
+
+    public String getCreditAccount() {
+        return creditAccount;
+    }
+
+    public void setCreditAccount(String creditAccount) {
+        this.creditAccount = creditAccount;
+    }
 
     public Map getFeeKindList() {
         return feeKindList;

@@ -34,11 +34,13 @@ public class TransactionAdviceConfig {
         source.addTransactionalMethod("delete*", txAttr_REQUIRED);
         source.addTransactionalMethod("update*", txAttr_REQUIRED);
         source.addTransactionalMethod("commit*", txAttr_REQUIRED);
+        source.addTransactionalMethod("last*", txAttr_REQUIRED);
         source.addTransactionalMethod("exec*", txAttr_REQUIRED);
         source.addTransactionalMethod("run*", txAttr_REQUIRED);
         source.addTransactionalMethod("set*", txAttr_REQUIRED);
         source.addTransactionalMethod("get*", txAttr_REQUIRED_READONLY);
         source.addTransactionalMethod("query*", txAttr_REQUIRED_READONLY);
+        source.addTransactionalMethod("export*", txAttr_REQUIRED_READONLY);
         source.addTransactionalMethod("find*", txAttr_REQUIRED_READONLY);
         source.addTransactionalMethod("list*", txAttr_REQUIRED_READONLY);
         source.addTransactionalMethod("count*", txAttr_REQUIRED_READONLY);

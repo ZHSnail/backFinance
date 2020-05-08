@@ -4,12 +4,15 @@ import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.common.Result;
 import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.service.*;
+import com.zhsnail.finance.util.ExcelUtils;
 import com.zhsnail.finance.util.JsonUtil;
 import com.zhsnail.finance.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +29,8 @@ public class ChargeController {
     private FeeKindService feeKindService;
     @Autowired
     private PayNoticeService payNoticeService;
+    @Autowired
+    private PayDetailService payDetailService;
 
     @GetMapping("/dormInfoList")
     public Result findDormInfoByCondition(@RequestParam String params) {
@@ -210,4 +215,58 @@ public class ChargeController {
         }
         return new Result(payNoticeService.findCmtTaskList(pageEntity));
     }
+
+    @GetMapping("/payNoticeList")
+    public Result findPayNoticeByCondition(@RequestParam String params) {
+        PayNoticeVo payNoticeVo = new PayNoticeVo();
+        if (StringUtils.isNotBlank(params)) {
+            payNoticeVo = JsonUtil.string2Obj(params, PayNoticeVo.class);
+        }
+        PageInfo<PayNotice> PayNoticePageInfo = payNoticeService.findListByCondition(payNoticeVo);
+        return new Result(PayNoticePageInfo);
+    }
+
+    @GetMapping("/payNoticeExport")
+    public void  exportAccount(HttpServletResponse response, @RequestParam String data){
+        PayNoticeVo payNoticeVo = new PayNoticeVo();
+        if (StringUtils.isNotBlank(data)) {
+            payNoticeVo = JsonUtil.string2Obj(data, PayNoticeVo.class);
+        }
+        List<PayNoticeVo> payNoticeVos = payNoticeService.exportPayNoticeVo(payNoticeVo);
+        ExcelUtils.export2Web(response,"缴费通知申请表"+new Date().getTime(),"缴费通知申请表",PayNoticeVo.class,payNoticeVos);
+    }
+
+    @GetMapping("/payDetailList/{payNoticeId}")
+    public Result findPayDetailByCondition(@PathVariable String payNoticeId,@RequestParam String params){
+        PayDetailVo payDetailVo = new PayDetailVo();
+        if (StringUtils.isNotBlank(params)){
+            payDetailVo = JsonUtil.string2Obj(params,PayDetailVo.class);
+        }
+        payDetailVo.setPayNoticeId(payNoticeId);
+        PageInfo<PayDetailVo> payDetailVoPageInfo = payDetailService.findByPayNoticeId(payDetailVo);
+        return new Result(payDetailVoPageInfo);
+    }
+
+    @GetMapping("/payDetail/{id}")
+    public Result findPayDetailById(@PathVariable String id){
+        PayDetailVo payDetailVo = payDetailService.findById(id);
+        return new Result(payDetailVo);
+    }
+
+    @GetMapping("/payDetailList")
+    public Result findPayDetailList(@RequestParam String params){
+        PageEntity pageEntity = new PageEntity();
+        if(StringUtils.isNotBlank(params)){
+            pageEntity = JsonUtil.string2Obj(params,PageEntity.class);
+        }
+        PageInfo<PayDetail> payDetailPageInfo = payDetailService.findByUserId(pageEntity);
+        return new Result(payDetailPageInfo);
+    }
+
+    @PostMapping("/pay/{id}")
+    public Result pay(@PathVariable String id){
+        payDetailService.execPay(id);
+        return new Result(true,"付款成功");
+    }
+
 }

@@ -4,6 +4,7 @@ import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.entity.PayNotice;
 import com.zhsnail.finance.vo.AccountDetailVo;
 import com.zhsnail.finance.vo.PayNoticeVo;
+import com.zhsnail.finance.vo.PayNoticeVo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 
@@ -186,6 +187,28 @@ public class PayNoticeSqlProvider {
                 +DICT.STATUS_BACK+"' , '" +
                 DICT.STATUS_CMT+"' , '"+DICT.STATUS_EXE
                 +"' )");
+        return sql.toString();
+    }
+
+    public String selectAllConditionSql(PayNoticeVo payNoticeVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("CAM_PAY_NOTICE");
+        if (payNoticeVo!=null){
+            if (StringUtils.isNotBlank(payNoticeVo.getCode())){
+                sql.WHERE("code like concat('%', #{code,jdbcType=VARCHAR},'%')");
+            }
+            if (StringUtils.isNotBlank(payNoticeVo.getStatus())){
+                sql.WHERE("status = #{status,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(payNoticeVo.getFeeKindId())){
+                sql.WHERE("fee_kind_id = #{feeKindId,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("status in ( '" +DICT.STATUS_FINSH+"' , '" +
+                DICT.STATUS_CMT+"' , '"+DICT.STATUS_EXE
+                +"' )");
+        sql.ORDER_BY("create_time desc");
         return sql.toString();
     }
 }

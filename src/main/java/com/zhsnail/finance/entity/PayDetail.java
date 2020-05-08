@@ -22,6 +22,8 @@ public class PayDetail {
     //缴费通知单id
     private String payNoticeId;
 
+    private PayNotice payNotice;
+
     private Date createTime;
 
     private String creater;
@@ -29,6 +31,14 @@ public class PayDetail {
     private String updater;
 
     private Date updateTime;
+
+    public PayNotice getPayNotice() {
+        return payNotice;
+    }
+
+    public void setPayNotice(PayNotice payNotice) {
+        this.payNotice = payNotice;
+    }
 
     public String getId() {
         return id;

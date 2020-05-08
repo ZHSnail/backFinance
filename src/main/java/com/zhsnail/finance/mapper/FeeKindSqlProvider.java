@@ -31,8 +31,12 @@ public class FeeKindSqlProvider {
             sql.VALUES("state", "#{state,jdbcType=VARCHAR}");
         }
         
-        if (record.getAccountId() != null) {
-            sql.VALUES("account_id", "#{accountId,jdbcType=VARCHAR}");
+        if (record.getDebitAccountId() != null) {
+            sql.VALUES("debit_account_id", "#{debitAccountId,jdbcType=VARCHAR}");
+        }
+        
+        if (record.getCreditAccountId() != null) {
+            sql.VALUES("credit_account_id", "#{creditAccountId,jdbcType=VARCHAR}");
         }
         
         return sql.toString();
@@ -58,8 +62,12 @@ public class FeeKindSqlProvider {
             sql.SET("state = #{state,jdbcType=VARCHAR}");
         }
         
-        if (record.getAccountId() != null) {
-            sql.SET("account_id = #{accountId,jdbcType=VARCHAR}");
+        if (record.getDebitAccountId() != null) {
+            sql.SET("debit_account_id = #{debitAccountId,jdbcType=VARCHAR}");
+        }
+        
+        if (record.getCreditAccountId() != null) {
+            sql.SET("credit_account_id = #{creditAccountId,jdbcType=VARCHAR}");
         }
         
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");

@@ -1,9 +1,11 @@
 package com.zhsnail.finance.vo;
 
 import com.zhsnail.finance.entity.PageEntity;
+import com.zhsnail.finance.entity.PayNotice;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class PayDetailVo extends PageEntity {
     private String id;
@@ -21,6 +23,37 @@ public class PayDetailVo extends PageEntity {
     private String code;
     //用户id
     private String userId;
+    //用户名
+    private String userName;
+    //用户idlist
+    private List<String> userIdList;
+    //缴费通知单id
+    private String payNoticeId;
+    private PayNotice payNotice;
+
+    public PayNotice getPayNotice() {
+        return payNotice;
+    }
+
+    public void setPayNotice(PayNotice payNotice) {
+        this.payNotice = payNotice;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPayNoticeId() {
+        return payNoticeId;
+    }
+
+    public void setPayNoticeId(String payNoticeId) {
+        this.payNoticeId = payNoticeId;
+    }
 
     private Date createTime;
 
@@ -29,6 +62,14 @@ public class PayDetailVo extends PageEntity {
     private String updater;
 
     private Date updateTime;
+
+    public List<String> getUserIdList() {
+        return userIdList;
+    }
+
+    public void setUserIdList(List<String> userIdList) {
+        this.userIdList = userIdList;
+    }
 
     public String getId() {
         return id;

@@ -1,6 +1,11 @@
 package com.zhsnail.finance.mapper;
 
+import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.entity.PayDetail;
+import com.zhsnail.finance.vo.PayDetailVo;
+import com.zhsnail.finance.vo.PayNoticeVo;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 
 import java.text.MessageFormat;
@@ -143,5 +148,36 @@ public class PayDetailSqlProvider {
             }
         }
         return sb.toString();
+    }
+
+    public String selectAllConditionSql(PayDetailVo payDetailVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("CAM_PAY_DETAIL");
+        if (payDetailVo!=null){
+            if (StringUtils.isNotBlank(payDetailVo.getCode())){
+                sql.WHERE("code like concat('%', #{code,jdbcType=VARCHAR},'%')");
+            }
+            if (StringUtils.isNotBlank(payDetailVo.getStatus())){
+                sql.WHERE("status = #{status,jdbcType=VARCHAR}");
+            }
+            if (CollectionUtils.isNotEmpty(payDetailVo.getUserIdList())){
+                StringBuilder sb = new StringBuilder();
+                sb.append("user_id in (");
+                for (int i = 0;i<payDetailVo.getUserIdList().size();i++){
+                    sb.append("'");
+                    sb.append(payDetailVo.getUserIdList().get(i));
+                    sb.append("'");
+                    if (i != payDetailVo.getUserIdList().size()-1){
+                        sb.append("',");
+                    }
+                }
+                sb.append(")");
+                sql.WHERE(sb.toString());
+            }
+        }
+        sql.WHERE("pay_notice_id = #{payNoticeId,jdbcType=VARCHAR}");
+        sql.ORDER_BY("create_time desc");
+        return sql.toString();
     }
 }
