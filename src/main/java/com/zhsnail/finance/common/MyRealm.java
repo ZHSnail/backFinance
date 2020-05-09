@@ -3,6 +3,7 @@ package com.zhsnail.finance.common;
 import com.zhsnail.finance.entity.Operation;
 import com.zhsnail.finance.entity.Role;
 import com.zhsnail.finance.entity.User;
+import com.zhsnail.finance.service.StudentInfoService;
 import com.zhsnail.finance.service.SystemService;
 import com.zhsnail.finance.util.CommonUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,8 @@ import java.util.Map;
 public class MyRealm extends AuthorizingRealm {
     @Autowired
     private SystemService systemService;
+    @Autowired
+    private StudentInfoService studentInfoService;
 
     //角色权限和对应权限添加
     @Override
@@ -31,7 +34,7 @@ public class MyRealm extends AuthorizingRealm {
         User userInfo = systemService.findUserInfo(name);
         List<Role> roles = new ArrayList<>();
         if (StringUtils.isNotBlank(userInfo.getStudentId())){
-            roles = systemService.findStudentInfoById(userInfo.getStudentId()).getRoles();
+            roles = studentInfoService.findById(userInfo.getStudentId()).getRoles();
         }
         //TODO 分配角色和权限
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();

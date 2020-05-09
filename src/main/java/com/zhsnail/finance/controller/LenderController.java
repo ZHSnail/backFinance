@@ -123,4 +123,5 @@ public class LenderController {
         List<AccountDetailVo> list = accountDetailService.exportByCondition(accountDetailVo);
         ExcelUtils.export2Web(response,"会计科目明细表"+new Date().getTime(),"会计科目明细表",AccountDetailVo.class,list);
     }
+
 }

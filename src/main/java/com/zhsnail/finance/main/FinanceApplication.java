@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -16,7 +17,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
         org.activiti.spring.boot.SecurityAutoConfiguration.class})
 @MapperScan("com.zhsnail.finance.mapper")
 @ComponentScan("com.zhsnail.finance")
-@EnableAsync
+@EnableAsync//异步支持
+@EnableCaching//缓存支持
 public class FinanceApplication {
 
     public static void main(String[] args) {

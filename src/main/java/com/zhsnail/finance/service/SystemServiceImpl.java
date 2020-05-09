@@ -2,16 +2,16 @@ package com.zhsnail.finance.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zhsnail.finance.common.UpdateCache;
 import com.zhsnail.finance.entity.*;
-import com.zhsnail.finance.mapper.ImportResultMapper;
-import com.zhsnail.finance.mapper.RoleMapper;
-import com.zhsnail.finance.mapper.StudentInfoMapper;
-import com.zhsnail.finance.mapper.UserMapper;
+import com.zhsnail.finance.mapper.*;
 import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
 import com.zhsnail.finance.vo.RoleVo;
+import com.zhsnail.finance.vo.SystemParamVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -28,6 +28,8 @@ public class SystemServiceImpl implements SystemService {
     private ImportResultMapper importResultMapper;
     @Autowired
     private StudentInfoMapper studentInfoMapper;
+    @Autowired
+    private SystemParamMapper systemParamMapper;
 
     @Override
     public User findUserByStaId(String staffId) {
@@ -117,4 +119,25 @@ public class SystemServiceImpl implements SystemService {
         role.setId(CodeUtil.getId());
         roleMapper.insert(role);
     }
+
+    @Override
+    @UpdateCache(name = "currentSysParam",beanName = "systemServiceImpl",methodName = "getCurrentSysParam")
+    public void saveSystemParam(SystemParamVo systemParamVo) {
+        SystemParam systemParam = new SystemParam();
+        BeanUtil.copyProperties(systemParam,systemParamVo);
+        systemParam.setId(CodeUtil.getId());
+        systemParamMapper.insert(systemParam);
+    }
+
+    @Override
+    @Cacheable("currentSysParam")
+    public SystemParam getCurrentSysParam() {
+        return systemParamMapper.findCurrentSysParam();
+    }
+
+    @Override
+    public SystemParam findSysParamById(String id) {
+        return systemParamMapper.selectByPrimaryKey(id);
+    }
+
 }

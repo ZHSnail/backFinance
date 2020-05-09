@@ -48,7 +48,7 @@
         </javaClientGenerator>
 
 
-        <table tableName="LEM_ACCOUNT" domainObjectName="Account"
+        <table tableName="SYM_SYSTEM_PARAM" domainObjectName="SystemParam"
                enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false" selectByExampleQueryId="false"/>
     </context>

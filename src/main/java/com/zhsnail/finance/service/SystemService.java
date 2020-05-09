@@ -3,6 +3,7 @@ package com.zhsnail.finance.service;
 import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.vo.RoleVo;
+import com.zhsnail.finance.vo.SystemParamVo;
 
 import java.util.List;
 import java.util.Map;
@@ -56,12 +57,31 @@ public interface SystemService {
      */
     User findUserInfo(String userName);
 
+    /**
+     * 查询导入结果
+     * @param fileId 文件id
+     * @return
+     */
     ImportResult findImResult(String fileId);
 
+    /**
+     * 保存导入结果
+     * @param importResult 导入结果实体
+     */
     void saveImresult(ImportResult importResult);
 
+    /**
+     * 分页查询所有角色
+     * @param roleVo 角色vo
+     * @return
+     */
     PageInfo<Role> findAllRole(RoleVo roleVo);
 
+    /**
+     * 分页查询所有用户
+     * @param pageEntity 页面实体
+     * @return
+     */
     PageInfo<User> findAllUser(PageEntity pageEntity);
 
     /**
@@ -76,7 +96,35 @@ public interface SystemService {
      */
     void updateRole(RoleVo roleVo);
 
+    /**
+     * 保存角色
+     * @param roleVo
+     */
     void saveRole(RoleVo roleVo);
 
+    /**
+     * 根据id查找学生信息
+     * @param id
+     * @return
+     */
     StudentInfo findStudentInfoById(String id);
+
+    /**
+     * 保存系统参数
+     * @param systemParamVo 系统参数
+     */
+    void saveSystemParam(SystemParamVo systemParamVo);
+
+    /**
+     * 获取当前启用的系统参数
+     */
+    SystemParam getCurrentSysParam();
+
+    /**
+     * 根据id获取当前启用的系统参数
+     * @param id id
+     * @return
+     */
+    SystemParam findSysParamById(String id);
+
 }

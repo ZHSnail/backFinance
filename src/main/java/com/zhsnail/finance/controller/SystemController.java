@@ -5,19 +5,17 @@ import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.common.Appendix;
 import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.common.Result;
-import com.zhsnail.finance.entity.PageEntity;
-import com.zhsnail.finance.entity.Role;
-import com.zhsnail.finance.entity.StudentInfo;
-import com.zhsnail.finance.entity.User;
+import com.zhsnail.finance.entity.*;
+import com.zhsnail.finance.entity.Account;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
 import com.zhsnail.finance.service.FileService;
+import com.zhsnail.finance.service.LenderService;
 import com.zhsnail.finance.service.StudentInfoService;
 import com.zhsnail.finance.service.SystemService;
-import com.zhsnail.finance.util.BeanUtil;
-import com.zhsnail.finance.util.ExcelUtils;
-import com.zhsnail.finance.util.JsonUtil;
-import com.zhsnail.finance.util.MD5Util;
+import com.zhsnail.finance.util.*;
 import com.zhsnail.finance.vo.RoleVo;
+import com.zhsnail.finance.vo.SystemParamVo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -35,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -46,6 +45,8 @@ public class SystemController {
     private FileService fileService;
     @Autowired
     private StudentInfoService studentInfoService;
+    @Autowired
+    private LenderService lenderService;
     @PostMapping("/login")
     public Result checkUser(@RequestBody User user){
         Map map = new HashMap();
@@ -66,28 +67,35 @@ public class SystemController {
                     Map userInfo = BeanUtil.beanToMap(studentInfo);
                     userInfo.put(DICT.LOGIN,DICT.LOGIN_STUDENT);
                     map.put("userInfo", userInfo);
+                    SystemParam currentSysParam = systemService.getCurrentSysParam();
+                    map.put("sysParam",currentSysParam);
                     subject.getSession().setAttribute("userInfo",userInfo);
                 }
                 if (StringUtils.isNotBlank(loginUser.getStaffId())){
                 }
             }
         }catch (LockedAccountException e){
+            e.printStackTrace();
             Result result = new Result(false, e.getMessage());
             return result;
         }catch (DisabledAccountException e)
         {
+            e.printStackTrace();
             return new Result(false, e.getMessage());
         }
         catch (UnknownAccountException e)
         {
+            e.printStackTrace();
             return new Result(false, e.getMessage());
         }
         catch (IncorrectCredentialsException e)
         {
+            e.printStackTrace();
             return new Result(false,"账号/密码不正确");
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             return new Result(false,"账户验证失败");
         }
         return new Result(map);
@@ -186,5 +194,35 @@ public class SystemController {
     public Result updateRole(@RequestBody RoleVo roleVo){
         systemService.updateRole(roleVo);
         return new Result(true,"修改角色成功");
+    }
+
+    @PostMapping("/saveSysParam")
+    public Result saveSysParam(@RequestBody SystemParamVo systemParamVo){
+        systemService.saveSystemParam(systemParamVo);
+        return new Result(true,"暂存系统参数成功！");
+    }
+
+    @GetMapping("/sysParam/{id}")
+    public Result findSysParamById(@PathVariable String id){
+        return new Result(systemService.findSysParamById(id));
+    }
+
+    @GetMapping("/checkSysParam")
+    public Result checkExistSysParam(){
+        SystemParam currentSysParam = CommonUtil.getCurrentSysParam();
+        List<Account> accountList = lenderService.findAllAccount();
+        if (CollectionUtils.isEmpty(accountList)){
+            return new Result(false,"请先前往会计科目页面新增会计科目");
+        }else if(currentSysParam != null){
+            return new Result(false,"系统参数已存在请不要重复初始化系统");
+        }else {
+            return new Result(true,"开始初始化系统");
+        }
+    }
+
+    @PostMapping("/commitSysParam")
+    public Result commitSysParam(@RequestBody SystemParamVo systemParamVo){
+        systemService.saveSystemParam(systemParamVo);
+        return new Result(true,"提交系统参数成功！");
     }
 }

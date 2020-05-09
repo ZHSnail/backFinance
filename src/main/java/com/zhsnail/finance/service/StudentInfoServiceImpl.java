@@ -2,6 +2,7 @@ package com.zhsnail.finance.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zhsnail.finance.common.UpdateCache;
 import com.zhsnail.finance.entity.StudentInfo;
 import com.zhsnail.finance.entity.User;
 import com.zhsnail.finance.mapper.StudentInfoMapper;
@@ -10,6 +11,7 @@ import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
 import com.zhsnail.finance.vo.StudentInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,12 +23,14 @@ public class StudentInfoServiceImpl implements StudentInfoService {
     @Autowired
     private UserMapper userMapper;
     @Override
+    @UpdateCache(name = "StudentInfoList",beanName = "studentInfoServiceImpl",methodName = "findAll")
     public void deleteStudentInfo(String id) {
         userMapper.deleteByStudentId(id);
         studentInfoMapper.deleteByPrimaryKey(id);
     }
 
     @Override
+    @UpdateCache(name = "StudentInfoList",beanName = "studentInfoServiceImpl",methodName = "findAll")
     public void updateStudentInfo(StudentInfoVo studentInfoVo) {
         StudentInfo studentInfo = studentInfoMapper.selectByPrimaryKey(studentInfoVo.getId());
         if (!(studentInfo.getStuNo().equals(studentInfoVo.getStuNo()))){
@@ -39,6 +43,7 @@ public class StudentInfoServiceImpl implements StudentInfoService {
     }
 
     @Override
+    @UpdateCache(name = "StudentInfoList",beanName = "studentInfoServiceImpl",methodName = "findAll")
     public void saveStudentInfo(StudentInfoVo studentInfoVo) {
         StudentInfo studentInfo = new StudentInfo();
         BeanUtil.copyProperties(studentInfo,studentInfoVo);
@@ -61,12 +66,13 @@ public class StudentInfoServiceImpl implements StudentInfoService {
     }
 
     @Override
+    @Cacheable(value = "StudentInfoList")
     public List<StudentInfo> findAll() {
         return studentInfoMapper.findAllByCondition(new StudentInfoVo());
     }
 
     @Override
-   public StudentInfo findById(String id){
+    public StudentInfo findById(String id){
         return studentInfoMapper.selectByPrimaryKey(id);
     }
 }
