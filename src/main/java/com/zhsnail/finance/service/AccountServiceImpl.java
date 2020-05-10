@@ -1,8 +1,12 @@
 package com.zhsnail.finance.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.common.Result;
+import com.zhsnail.finance.common.UpdateCache;
 import com.zhsnail.finance.entity.Account;
+import com.zhsnail.finance.entity.AccountBalance;
 import com.zhsnail.finance.mapper.AccountMapper;
 import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
@@ -10,38 +14,75 @@ import com.zhsnail.finance.vo.AccountVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class LenderServiceImpl implements LenderService {
+public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountMapper accountMapper;
+    @Autowired
+    private AccountBalanceService accountBalanceService;
 
     @Override
+    @Cacheable("accountList")
     public List<Account> findAllAccount() {
         return accountMapper.findAllByCondition(new AccountVo());
     }
 
     @Override
+    @UpdateCache(name = "accountList",beanName = "accountServiceImpl",methodName = "findAllAccount")
+    @CacheEvict("accountDetailList")
     public void saveAccount(AccountVo accountVo) {
         Account account = new Account();
         BeanUtil.copyProperties(account,accountVo);
         account.setId(CodeUtil.getId());
         accountMapper.insert(account);
+        accountBalanceService.execBatchInsert(generaAccountBalance(account.getId()));
     }
 
+    /**
+     * 批量生成会计科目余额实体
+     * @param accountIds 会计科目余额实体
+     * @return
+     */
+    private List<AccountBalance> generaAccountBalance(String... accountIds){
+        List<AccountBalance> accountBalances = new ArrayList<>();
+        for (int i = 0;i<accountIds.length;i++){
+            AccountBalance accountBalance = new AccountBalance();
+            accountBalance.setAccountId(accountIds[i]);
+            accountBalance.setId(CodeUtil.getId());
+            accountBalance.setDebitStayearAmt(new BigDecimal(0.00));
+            accountBalance.setCreditStayearAmt(new BigDecimal(0.00));
+            accountBalance.setCreditStaperiodAmt(new BigDecimal(0.00));
+            accountBalance.setDebitStaperiodAmt(new BigDecimal(0.00));
+            accountBalance.setCreditEndperiodAmt(new BigDecimal(0.00));
+            accountBalance.setDebitEndperiodAmt(new BigDecimal(0.00));
+            accountBalance.setCreditCurrperiodAmt(new BigDecimal(0.00));
+            accountBalance.setDebitCurrperiodAmt(new BigDecimal(0.00));
+            accountBalance.setDebitAccumyearAmt(new BigDecimal(0.00));
+            accountBalance.setCreditAccumyearAmt(new BigDecimal(0.00));
+            accountBalances.add(accountBalance);
+        }
+        return accountBalances;
+    }
     @Override
+    @UpdateCache(name = "accountList",beanName = "accountServiceImpl",methodName = "findAllAccount")
+    @CacheEvict("accountDetailList")
     public Result deleteAccount(String id) {
         List<Account> accounts = accountMapper.findByParentId(id);
         if (CollectionUtils.isNotEmpty(accounts)){
             return new Result(false,"该科目有子科目，请先删除子科目！");
         }else {
             accountMapper.deleteByPrimaryKey(id);
+            accountBalanceService.deleteByAccId(id);
             return new Result(true,"删除成功！");
         }
     }
@@ -81,7 +122,7 @@ public class LenderServiceImpl implements LenderService {
         if (rootMap != null) {
             for (Map map : rootMap) {
                 String id = (String) map.get("id");
-                List<Map> childrenMap = accounts.stream().filter(account -> account.getParentId().equals(id)).map(account -> {
+                List<Map> childrenMap = accounts.stream().filter(account -> id.equals(account.getParentId())).map(account -> {
                     return BeanUtil.beanToMap(account);
                 }).collect(Collectors.toList());
                 if (CollectionUtils.isNotEmpty(childrenMap)){
@@ -114,14 +155,27 @@ public class LenderServiceImpl implements LenderService {
     }
 
     @Override
+    @UpdateCache(name = "accountList",beanName = "accountServiceImpl",methodName = "findAllAccount")
+    @CacheEvict("accountDetailList")
     public void execBatchInsert(List<Account> accounts) {
         if (CollectionUtils.isNotEmpty(accounts)){
             accountMapper.batchInsert(accounts);
+            List<String> accountIds = accounts.stream().map(account -> account.getId()).collect(Collectors.toList());
+            accountBalanceService.execBatchInsert(generaAccountBalance(accountIds.toArray(new String[accountIds.size()])));
         }
     }
 
     @Override
+    @Cacheable("accountDetailList")
     public List<Account> findDetailAccount() {
         return accountMapper.findAllDetailAccount();
+    }
+
+    @Override
+    public PageInfo<Account> findAllByCondition(AccountVo accountVo) {
+        PageHelper.startPage(accountVo.getPageNum(),accountVo.getPageSize(),true);
+        List<Account> accountList = accountMapper.findAllByCondition(accountVo);
+        PageInfo<Account> accountPageInfo = new PageInfo<>(accountList);
+        return accountPageInfo;
     }
 }

@@ -4,11 +4,12 @@ import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.zhsnail.finance.common.CustomStringStringConverter;
 import com.zhsnail.finance.entity.Account;
+import com.zhsnail.finance.entity.PageEntity;
 
 import java.util.List;
 
 
-public class AccountVo{
+public class AccountVo extends PageEntity {
     @ExcelIgnore
     private String id;
     @ExcelProperty({"会计科目表","科目名称"})

@@ -9,7 +9,7 @@ import com.zhsnail.finance.listener.AccountImportListener;
 import com.zhsnail.finance.service.AccountBalanceService;
 import com.zhsnail.finance.service.AccountDetailService;
 import com.zhsnail.finance.service.FileService;
-import com.zhsnail.finance.service.LenderService;
+import com.zhsnail.finance.service.AccountService;
 import com.zhsnail.finance.util.ExcelUtils;
 import com.zhsnail.finance.util.JsonUtil;
 import com.zhsnail.finance.util.TaskUtil;
@@ -29,7 +29,7 @@ import java.util.Map;
 @RequestMapping("/lender")
 public class LenderController {
     @Autowired
-    private LenderService lenderService;
+    private AccountService accountService;
     @Autowired
     private FileService fileService;
     @Autowired
@@ -38,31 +38,31 @@ public class LenderController {
     private AccountDetailService accountDetailService;
     @PostMapping("/account")
     public Result saveAccount(@RequestBody AccountVo accountVo){
-        lenderService.saveAccount(accountVo);
+        accountService.saveAccount(accountVo);
         return new Result(true,"保存会计科目成功");
     }
 
     @DeleteMapping("/account/{id}")
     public Result deleteAccount(@PathVariable("id") String id){
-        return lenderService.deleteAccount(id);
+        return accountService.deleteAccount(id);
     }
 
     @GetMapping("/accountCondition")
     public Result findAllByCondition(@RequestParam String params){
         AccountVo accountVo = JsonUtil.string2Obj(params, AccountVo.class);
-        List<Map> arrangeAccount = lenderService.findArrangeAccount(accountVo);
+        List<Map> arrangeAccount = accountService.findArrangeAccount(accountVo);
         return new Result(arrangeAccount);
     }
 
     @GetMapping("/allAccount")
     public Result findAllAccount(){
-        List<Account> accountList = lenderService.findDetailAccount();
+        List<Account> accountList = accountService.findDetailAccount();
         return new Result(accountList);
     }
 
     @GetMapping("/lastAccounts/{level}")
     public Result findUpAccount(@PathVariable("level") String level){
-        List<Account> accounts = lenderService.findUpAccount(level);
+        List<Account> accounts = accountService.findUpAccount(level);
         return new Result(accounts);
     }
     @GetMapping("/accountExport")
@@ -71,7 +71,7 @@ public class LenderController {
         if (StringUtils.isNotBlank(data)){
             accountVo = JsonUtil.string2Obj(data, AccountVo.class);
         }
-        List<AccountVo> accountVos = lenderService.exportAccount(accountVo);
+        List<AccountVo> accountVos = accountService.exportAccount(accountVo);
         ExcelUtils.export2Web(response,"会计科目表"+new Date().getTime(),"会计科目表",AccountVo.class,accountVos);
     }
     @PostMapping("/importAccount/{id}")
@@ -102,6 +102,16 @@ public class LenderController {
         }
         List<AccountBalanceVo> list = accountBalanceService.exportByCondition(accountBalanceVo);
         ExcelUtils.export2Web(response,"会计科目余额表"+new Date().getTime(),"会计科目余额表",AccountBalanceVo.class,list);
+    }
+
+    @GetMapping("/accBalanceInitData")
+    public Result findInitData(@RequestParam String params){
+        AccountBalanceVo accountBalanceVo = new AccountBalanceVo();
+        if (StringUtils.isNotBlank(params)){
+            accountBalanceVo = JsonUtil.string2Obj(params, AccountBalanceVo.class);
+        }
+        PageInfo<AccountBalanceVo> accountBalanceVos = accountBalanceService.findInitData(accountBalanceVo);
+        return new Result(accountBalanceVos);
     }
 
     @GetMapping("/accDetailCondition")

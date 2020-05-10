@@ -2,6 +2,9 @@ package com.zhsnail.finance.entity;
 
 import java.math.BigDecimal;
 
+/**
+ * 会计科目冻结表，发生业务时会插到这个表里，过账后才直接算金额
+ */
 public class AccountTemp {
     private String id;
 

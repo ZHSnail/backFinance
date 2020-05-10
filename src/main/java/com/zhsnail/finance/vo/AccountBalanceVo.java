@@ -5,6 +5,7 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import com.zhsnail.finance.entity.PageEntity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class AccountBalanceVo extends PageEntity {
     @ExcelIgnore
@@ -49,6 +50,28 @@ public class AccountBalanceVo extends PageEntity {
     //会计科目id
     @ExcelIgnore
     private String accountId;
+    //会计科目类型
+    @ExcelIgnore
+    private String accountType;
+    //会计科目idlist
+    @ExcelIgnore
+    private List<String> accountIds;
+
+    public List<String> getAccountIds() {
+        return accountIds;
+    }
+
+    public void setAccountIds(List<String> accountIds) {
+        this.accountIds = accountIds;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
 
     public String getId() {
         return id;

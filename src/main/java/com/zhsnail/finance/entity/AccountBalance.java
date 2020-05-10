@@ -2,6 +2,7 @@ package com.zhsnail.finance.entity;
 
 import java.math.BigDecimal;
 
+//会计科目余额表
 public class AccountBalance {
     private String id;
     //借方年初余额

@@ -1,6 +1,5 @@
 package com.zhsnail.finance.controller;
 
-import com.alibaba.excel.support.ExcelTypeEnum;
 import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.common.Appendix;
 import com.zhsnail.finance.common.DICT;
@@ -9,7 +8,7 @@ import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.entity.Account;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
 import com.zhsnail.finance.service.FileService;
-import com.zhsnail.finance.service.LenderService;
+import com.zhsnail.finance.service.AccountService;
 import com.zhsnail.finance.service.StudentInfoService;
 import com.zhsnail.finance.service.SystemService;
 import com.zhsnail.finance.util.*;
@@ -46,7 +45,7 @@ public class SystemController {
     @Autowired
     private StudentInfoService studentInfoService;
     @Autowired
-    private LenderService lenderService;
+    private AccountService accountService;
     @PostMapping("/login")
     public Result checkUser(@RequestBody User user){
         Map map = new HashMap();
@@ -210,7 +209,7 @@ public class SystemController {
     @GetMapping("/checkSysParam")
     public Result checkExistSysParam(){
         SystemParam currentSysParam = CommonUtil.getCurrentSysParam();
-        List<Account> accountList = lenderService.findAllAccount();
+        List<Account> accountList = accountService.findAllAccount();
         if (CollectionUtils.isEmpty(accountList)){
             return new Result(false,"请先前往会计科目页面新增会计科目");
         }else if(currentSysParam != null){

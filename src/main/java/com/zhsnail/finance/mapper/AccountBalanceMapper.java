@@ -126,4 +126,14 @@ public interface AccountBalanceMapper {
             @Result(column="account_id",property="account",one=@One(select="com.zhsnail.finance.mapper.AccountMapper.selectByPrimaryKey",fetchType= FetchType.EAGER))
     })
     AccountBalance findByAccId(String accountId);
+
+    @Delete({
+            "delete from LEM_ACCOUNT_BALANCE",
+            "where account_id = #{accountId,jdbcType=VARCHAR}"
+    })
+    void deleteByaAcountId(String accountId);
+
+    @InsertProvider(type=AccountBalanceSqlProvider.class, method="batchinsertSql")
+    void batchInsert(List<AccountBalance> accountBalances);
+
 }

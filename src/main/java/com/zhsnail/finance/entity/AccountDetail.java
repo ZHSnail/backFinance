@@ -2,6 +2,7 @@ package com.zhsnail.finance.entity;
 
 import java.math.BigDecimal;
 
+//会计科目明细表
 public class AccountDetail {
     private String id;
 

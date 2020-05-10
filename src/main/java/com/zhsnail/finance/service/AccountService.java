@@ -1,5 +1,6 @@
 package com.zhsnail.finance.service;
 
+import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.common.Result;
 import com.zhsnail.finance.entity.Account;
 import com.zhsnail.finance.vo.AccountVo;
@@ -7,7 +8,7 @@ import com.zhsnail.finance.vo.AccountVo;
 import java.util.List;
 import java.util.Map;
 
-public interface LenderService {
+public interface AccountService {
     /**
      * 查询所有的会计科目
      * @return  List<Account>
@@ -40,8 +41,17 @@ public interface LenderService {
      */
     List<Account> findUpAccount(String level);
 
+    /**
+     * 查询会计科目导出信息
+     * @param accountVo
+     * @return
+     */
     List<AccountVo> exportAccount(AccountVo accountVo);
 
+    /**
+     * 批量插入会计科目信息
+     * @param accounts
+     */
     void execBatchInsert(List<Account> accounts);
 
     /**
@@ -49,4 +59,11 @@ public interface LenderService {
      * @return
      */
     List<Account> findDetailAccount();
+
+    /**
+     * 分页条件查询所有的会计科目信息
+     * @param accountVo 会计科目参数
+     * @return
+     */
+    PageInfo<Account> findAllByCondition(AccountVo accountVo);
 }

@@ -106,6 +106,12 @@ public class AccountSqlProvider {
             if (StringUtils.isNotBlank(accountVo.getAccountName())){
                 sql.WHERE("account_name like concat('%',#{accountName,jdbcType=VARCHAR},'%')");
             }
+            if (StringUtils.isNotBlank(accountVo.getIsDetail())){
+                sql.WHERE("is_detail = #{isDetail,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(accountVo.getType())){
+                sql.WHERE("type = #{type,jdbcType=VARCHAR}");
+            }
         }
         return sql.toString();
     }

@@ -169,7 +169,7 @@ public class PayDetailSqlProvider {
                     sb.append(payDetailVo.getUserIdList().get(i));
                     sb.append("'");
                     if (i != payDetailVo.getUserIdList().size()-1){
-                        sb.append("',");
+                        sb.append(",");
                     }
                 }
                 sb.append(")");

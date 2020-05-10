@@ -3,22 +3,17 @@ package com.zhsnail.finance.listener;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.exception.ExcelDataConvertException;
-import com.alibaba.excel.read.metadata.holder.ReadHolder;
 import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.entity.Account;
 import com.zhsnail.finance.entity.ImportResult;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
-import com.zhsnail.finance.mapper.AccountMapper;
-import com.zhsnail.finance.service.LenderService;
+import com.zhsnail.finance.service.AccountService;
 import com.zhsnail.finance.service.SystemService;
-import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
 import com.zhsnail.finance.util.JsonUtil;
 import com.zhsnail.finance.util.SpringUtil;
-import org.apache.batik.transcoder.keys.StringKey;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +32,7 @@ public class AccountImportListener extends AnalysisEventListener<Map<Integer, St
 
     private String succString = "";
 
-    private LenderService lenderService;
+    private AccountService accountService;
 
     private SystemService systemService;
 
@@ -52,9 +47,9 @@ public class AccountImportListener extends AnalysisEventListener<Map<Integer, St
      * @param fileId 文件id
      */
     public AccountImportListener(String fileId) {
-        this.lenderService = SpringUtil.getBean(LenderService.class);
+        this.accountService = SpringUtil.getBean(AccountService.class);
         this.systemService = SpringUtil.getBean(SystemService.class);
-        this.accounts = lenderService.findAllAccount();
+        this.accounts = accountService.findAllAccount();
         this.fileId = fileId;
     }
 
@@ -212,7 +207,7 @@ public class AccountImportListener extends AnalysisEventListener<Map<Integer, St
             accountList.add(account);
         }
         save_size += list.size();
-        lenderService.execBatchInsert(accountList);
+        accountService.execBatchInsert(accountList);
         LOGGER.info("存储数据库成功！");
     }
 }

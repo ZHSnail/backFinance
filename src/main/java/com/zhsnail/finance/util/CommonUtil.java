@@ -2,12 +2,15 @@ package com.zhsnail.finance.util;
 
 
 import com.zhsnail.finance.common.DICT;
+import com.zhsnail.finance.entity.Account;
 import com.zhsnail.finance.entity.StudentInfo;
 import com.zhsnail.finance.entity.SysSequence;
 import com.zhsnail.finance.entity.SystemParam;
+import com.zhsnail.finance.service.AccountService;
 import com.zhsnail.finance.service.StudentInfoService;
 import com.zhsnail.finance.service.SysSequenceService;
 import com.zhsnail.finance.service.SystemService;
+import com.zhsnail.finance.vo.AccountVo;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
@@ -25,6 +28,7 @@ public class CommonUtil {
     private static SysSequenceService sysSequenceService = SpringUtil.getBean(SysSequenceService.class);
     private static StudentInfoService studentInfoService = SpringUtil.getBean(StudentInfoService.class);
     private static SystemService systemService = SpringUtil.getBean(SystemService.class);
+    private static AccountService accountService = SpringUtil.getBean(AccountService.class);
 
     /**
      * 获取session中的用户
@@ -135,4 +139,21 @@ public class CommonUtil {
     public static SystemParam getCurrentSysParam() {
         return systemService.getCurrentSysParam();
     }
+
+    /**
+     * 查询所有明细科目
+     * @return
+     */
+    public static List<Account> findDetailAccount() {
+        return accountService.findDetailAccount();
+    }
+
+    /**
+     * 查询所有会计科目
+     * @return
+     */
+    public List<Account> findAllAccount() {
+        return accountService.findAllAccount();
+    }
+
 }

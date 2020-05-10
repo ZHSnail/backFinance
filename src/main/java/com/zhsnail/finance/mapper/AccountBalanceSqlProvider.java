@@ -1,10 +1,16 @@
 package com.zhsnail.finance.mapper;
 
+import com.zhsnail.finance.entity.Account;
 import com.zhsnail.finance.entity.AccountBalance;
 import com.zhsnail.finance.vo.AccountBalanceVo;
 import com.zhsnail.finance.vo.AccountVo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
+
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
 
 public class AccountBalanceSqlProvider {
 
@@ -188,7 +194,45 @@ public class AccountBalanceSqlProvider {
             if (StringUtils.isNotBlank(accountBalanceVo.getAccountPeriod())){
                 sql.WHERE("account_period = #{accountPeriod,jdbcType=VARCHAR}");
             }
+            if (CollectionUtils.isNotEmpty(accountBalanceVo.getAccountIds())){
+                StringBuilder sb = new StringBuilder();
+                sb.append("account_id in (");
+                for (int i = 0;i<accountBalanceVo.getAccountIds().size();i++){
+                    sb.append("'");
+                    sb.append(accountBalanceVo.getAccountIds().get(i));
+                    sb.append("'");
+                    if (i != accountBalanceVo.getAccountIds().size()-1){
+                        sb.append(",");
+                    }
+                }
+                sb.append(")");
+                sql.WHERE(sb.toString());
+            }
         }
         return sql.toString();
+    }
+
+    public String batchinsertSql(Map<String, List<AccountBalance>> map ){
+        List<AccountBalance> accountBalances = map.get("list");
+        StringBuilder sb = new StringBuilder();
+        sb.append("INSERT INTO LEM_ACCOUNT_BALANCE ");
+        sb.append("(id, debit_stayear_amt,credit_stayear_amt,credit_staperiod_amt,debit_staperiod_amt," +
+                "credit_endperiod_amt,debit_endperiod_amt,credit_currperiod_amt,debit_currperiod_amt," +
+                "credit_accumyear_amt,debit_accumyear_amt,account_period,account_id) ");
+        sb.append("VALUES ");
+        MessageFormat mf = new MessageFormat(
+                "(#'{'list[{0}].id},#'{'list[{0}].debitStayearAmt}, #'{'list[{0}].creditStayearAmt}," +
+                "#'{'list[{0}].creditStaperiodAmt},#'{'list[{0}].debitStaperiodAmt}," +
+                "#'{'list[{0}].creditEndperiodAmt},#'{'list[{0}].debitEndperiodAmt}," +
+                "#'{'list[{0}].creditCurrperiodAmt},#'{'list[{0}].debitCurrperiodAmt}," +
+                        "#'{'list[{0}].creditAccumyearAmt},#'{'list[{0}].debitAccumyearAmt},#'{'list[{0}].accountPeriod}," +
+                        "#'{'list[{0}].accountId})");
+        for (int i = 0; i < accountBalances.size(); i++) {
+            sb.append(mf.format(new Object[]{i}));
+            if (i < accountBalances.size() - 1) {
+                sb.append(",");
+            }
+        }
+        return sb.toString();
     }
 }
