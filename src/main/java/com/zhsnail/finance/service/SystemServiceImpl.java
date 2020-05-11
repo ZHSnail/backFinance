@@ -2,11 +2,14 @@ package com.zhsnail.finance.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.common.UpdateCache;
 import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.mapper.*;
 import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
+import com.zhsnail.finance.util.CommonUtil;
+import com.zhsnail.finance.vo.AccountBalanceVo;
 import com.zhsnail.finance.vo.RoleVo;
 import com.zhsnail.finance.vo.SystemParamVo;
 import org.apache.commons.collections4.CollectionUtils;
@@ -30,6 +33,8 @@ public class SystemServiceImpl implements SystemService {
     private StudentInfoMapper studentInfoMapper;
     @Autowired
     private SystemParamMapper systemParamMapper;
+    @Autowired
+    private AccountBalanceService accountBalanceService;
 
     @Override
     public User findUserByStaId(String staffId) {
@@ -85,7 +90,7 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public PageInfo<Role> findAllRole(RoleVo roleVo) {
-        PageHelper.startPage(roleVo.getPageNum(),roleVo.getPageSize(),true);
+        CommonUtil.startPage(roleVo);
 //        List<Role> roleList = roleMapper.findAllRole();
         List<Role> roleList = roleMapper.findAllByCondition(roleVo);
         PageInfo<Role> rolePageInfo = new PageInfo<>(roleList);
@@ -94,6 +99,7 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public PageInfo<User> findAllUser(PageEntity pageEntity) {
+        CommonUtil.startPage(pageEntity);
         PageHelper.startPage(pageEntity.getPageNum(),pageEntity.getPageSize(),true);
         List<User> allUser = userMapper.findAllUser();
         PageInfo<User> userPageInfo = new PageInfo<>(allUser);
@@ -121,18 +127,27 @@ public class SystemServiceImpl implements SystemService {
     }
 
     @Override
-    @UpdateCache(name = "currentSysParam",beanName = "systemServiceImpl",methodName = "getCurrentSysParam")
     public void saveSystemParam(SystemParamVo systemParamVo) {
         SystemParam systemParam = new SystemParam();
         BeanUtil.copyProperties(systemParam,systemParamVo);
         systemParam.setId(CodeUtil.getId());
+        systemParam.setState(DICT.BOOLEAN_STATE_TRUE);
         systemParamMapper.insert(systemParam);
+        List<AccountBalanceVo> accountBalanceVoList = systemParamVo.getAccountBalanceVoList();
+        accountBalanceVoList.forEach(accountBalanceVo -> accountBalanceVo.setAccountPeriod(systemParam.getNowAccountPeriod()));
+        if (systemParam.getNowAccountPeriod().endsWith("01")){
+            accountBalanceVoList.forEach(accountBalanceVo -> {
+                accountBalanceVo.setDebitStayearAmt(accountBalanceVo.getDebitStaperiodAmt());
+                accountBalanceVo.setCreditStaperiodAmt(accountBalanceVo.getCreditStaperiodAmt());
+            });
+        }
+        accountBalanceService.execBatchUpdate(accountBalanceVoList);
     }
 
     @Override
-    @Cacheable("currentSysParam")
-    public SystemParam getCurrentSysParam() {
-        return systemParamMapper.findCurrentSysParam();
+    public SystemParam findCurrentSysParam() {
+        SystemParam currentSysParam = systemParamMapper.findCurrentSysParam();
+        return currentSysParam;
     }
 
     @Override

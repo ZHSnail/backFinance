@@ -135,5 +135,25 @@ public interface AccountBalanceMapper {
 
     @InsertProvider(type=AccountBalanceSqlProvider.class, method="batchinsertSql")
     void batchInsert(List<AccountBalance> accountBalances);
-
+    
+    @Update({"<script>" +
+            "<foreach item='accountBalanceVo' collection='accountBalanceVos' index='index' open='' close='' separator=';'>" +
+            " UPDATE LEM_ACCOUNT_BALANCE " +
+            " SET " +
+            "<if test='#{accountBalanceVo.debitStayearAmt} != null'>debit_stayear_amt = #{accountBalanceVo.debitStayearAmt},</if>" +
+            "<if test='#{accountBalanceVo.creditStayearAmt} != null'>credit_stayear_amt = #{accountBalanceVo.creditStayearAmt},</if>" +
+            "<if test='#{accountBalanceVo.creditStaperiodAmt} != null'>credit_staperiod_amt = #{accountBalanceVo.creditStaperiodAmt},</if>" +
+            "<if test='#{accountBalanceVo.debitStaperiodAmt} != null'>debit_staperiod_amt = #{accountBalanceVo.debitStaperiodAmt},</if>" +
+            "<if test='#{accountBalanceVo.creditEndperiodAmt} != null'>credit_endperiod_amt = #{accountBalanceVo.creditEndperiodAmt},</if>" +
+            "<if test='#{accountBalanceVo.debitEndperiodAmt} != null'>debit_endperiod_amt = #{accountBalanceVo.debitEndperiodAmt},</if>" +
+            "<if test='#{accountBalanceVo.creditCurrperiodAmt} != null'>credit_currperiod_amt = #{accountBalanceVo.creditCurrperiodAmt},</if>" +
+            "<if test='#{accountBalanceVo.debitCurrperiodAmt} != null'>debit_currperiod_amt = #{accountBalanceVo.debitCurrperiodAmt},</if>" +
+            "<if test='#{accountBalanceVo.creditAccumyearAmt} != null'>credit_accumyear_amt = #{accountBalanceVo.creditAccumyearAmt},</if>" +
+            "<if test='#{accountBalanceVo.debitAccumyearAmt} != null'>debit_accumyear_amt = #{accountBalanceVo.debitAccumyearAmt},</if>" +
+            "<if test='#{accountBalanceVo.accountPeriod} != null'>account_period = #{accountBalanceVo.accountPeriod}</if>" +
+            " WHERE account_id = #{accountBalanceVo.accountId} " +
+            "</foreach>" +
+            "</script>"})
+//    @InsertProvider(type=AccountBalanceSqlProvider.class, method="batchUpdateSql")
+    void batchUpdate(@Param("accountBalanceVos") List<AccountBalanceVo> accountBalanceVos);
 }

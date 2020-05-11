@@ -187,7 +187,7 @@ public class PayNoticeServiceImpl implements PayNoticeService {
         }
         ids = ids.stream().distinct().collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(ids)){
-            PageHelper.startPage(pageEntity.getPageNum(),pageEntity.getPageSize(),true);
+            CommonUtil.startPage(pageEntity);
             List<PayNotice> payNoticeList = payNoticeMapper.findByIds(ids);
             PageInfo<PayNotice> pageInfo = new PageInfo<>(payNoticeList);
             return pageInfo;
@@ -197,7 +197,7 @@ public class PayNoticeServiceImpl implements PayNoticeService {
 
     @Override
     public PageInfo<PayNotice> findListByCondition(PayNoticeVo payNoticeVo) {
-        PageHelper.startPage(payNoticeVo.getPageNum(),payNoticeVo.getPageSize(),true);
+        CommonUtil.startPage(payNoticeVo);
         List<PayNotice> payNoticeList = payNoticeMapper.findAllByCondition(payNoticeVo);
         payNoticeList.forEach(payNotice -> {
             String name = (String) CommonUtil.findUserInfo(payNotice.getCreater()).get("name");

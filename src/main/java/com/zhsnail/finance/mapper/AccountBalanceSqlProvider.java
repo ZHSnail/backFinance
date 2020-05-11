@@ -235,4 +235,59 @@ public class AccountBalanceSqlProvider {
         }
         return sb.toString();
     }
+
+    public String batchUpdateSql(Map<String, List<AccountBalanceVo>> map ){
+        List<AccountBalanceVo> accountBalanceVos = map.get("list");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0;i<accountBalanceVos.size();i++){
+            AccountBalanceVo accountBalanceVo = accountBalanceVos.get(i);
+            sb.append("UPDATE LEM_ACCOUNT_BALANCE SET ");
+            if (accountBalanceVo.getDebitStayearAmt()!=null){
+                sb.append("debit_stayear_amt = "+accountBalanceVo.getDebitStayearAmt());
+                sb.append(",");
+            }
+            if (accountBalanceVo.getCreditStayearAmt() != null) {
+                sb.append("credit_stayear_amt = "+accountBalanceVo.getCreditStayearAmt());
+                sb.append(",");
+            }
+            if (accountBalanceVo.getCreditStaperiodAmt() != null) {
+                sb.append("credit_staperiod_amt = "+accountBalanceVo.getCreditStaperiodAmt());
+                sb.append(",");
+            }
+            if (accountBalanceVo.getDebitStaperiodAmt() != null) {
+                sb.append("debit_staperiod_amt = "+accountBalanceVo.getDebitStaperiodAmt());
+                sb.append(",");
+            }
+            if (accountBalanceVo.getCreditEndperiodAmt() != null) {
+                sb.append("credit_endperiod_amt = "+accountBalanceVo.getCreditEndperiodAmt());
+                sb.append(",");
+            }
+            if (accountBalanceVo.getDebitEndperiodAmt() != null) {
+                sb.append("debit_endperiod_amt = "+accountBalanceVo.getDebitEndperiodAmt());
+                sb.append(",");
+            }
+            if (accountBalanceVo.getCreditCurrperiodAmt() != null) {
+                sb.append("credit_currperiod_amt = "+accountBalanceVo.getCreditCurrperiodAmt());
+                sb.append(",");
+            }
+            if (accountBalanceVo.getDebitCurrperiodAmt() != null) {
+                sb.append("debit_currperiod_amt = "+accountBalanceVo.getDebitCurrperiodAmt());
+                sb.append(",");
+            }
+            if (accountBalanceVo.getCreditAccumyearAmt() != null) {
+                sb.append("credit_accumyear_amt = "+accountBalanceVo.getCreditAccumyearAmt());
+                sb.append(",");
+            }
+            if (accountBalanceVo.getDebitAccumyearAmt() != null) {
+                sb.append("debit_accumyear_amt = "+accountBalanceVo.getDebitAccumyearAmt());
+                sb.append(",");
+            }
+            if (accountBalanceVo.getAccountPeriod() != null) {
+                sb.append("account_period = "+accountBalanceVo.getAccountPeriod());
+            }
+            sb.append(" WHERE account_id = '"+accountBalanceVo.getAccountId()+"'");
+            sb.append(";");
+        }
+        return sb.toString();
+    }
 }

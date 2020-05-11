@@ -124,7 +124,7 @@ public interface AccountMapper {
     })
     Account findByCode(String code);
 
-    @Select("select * from LEM_ACCOUNT where is_detail = 'TRUE' ")
+    @SelectProvider(type=AccountSqlProvider.class, method="selectAllDetailConditionSql")
     @Results({
             @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
             @Result(column="account_name", property="accountName", jdbcType=JdbcType.VARCHAR),
@@ -136,5 +136,5 @@ public interface AccountMapper {
             @Result(column="is_detail", property="isDetail", jdbcType=JdbcType.VARCHAR),
             @Result(column="type", property="type", jdbcType=JdbcType.VARCHAR)
     })
-    List<Account> findAllDetailAccount();
+    List<Account> findAllDetailAccount(AccountVo accountVo);
 }

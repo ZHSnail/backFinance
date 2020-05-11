@@ -1,11 +1,9 @@
 package com.zhsnail.finance.util;
 
 
+import com.github.pagehelper.PageHelper;
 import com.zhsnail.finance.common.DICT;
-import com.zhsnail.finance.entity.Account;
-import com.zhsnail.finance.entity.StudentInfo;
-import com.zhsnail.finance.entity.SysSequence;
-import com.zhsnail.finance.entity.SystemParam;
+import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.service.AccountService;
 import com.zhsnail.finance.service.StudentInfoService;
 import com.zhsnail.finance.service.SysSequenceService;
@@ -137,23 +135,85 @@ public class CommonUtil {
      * @return
      */
     public static SystemParam getCurrentSysParam() {
-        return systemService.getCurrentSysParam();
+        return systemService.findCurrentSysParam();
     }
 
-    /**
-     * 查询所有明细科目
-     * @return
-     */
-    public static List<Account> findDetailAccount() {
-        return accountService.findDetailAccount();
-    }
 
     /**
      * 查询所有会计科目
      * @return
      */
-    public List<Account> findAllAccount() {
+    public static  List<Account> findAllAccount() {
         return accountService.findAllAccount();
     }
 
+    /**
+     * 获取会计科目长名称
+     * @param account
+     * @return
+     */
+    public static String getAccountLongName(Account account){
+        StringBuilder sb = new StringBuilder();
+        List<Account> allAccount = findAllAccount();
+        String level = account.getLevel();
+        String tempParentId = "";
+        if (Integer.parseInt(level)>1){
+            for (int i = Integer.parseInt(level);i>0;i--){
+                int tempLevel = i;
+                if (tempLevel != Integer.parseInt(level)){
+                    if (tempLevel == Integer.parseInt(level)-1){
+                        List<Account> tempAccount = allAccount.stream().filter(item -> item.getLevel().equals(String.valueOf(tempLevel)) && item.getId().equals(account.getParentId())).collect(Collectors.toList());
+                        if (CollectionUtils.isNotEmpty(tempAccount)){
+                            sb.append(tempAccount.get(0).getAccountName()+"-");
+                            tempParentId = tempAccount.get(0).getParentId();
+                        }
+                    }else {
+                        String finalTempParentId = tempParentId;
+                        List<Account> tempAccount = allAccount.stream().filter(item -> item.getLevel().equals(String.valueOf(tempLevel)) && item.getId().equals(finalTempParentId)).collect(Collectors.toList());
+                        if (CollectionUtils.isNotEmpty(tempAccount)){
+                            sb.append(tempAccount.get(0).getAccountName()+"-");
+                            tempParentId = tempAccount.get(0).getParentId();
+                        }
+                    }
+
+                }
+            }
+        }
+        sb.append(account.getAccountName());
+        String[] split = sb.toString().split("-");
+        sb.setLength(0);
+        if(Integer.parseInt(level)>1){
+            for (int i = split.length-2;i>=0;i--){
+                sb.append(split[i]+"-");
+            }
+        }
+        sb.append(split[split.length-1]);
+        return sb.toString();
+    }
+
+    /**
+     * 开启分页
+     * @param pageEntity 页面参数
+     */
+    public static void startPage(PageEntity pageEntity){
+        PageHelper.startPage(pageEntity.getPageNum(),pageEntity.getPageSize(),true);
+    }
+
+    /**
+     * 根据会计科目id查询对应得所有父级科目id
+     * @param accountId 当前会计科目id
+     * @param accountParentIds 结果集
+     */
+    public static void getParentIds(String accountId,List<String> accountParentIds){
+        List<Account> allAccount = findAllAccount();
+        //当前会计科目
+        List<Account> accountList = allAccount.stream().filter(account -> accountId.equals(account.getId())).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(accountList)){
+            String parentId = accountList.get(0).getParentId();
+            if (parentId != null){
+                accountParentIds.add(parentId);
+                getParentIds(parentId,accountParentIds);
+            }
+        }
+    }
 }

@@ -61,7 +61,9 @@ public class UpdateCacheAspect {
         cache.evict(cache);
         logger.info("删除name为{}的缓存数据",name);
         ConcurrentMap<Object, Object> concurrentMap = new ConcurrentHashMap<>();
-        cache.put(name, concurrentMap.put(simpleKey, o));
-        logger.info("保存name为{}的缓存数据",name);
+        if (o != null){
+            cache.put(name, concurrentMap.put(simpleKey, o));
+        }
+        logger.info("保存缓存数据{}",o);
     }
 }

@@ -131,4 +131,23 @@ public class AccountSqlProvider {
         }
         return sb.toString();
     }
+
+    public String selectAllDetailConditionSql(AccountVo accountVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("LEM_ACCOUNT");
+        if (accountVo!=null){
+            if (StringUtils.isNotBlank(accountVo.getCode())){
+                sql.WHERE("code like concat('%', #{code,jdbcType=VARCHAR},'%')");
+            }
+            if (StringUtils.isNotBlank(accountVo.getAccountName())){
+                sql.WHERE("account_name like concat('%',#{accountName,jdbcType=VARCHAR},'%')");
+            }
+            if (StringUtils.isNotBlank(accountVo.getType())){
+                sql.WHERE("type = #{type,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("is_detail = 'TRUE'");
+        return sql.toString();
+    }
 }

@@ -10,6 +10,7 @@ import com.zhsnail.finance.service.AccountBalanceService;
 import com.zhsnail.finance.service.AccountDetailService;
 import com.zhsnail.finance.service.FileService;
 import com.zhsnail.finance.service.AccountService;
+import com.zhsnail.finance.util.CommonUtil;
 import com.zhsnail.finance.util.ExcelUtils;
 import com.zhsnail.finance.util.JsonUtil;
 import com.zhsnail.finance.util.TaskUtil;
@@ -49,15 +50,22 @@ public class LenderController {
 
     @GetMapping("/accountCondition")
     public Result findAllByCondition(@RequestParam String params){
-        AccountVo accountVo = JsonUtil.string2Obj(params, AccountVo.class);
+        AccountVo accountVo = new AccountVo();
+        if (StringUtils.isNotBlank(params)){
+            accountVo = JsonUtil.string2Obj(params, AccountVo.class);
+        }
         List<Map> arrangeAccount = accountService.findArrangeAccount(accountVo);
         return new Result(arrangeAccount);
     }
 
     @GetMapping("/allAccount")
-    public Result findAllAccount(){
-        List<Account> accountList = accountService.findDetailAccount();
-        return new Result(accountList);
+    public Result findAllAccount(@RequestParam String params){
+        AccountVo accountVo = new AccountVo();
+        if (StringUtils.isNotBlank(params)){
+            accountVo = JsonUtil.string2Obj(params, AccountVo.class);
+        }
+        PageInfo<Account> accountPageInfo = accountService.findDetailAccount(accountVo);
+        return new Result(accountPageInfo);
     }
 
     @GetMapping("/lastAccounts/{level}")

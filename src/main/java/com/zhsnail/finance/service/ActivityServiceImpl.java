@@ -74,14 +74,14 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public PageInfo<ActivitiModel> findAllModel(ModelVo modelVo) {
-        PageHelper.startPage(modelVo.getPageNum(), modelVo.getPageSize(), true);
+        CommonUtil.startPage(modelVo);
         List<ActivitiModel> list = activitiModelMapper.findAll();
         return new PageInfo<>(list);
     }
 
     @Override
     public PageInfo<ActivitiDeployment> findAllDeployMent(DeployMentVo deployMentVo) {
-        PageHelper.startPage(deployMentVo.getPageNum(), deployMentVo.getPageSize(), true);
+        CommonUtil.startPage(deployMentVo);
         List<ActivitiDeployment> list = activitiDeploymentMapper.findAll();
         return new PageInfo<>(list);
     }

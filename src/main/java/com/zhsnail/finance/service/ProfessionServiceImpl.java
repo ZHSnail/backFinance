@@ -8,6 +8,7 @@ import com.zhsnail.finance.exception.BaseRuningTimeException;
 import com.zhsnail.finance.mapper.ProfessionMapper;
 import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
+import com.zhsnail.finance.util.CommonUtil;
 import com.zhsnail.finance.vo.ProfessionVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -63,13 +64,17 @@ public class ProfessionServiceImpl implements ProfessionService {
     public void saveProfession(ProfessionVo professionVo) {
         Profession profession = new Profession();
         BeanUtil.copyProperties(profession, professionVo);
+        if (DICT.BOOLEAN_STATE_FALSE.equals(professionVo.getIsLeaf())){
+            profession.setGrade("");
+            profession.setParentId("");
+        }
         profession.setId(CodeUtil.getId());
         professionMapper.insert(profession);
     }
 
     @Override
     public PageInfo<Profession> findAll(ProfessionVo professionVo) {
-        PageHelper.startPage(professionVo.getPageNum(), professionVo.getPageSize(), true);
+        CommonUtil.startPage(professionVo);
         List<Profession> professionList = professionMapper.findAllByCondition(professionVo);
         PageInfo<Profession> professionPageInfo = new PageInfo<>(professionList);
         return professionPageInfo;

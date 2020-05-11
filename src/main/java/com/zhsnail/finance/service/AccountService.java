@@ -55,10 +55,10 @@ public interface AccountService {
     void execBatchInsert(List<Account> accounts);
 
     /**
-     * 查询所有可选的会计科目
+     * 分页查询所有可选的会计科目
      * @return
      */
-    List<Account> findDetailAccount();
+    PageInfo<Account> findDetailAccount(AccountVo accountVo);
 
     /**
      * 分页条件查询所有的会计科目信息

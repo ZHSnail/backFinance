@@ -17,9 +17,8 @@ public class MyApplicationRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         logger.info("执行初始化缓存开始。。。。。");
         SpringUtil.getBean(StudentInfoService.class).findAll();
-        SpringUtil.getBean(SystemService.class).getCurrentSysParam();
+//        SpringUtil.getBean(SystemService.class).findCurrentSysParam();
         SpringUtil.getBean(AccountService.class).findAllAccount();
-        SpringUtil.getBean(AccountService.class).findDetailAccount();
         logger.info("执行初始化缓存结束。。。。。");
     }
 }

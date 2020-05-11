@@ -10,6 +10,7 @@ import com.zhsnail.finance.entity.AccountBalance;
 import com.zhsnail.finance.mapper.AccountMapper;
 import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
+import com.zhsnail.finance.util.CommonUtil;
 import com.zhsnail.finance.vo.AccountVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +40,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @UpdateCache(name = "accountList",beanName = "accountServiceImpl",methodName = "findAllAccount")
-    @CacheEvict("accountDetailList")
     public void saveAccount(AccountVo accountVo) {
         Account account = new Account();
         BeanUtil.copyProperties(account,accountVo);
@@ -75,7 +75,6 @@ public class AccountServiceImpl implements AccountService {
     }
     @Override
     @UpdateCache(name = "accountList",beanName = "accountServiceImpl",methodName = "findAllAccount")
-    @CacheEvict("accountDetailList")
     public Result deleteAccount(String id) {
         List<Account> accounts = accountMapper.findByParentId(id);
         if (CollectionUtils.isNotEmpty(accounts)){
@@ -106,8 +105,14 @@ public class AccountServiceImpl implements AccountService {
                 Map<String, Object> map = BeanUtil.beanToMap(account);
                 return map;
             }).collect(Collectors.toList());
-            arrangeAccount(root,accounts);
-            return root;
+            if (CollectionUtils.isNotEmpty(root)){
+                arrangeAccount(root,accounts);
+                return root;
+            }else {
+                return accounts.stream().map(account -> BeanUtil.beanToMap(account)).collect(Collectors.toList());
+            }
+
+
         }
     }
 
@@ -119,7 +124,7 @@ public class AccountServiceImpl implements AccountService {
         }
     }
     private void arrangeAccount(List<Map> rootMap,List<Account> accounts){
-        if (rootMap != null) {
+        if (CollectionUtils.isNotEmpty(rootMap)) {
             for (Map map : rootMap) {
                 String id = (String) map.get("id");
                 List<Map> childrenMap = accounts.stream().filter(account -> id.equals(account.getParentId())).map(account -> {
@@ -156,7 +161,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @UpdateCache(name = "accountList",beanName = "accountServiceImpl",methodName = "findAllAccount")
-    @CacheEvict("accountDetailList")
     public void execBatchInsert(List<Account> accounts) {
         if (CollectionUtils.isNotEmpty(accounts)){
             accountMapper.batchInsert(accounts);
@@ -166,14 +170,17 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    @Cacheable("accountDetailList")
-    public List<Account> findDetailAccount() {
-        return accountMapper.findAllDetailAccount();
+    public PageInfo<Account> findDetailAccount(AccountVo accountVo) {
+        CommonUtil.startPage(accountVo);
+        List<Account> accountList = accountMapper.findAllDetailAccount(accountVo);
+        accountList.forEach(account -> account.setAccountName(CommonUtil.getAccountLongName(account)));
+        PageInfo<Account> accountPageInfo = new PageInfo<>(accountList);
+        return accountPageInfo;
     }
 
     @Override
     public PageInfo<Account> findAllByCondition(AccountVo accountVo) {
-        PageHelper.startPage(accountVo.getPageNum(),accountVo.getPageSize(),true);
+        CommonUtil.startPage(accountVo);
         List<Account> accountList = accountMapper.findAllByCondition(accountVo);
         PageInfo<Account> accountPageInfo = new PageInfo<>(accountList);
         return accountPageInfo;

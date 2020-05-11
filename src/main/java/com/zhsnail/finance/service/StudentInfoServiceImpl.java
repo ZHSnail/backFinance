@@ -9,6 +9,7 @@ import com.zhsnail.finance.mapper.StudentInfoMapper;
 import com.zhsnail.finance.mapper.UserMapper;
 import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
+import com.zhsnail.finance.util.CommonUtil;
 import com.zhsnail.finance.vo.StudentInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -59,7 +60,7 @@ public class StudentInfoServiceImpl implements StudentInfoService {
 
     @Override
     public PageInfo<StudentInfo> findByCondition(StudentInfoVo studentInfoVo) {
-        PageHelper.startPage(studentInfoVo.getPageNum(),studentInfoVo.getPageSize(),true);
+        CommonUtil.startPage(studentInfoVo);
         List<StudentInfo> studentInfoList = studentInfoMapper.findAllByCondition(studentInfoVo);
         PageInfo<StudentInfo> studentPageInfo = new PageInfo<>(studentInfoList);
         return studentPageInfo;

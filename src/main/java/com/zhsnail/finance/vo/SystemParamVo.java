@@ -3,6 +3,7 @@ package com.zhsnail.finance.vo;
 import com.zhsnail.finance.entity.PageEntity;
 
 import java.util.Date;
+import java.util.List;
 
 public class SystemParamVo extends PageEntity {
     private String id;
@@ -16,6 +17,16 @@ public class SystemParamVo extends PageEntity {
     private Date startTime;
     //单位
     private String unit;
+    //会计科目余额list
+    private List<AccountBalanceVo> accountBalanceVoList;
+
+    public List<AccountBalanceVo> getAccountBalanceVoList() {
+        return accountBalanceVoList;
+    }
+
+    public void setAccountBalanceVoList(List<AccountBalanceVo> accountBalanceVoList) {
+        this.accountBalanceVoList = accountBalanceVoList;
+    }
 
     public String getUnit() {
         return unit;

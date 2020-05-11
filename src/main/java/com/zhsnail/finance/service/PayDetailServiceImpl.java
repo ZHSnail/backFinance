@@ -39,7 +39,7 @@ public class PayDetailServiceImpl implements  PayDetailService {
             userIdList.addAll(list);
         }
         payDetailVo.setUserIdList(userIdList);
-        PageHelper.startPage(payDetailVo.getPageNum(),payDetailVo.getPageSize(),true);
+        CommonUtil.startPage(payDetailVo);
         List<PayDetail> payDetailList = payDetailMapper.findAllByCondition(payDetailVo);
         List<PayDetailVo> payDetailVoList = new ArrayList<>();
         for (PayDetail payDetail : payDetailList){
@@ -77,7 +77,7 @@ public class PayDetailServiceImpl implements  PayDetailService {
     @Override
     public PageInfo<PayDetail> findByUserId(PageEntity pageEntity) {
         String id = (String) CommonUtil.getCurrentUser().get("id");
-        PageHelper.startPage(pageEntity.getPageNum(),pageEntity.getPageSize(),true);
+        CommonUtil.startPage(pageEntity);
         List<PayDetail> payDetailList = payDetailMapper.findByUserId(id);
         PageInfo<PayDetail> payDetailPageInfo = new PageInfo<>(payDetailList);
         return payDetailPageInfo;

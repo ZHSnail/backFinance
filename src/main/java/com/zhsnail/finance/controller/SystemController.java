@@ -66,7 +66,7 @@ public class SystemController {
                     Map userInfo = BeanUtil.beanToMap(studentInfo);
                     userInfo.put(DICT.LOGIN,DICT.LOGIN_STUDENT);
                     map.put("userInfo", userInfo);
-                    SystemParam currentSysParam = systemService.getCurrentSysParam();
+                    SystemParam currentSysParam = systemService.findCurrentSysParam();
                     map.put("sysParam",currentSysParam);
                     subject.getSession().setAttribute("userInfo",userInfo);
                 }

@@ -51,4 +51,10 @@ public interface AccountBalanceService {
      * @return
      */
     PageInfo<AccountBalanceVo> findInitData(AccountBalanceVo accountBalanceVo);
+
+    /**
+     * 批量更新会计科目余额
+     * @param accountBalanceVoList 会计科目余额信息
+     */
+    void execBatchUpdate(List<AccountBalanceVo> accountBalanceVoList);
 }

@@ -118,7 +118,7 @@ public interface SystemService {
     /**
      * 获取当前启用的系统参数
      */
-    SystemParam getCurrentSysParam();
+    SystemParam findCurrentSysParam();
 
     /**
      * 根据id获取当前启用的系统参数

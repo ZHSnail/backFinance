@@ -49,7 +49,7 @@ public class FeeKindServiceImpl implements FeeKindService {
 
     @Override
     public PageInfo<FeeKind> findByCondition(FeeKindVo feeKindVo) {
-        PageHelper.startPage(feeKindVo.getPageNum(),feeKindVo.getPageSize(),true);
+        CommonUtil.startPage(feeKindVo);
         List<FeeKind> feeKindList = feeKindMapper.findByCondition(feeKindVo);
         PageInfo<FeeKind> feeKindPageInfo = new PageInfo<>(feeKindList);
         return feeKindPageInfo;

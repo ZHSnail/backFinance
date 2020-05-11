@@ -6,6 +6,7 @@ import com.zhsnail.finance.entity.DormInfo;
 import com.zhsnail.finance.mapper.DormInfoMapper;
 import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
+import com.zhsnail.finance.util.CommonUtil;
 import com.zhsnail.finance.vo.DormInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class DormInfoServiceImpl implements DormInfoService {
 
     @Override
     public PageInfo<DormInfo> findByCondition(DormInfoVo dormInfoVo) {
-        PageHelper.startPage(dormInfoVo.getPageNum(),dormInfoVo.getPageSize(),true);
+        CommonUtil.startPage(dormInfoVo);
         List<DormInfo> dormInfoList = dormInfoMapper.findAll();
         PageInfo<DormInfo> pageInfo = new PageInfo<>(dormInfoList);
         return pageInfo;
