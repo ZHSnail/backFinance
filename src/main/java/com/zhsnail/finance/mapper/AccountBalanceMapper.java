@@ -136,7 +136,7 @@ public interface AccountBalanceMapper {
     @InsertProvider(type=AccountBalanceSqlProvider.class, method="batchinsertSql")
     void batchInsert(List<AccountBalance> accountBalances);
     
-    @Update({"<script>" +
+    /*@Update({"<script>" +
             "<foreach item='accountBalanceVo' collection='accountBalanceVos' index='index' open='' close='' separator=';'>" +
             " UPDATE LEM_ACCOUNT_BALANCE " +
             " SET " +
@@ -153,7 +153,7 @@ public interface AccountBalanceMapper {
             "<if test='#{accountBalanceVo.accountPeriod} != null'>account_period = #{accountBalanceVo.accountPeriod}</if>" +
             " WHERE account_id = #{accountBalanceVo.accountId} " +
             "</foreach>" +
-            "</script>"})
-//    @InsertProvider(type=AccountBalanceSqlProvider.class, method="batchUpdateSql")
-    void batchUpdate(@Param("accountBalanceVos") List<AccountBalanceVo> accountBalanceVos);
+            "</script>"})*/
+    @UpdateProvider(type=AccountBalanceSqlProvider.class, method="batchUpdateSql")
+    void batchUpdate(List<AccountBalanceVo> accountBalanceVos);
 }

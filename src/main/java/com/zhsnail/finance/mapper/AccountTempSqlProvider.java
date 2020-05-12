@@ -1,7 +1,12 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.AccountTemp;
+import com.zhsnail.finance.entity.PayDetail;
 import org.apache.ibatis.jdbc.SQL;
+
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
 
 public class AccountTempSqlProvider {
 
@@ -55,5 +60,22 @@ public class AccountTempSqlProvider {
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
         return sql.toString();
+    }
+
+    public String batchinsertSql(Map<String, List<AccountTemp>> map ){
+        List<AccountTemp> payDetails = map.get("list");
+        StringBuilder sb = new StringBuilder();
+        sb.append("INSERT INTO VCM_ACCOUNT_TEMP ");
+        sb.append("(id, voucher_id,account_id,debit_amt,credit_amt) ");
+        sb.append("VALUES ");
+        MessageFormat mf = new MessageFormat("(#'{'list[{0}].id},#'{'list[{0}].voucherId}, " +
+                "#'{'list[{0}].accountId},#'{'list[{0}].debitAmt},#'{'list[{0}].creditAmt})");
+        for (int i = 0; i < payDetails.size(); i++) {
+            sb.append(mf.format(new Object[]{i}));
+            if (i < payDetails.size() - 1) {
+                sb.append(",");
+            }
+        }
+        return sb.toString();
     }
 }

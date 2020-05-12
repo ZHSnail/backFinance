@@ -23,4 +23,11 @@ public class CodeUtil {
     public static String getId(){
         return Long.toString(snowflakeIdWorker.nextId());
     }
+
+    /**
+     * 获取凭证号
+     */
+    public static String getVoucherCode(){
+        return sysSequenceService.getVoucherCode();
+    }
 }

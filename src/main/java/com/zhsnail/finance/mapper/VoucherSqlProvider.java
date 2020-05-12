@@ -1,6 +1,9 @@
 package com.zhsnail.finance.mapper;
 
+import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.entity.Voucher;
+import com.zhsnail.finance.vo.VoucherVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 
 public class VoucherSqlProvider {
@@ -8,10 +11,6 @@ public class VoucherSqlProvider {
     public String insertSelective(Voucher record) {
         SQL sql = new SQL();
         sql.INSERT_INTO("VCM_VOUCHER");
-        
-        if (record.getCode() != null) {
-            sql.VALUES("code", "#{code,jdbcType=INTEGER}");
-        }
         
         if (record.getId() != null) {
             sql.VALUES("id", "#{id,jdbcType=VARCHAR}");
@@ -61,6 +60,10 @@ public class VoucherSqlProvider {
             sql.VALUES("account_period", "#{accountPeriod,jdbcType=VARCHAR}");
         }
         
+        if (record.getCode() != null) {
+            sql.VALUES("code", "#{code,jdbcType=VARCHAR}");
+        }
+        
         if (record.getBizDate() != null) {
             sql.VALUES("biz_date", "#{bizDate,jdbcType=TIMESTAMP}");
         }
@@ -77,16 +80,16 @@ public class VoucherSqlProvider {
             sql.VALUES("memo", "#{memo,jdbcType=VARCHAR}");
         }
         
+        if (record.getBizCode() != null) {
+            sql.VALUES("biz_code", "#{bizCode,jdbcType=VARCHAR}");
+        }
+        
         return sql.toString();
     }
 
     public String updateByPrimaryKeySelective(Voucher record) {
         SQL sql = new SQL();
         sql.UPDATE("VCM_VOUCHER");
-        
-        if (record.getId() != null) {
-            sql.SET("id = #{id,jdbcType=VARCHAR}");
-        }
         
         if (record.getBizId() != null) {
             sql.SET("biz_id = #{bizId,jdbcType=VARCHAR}");
@@ -132,6 +135,10 @@ public class VoucherSqlProvider {
             sql.SET("account_period = #{accountPeriod,jdbcType=VARCHAR}");
         }
         
+        if (record.getCode() != null) {
+            sql.SET("code = #{code,jdbcType=VARCHAR}");
+        }
+        
         if (record.getBizDate() != null) {
             sql.SET("biz_date = #{bizDate,jdbcType=TIMESTAMP}");
         }
@@ -148,8 +155,31 @@ public class VoucherSqlProvider {
             sql.SET("memo = #{memo,jdbcType=VARCHAR}");
         }
         
-        sql.WHERE("code = #{code,jdbcType=INTEGER}");
+        if (record.getBizCode() != null) {
+            sql.SET("biz_code = #{bizCode,jdbcType=VARCHAR}");
+        }
         
+        sql.WHERE("id = #{id,jdbcType=VARCHAR}");
+        
+        return sql.toString();
+    }
+
+    public String selectAllConditionSql(VoucherVo voucherVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("VCM_VOUCHER");
+        if (voucherVo!=null){
+            if (StringUtils.isNotBlank(voucherVo.getCode())){
+                sql.WHERE("code = #{code,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(voucherVo.getAccountPeriod())){
+                sql.WHERE("account_period = #{accountPeriod,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("status in ( '" + DICT.STATUS_FINSH+"' , '" +
+                DICT.STATUS_CMT+"' , '"+DICT.STATUS_EXE
+                +"' )");
+        sql.ORDER_BY("code desc");
         return sql.toString();
     }
 }

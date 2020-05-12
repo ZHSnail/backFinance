@@ -100,7 +100,6 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public PageInfo<User> findAllUser(PageEntity pageEntity) {
         CommonUtil.startPage(pageEntity);
-        PageHelper.startPage(pageEntity.getPageNum(),pageEntity.getPageSize(),true);
         List<User> allUser = userMapper.findAllUser();
         PageInfo<User> userPageInfo = new PageInfo<>(allUser);
         return userPageInfo;
@@ -137,8 +136,10 @@ public class SystemServiceImpl implements SystemService {
         accountBalanceVoList.forEach(accountBalanceVo -> accountBalanceVo.setAccountPeriod(systemParam.getNowAccountPeriod()));
         if (systemParam.getNowAccountPeriod().endsWith("01")){
             accountBalanceVoList.forEach(accountBalanceVo -> {
+                //借方年初余额
                 accountBalanceVo.setDebitStayearAmt(accountBalanceVo.getDebitStaperiodAmt());
-                accountBalanceVo.setCreditStaperiodAmt(accountBalanceVo.getCreditStaperiodAmt());
+                //贷方年初余额
+                accountBalanceVo.setCreditStayearAmt(accountBalanceVo.getCreditStaperiodAmt());
             });
         }
         accountBalanceService.execBatchUpdate(accountBalanceVoList);

@@ -198,7 +198,7 @@ public class SystemController {
     @PostMapping("/saveSysParam")
     public Result saveSysParam(@RequestBody SystemParamVo systemParamVo){
         systemService.saveSystemParam(systemParamVo);
-        return new Result(true,"暂存系统参数成功！");
+        return new Result(true,"保存暂存系统参数成功！");
     }
 
     @GetMapping("/sysParam/{id}")

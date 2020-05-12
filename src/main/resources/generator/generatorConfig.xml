@@ -48,7 +48,7 @@
         </javaClientGenerator>
 
 
-        <table tableName="SYM_SYSTEM_PARAM" domainObjectName="SystemParam"
+        <table tableName="VCM_VOUCHER" domainObjectName="Voucher"
                enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false" selectByExampleQueryId="false"/>
     </context>

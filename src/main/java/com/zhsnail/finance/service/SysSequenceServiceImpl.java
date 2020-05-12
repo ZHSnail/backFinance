@@ -41,14 +41,36 @@ public class SysSequenceServiceImpl implements SysSequenceService{
         LOGGER.info("初始化序列号开始。。。。");
         List<SysSequence> sysSequenceList = sysSequenceMapper.findAll();
         sysSequenceList.forEach(sysSequence->{
-            sysSequence.setValue(0);
-            sysSequenceMapper.updateByPrimaryKeySelective(sysSequence);
+            if (!"VM".equals(sysSequence.getName())){
+                sysSequence.setValue(0);
+                sysSequenceMapper.updateByPrimaryKeySelective(sysSequence);
+            }
         });
         LOGGER.info("初始化序列号结束。。。。");
+    }
+
+    @Async
+    @Scheduled(cron = "59 59 23 L * ?")
+    @Override
+    public void runInitVoucherCode() {
+        LOGGER.info("初始化凭证序列号开始。。。。");
+        SysSequence vm = sysSequenceMapper.selectByPrimaryKey("VM");
+        vm.setValue(0);
+        sysSequenceMapper.updateByPrimaryKeySelective(vm);
+        LOGGER.info("初始化凭证序列号结束。。。。");
     }
 
     @Override
     public void saveSysSequence(SysSequence sysSequence) {
         sysSequenceMapper.insert(sysSequence);
+    }
+
+    @Override
+    public String getVoucherCode() {
+        SysSequence sysSequence = new SysSequence();
+        sysSequence.setName("VM");
+        int seqNo = sysSequenceMapper.getSeq(sysSequence);
+        String suffixCode =  String.format("%04d", seqNo);
+        return suffixCode;
     }
 }

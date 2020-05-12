@@ -17,6 +17,8 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.shiro.SecurityUtils;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,6 +119,7 @@ public class CommonUtil {
         List<StudentInfo> result = studentInfoList.stream().filter(studentInfo -> studentInfo.getId().equals(id)).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(result)) {
             userMap = BeanUtil.beanToMap(result.get(0));
+            return userMap;
         }
         return new HashMap();
         //TODO 查询员工的信息
@@ -215,5 +218,61 @@ public class CommonUtil {
                 getParentIds(parentId,accountParentIds);
             }
         }
+    }
+
+    /**
+     * 初始化凭证实体
+     * @return
+     */
+    public static Voucher initVoucher(String originator){
+        Voucher voucher = new Voucher();
+        //会计期间
+        voucher.setAccountPeriod(getCurrentSysParam().getNowAccountPeriod());
+        //id
+        voucher.setId(CodeUtil.getId());
+        //凭证审核状态
+        voucher.setStatus(DICT.STATUS_EXE);
+        //制单人
+        voucher.setOriginator(originator);
+        //过账状态
+        voucher.setPostingStatus(DICT.VOUCHER_POST_STATUS_UNPOST);
+        //凭证号
+        voucher.setCode(CodeUtil.getVoucherCode());
+        return voucher;
+    }
+
+    /**
+     * 根据会计科目id查询会计科目
+     * @param id
+     * @return
+     */
+    public static Account findAccountById(String id){
+        List<Account> allAccount = findAllAccount();
+        List<Account> collect = allAccount.stream().filter(account -> id.equals(account.getId())).collect(Collectors.toList());
+        return collect.get(0);
+    }
+
+    /**
+     * 生成会计科目冻结表
+     * @param voucherId 凭证id
+     * @param accountIdMap 会计科目id key为借贷方向
+     * @param amountMap 金额 key为借贷方向
+     * @return
+     */
+    public static List<AccountTemp> initAccountTemp(String voucherId, Map accountIdMap, Map amountMap){
+        List<AccountTemp> list = new ArrayList<>();
+        AccountTemp creditAccountTemp = new AccountTemp();
+        creditAccountTemp.setId(CodeUtil.getId());
+        creditAccountTemp.setVoucherId(voucherId);
+        creditAccountTemp.setCreditAmt((BigDecimal) amountMap.get(DICT.LENDER_ACCOUNT_DIRECTION_CREDIT));
+        creditAccountTemp.setAccountId((String) accountIdMap.get(DICT.LENDER_ACCOUNT_DIRECTION_CREDIT));
+        list.add(creditAccountTemp);
+        AccountTemp debitAccountTemp = new AccountTemp();
+        debitAccountTemp.setId(CodeUtil.getId());
+        debitAccountTemp.setVoucherId(voucherId);
+        debitAccountTemp.setCreditAmt((BigDecimal) amountMap.get(DICT.LENDER_ACCOUNT_DIRECTION_DEBIT));
+        debitAccountTemp.setAccountId((String) accountIdMap.get(DICT.LENDER_ACCOUNT_DIRECTION_DEBIT));
+        list.add(debitAccountTemp);
+        return list;
     }
 }

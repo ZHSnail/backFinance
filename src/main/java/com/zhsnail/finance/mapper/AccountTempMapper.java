@@ -1,6 +1,7 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.AccountTemp;
+import com.zhsnail.finance.entity.PayDetail;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.InsertProvider;
@@ -10,6 +11,8 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
+
+import java.util.List;
 
 public interface AccountTempMapper {
     @Delete({
@@ -58,4 +61,7 @@ public interface AccountTempMapper {
         "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(AccountTemp record);
+
+    @InsertProvider(type=AccountTempSqlProvider.class, method="batchinsertSql")
+    void batchInsert(List<AccountTemp> accountTemps);
 }

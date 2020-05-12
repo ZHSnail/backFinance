@@ -3,14 +3,13 @@ package com.zhsnail.finance.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.common.DICT;
-import com.zhsnail.finance.entity.PageEntity;
-import com.zhsnail.finance.entity.PayDetail;
-import com.zhsnail.finance.entity.StudentInfo;
+import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.mapper.PayDetailMapper;
 import com.zhsnail.finance.mapper.StudentInfoMapper;
 import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CommonUtil;
 import com.zhsnail.finance.vo.PayDetailVo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +28,8 @@ public class PayDetailServiceImpl implements  PayDetailService {
     private PayNoticeService payNoticeService;
     @Autowired
     private StudentInfoMapper studentInfoMapper;
+    @Autowired
+    private VoucherService voucherService;
 
     @Override
     public PageInfo<PayDetailVo> findByPayNoticeId(PayDetailVo payDetailVo) {
@@ -70,10 +71,46 @@ public class PayDetailServiceImpl implements  PayDetailService {
         payDetail.setUpdater((String) CommonUtil.getCurrentUser().get("id"));
         payDetail.setUpdateTime(new Date());
         payDetail.setStatus(DICT.PAY_DETAIL_STATUS_PAID);
-//        payDetailMapper.updateByPrimaryKeySelective(payDetail);
+        payDetailMapper.updateByPrimaryKeySelective(payDetail);
         String payNoticeId = payDetail.getPayNoticeId();
+        Map payNoticeMap = payNoticeService.findById(payNoticeId);
+        PayNotice payNotice = new PayNotice();
+        BeanUtil.mapToBean(payNoticeMap,payNotice);
+        FeeKind feeKind = payNotice.getFeeKind();
+        //贷方会计科目id
+        String creditAccountId = feeKind.getCreditAccountId();
+        //借方会计科目id
+        String debitAccountId = feeKind.getDebitAccountId();
+        //生成凭证
+        voucherService.generateVoucher(initVoucher(payDetail,feeKind.getName(),payNotice.getCreater()),debitAccountId,creditAccountId);
+        List<PayDetail> payDetailList = payDetailMapper.findByPayNoticeId(payNoticeId);
+        //如果已经没有了要付款的单据，就把缴费通知单完成。
+        List<PayDetail> collect = payDetailList.stream().filter(item -> DICT.PAY_DETAIL_STATUS_UNPAID.equals(item.getStatus())).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(collect)){
+            payNoticeService.updateStatusById(payNoticeId,DICT.STATUS_FINSH);
+        }
     }
 
+    private Voucher initVoucher(PayDetail payDetail,String memo,String originator){
+        Voucher voucher = CommonUtil.initVoucher(originator);
+        //业务日期
+        voucher.setBizDate(payDetail.getPayDate());
+        //业务id
+        voucher.setBizId(payDetail.getId());
+        //业务类型
+        voucher.setBizType(DICT.VOUCHER_BIZ_TYPE_CHARGE_PAY);
+        //源单号
+        voucher.setBizCode(payDetail.getCode());
+        //交易类型
+        voucher.setDealType(DICT.VOUCHER_DEAL_TYPE_BANK);
+        //借方金额
+        voucher.setDebitTotal(payDetail.getAmount());
+        //贷方金额
+        voucher.setCreditTotal(payDetail.getAmount());
+        //备注
+        voucher.setMemo(memo);
+        return voucher;
+    }
     @Override
     public PageInfo<PayDetail> findByUserId(PageEntity pageEntity) {
         String id = (String) CommonUtil.getCurrentUser().get("id");

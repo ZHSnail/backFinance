@@ -7,13 +7,13 @@ import java.math.BigDecimal;
  */
 public class AccountTemp {
     private String id;
-
+    //凭证id
     private String voucherId;
-
+    //会计科目id
     private String accountId;
-
+    //借方金额
     private BigDecimal debitAmt;
-
+    //贷方金额
     private BigDecimal creditAmt;
 
     public String getId() {

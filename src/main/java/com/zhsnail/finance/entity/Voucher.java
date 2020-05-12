@@ -3,49 +3,45 @@ package com.zhsnail.finance.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * 凭证类
+ */
 public class Voucher {
-    //凭证号
-    private Integer code;
-
     private String id;
-//业务单id
+    //凭证号
+    private String code;
+    //业务单id
     private String bizId;
-//模块名
+    //模块名
     private String module;
-//过账状态
+    //过账状态
     private String postingStatus;
-//状态
+    //状态
     private String status;
-//制单人
+    //制单人
     private String originator;
-//审核人
+    //审核人
     private String auditer;
-//过账人
+    //过账人
     private String keeper;
-//过账日期
+    //过账日期
     private Date postingDate;
-//业务类型
+    //业务类型
     private String bizType;
-//借方总金额
+    //借方总金额
     private BigDecimal debitTotal;
-//会计期间
+    //会计期间
     private String accountPeriod;
-//记账日期、业务日期
+    //记账日期、业务日期
     private Date bizDate;
-//交易类型
+    //交易类型
     private String dealType;
-//贷方总金额
+    //贷方总金额
     private BigDecimal creditTotal;
-//备注
+    //备注
     private String memo;
-
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
-    }
+    //原单号
+    private String bizCode;
 
     public String getId() {
         return id;
@@ -143,6 +139,14 @@ public class Voucher {
         this.accountPeriod = accountPeriod == null ? null : accountPeriod.trim();
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code == null ? null : code.trim();
+    }
+
     public Date getBizDate() {
         return bizDate;
     }
@@ -173,5 +177,13 @@ public class Voucher {
 
     public void setMemo(String memo) {
         this.memo = memo == null ? null : memo.trim();
+    }
+
+    public String getBizCode() {
+        return bizCode;
+    }
+
+    public void setBizCode(String bizCode) {
+        this.bizCode = bizCode == null ? null : bizCode.trim();
     }
 }

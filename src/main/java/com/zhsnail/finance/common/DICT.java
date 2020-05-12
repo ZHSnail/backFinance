@@ -14,6 +14,55 @@ public interface DICT {
      */
     String BOOLEAN_STATE_FALSE = "FALSE";
     /**
+     * 借贷方向--借
+     */
+    String LENDER_ACCOUNT_DIRECTION_DEBIT = "DEBIT";
+    /**
+     * 借贷方向--贷
+     */
+    String LENDER_ACCOUNT_DIRECTION_CREDIT = "CREDIT";
+    /**
+     * 凭证过账状态--未过账
+     */
+    String VOUCHER_POST_STATUS_UNPOST = "UNPOST";
+    /**
+     * 凭证交易类型--已过账
+     */
+    String VOUCHER_POST_STATUS_POSTED = "POSTED";
+    /**
+     * 凭证交易类型--其他
+     */
+    String VOUCHER_DEAL_TYPE_OTHER = "OTHER";
+    /**
+     * 凭证交易类型--现金
+     */
+    String VOUCHER_DEAL_TYPE_CASH = "CASH";
+    /**
+     * 凭证交易类型--银行
+     */
+    String VOUCHER_DEAL_TYPE_BANK = "BANK";
+    /**
+     * 凭证业务类型--收费付款
+     */
+    String VOUCHER_BIZ_TYPE_CHARGE_PAY = "CHARGE_PAY";
+    /**
+     * 凭证业务类型--工资付款
+     */
+    String VOUCHER_BIZ_TYPE_SALARY_PAY = "SALARY_PAY";
+    /**
+     * 凭证业务类型--固定资产登记
+     */
+    String VOUCHER_BIZ_TYPE_ASSETS_REG = "ASSETS_REG";
+    /**
+     * 凭证业务类型--固定资产折旧
+     */
+    String VOUCHER_BIZ_TYPE_ASSETS_DEPRECIATED = "ASSETS_DEPRECIATED";
+    /**
+     * 凭证业务类型--固定资产采购
+     */
+    String VOUCHER_BIZ_TYPE_ASSETS_PURCHASE = "CHARGE_PAY";
+
+     /**
      * 资产类会计科目
      */
     String ACCOUNT_TYPE_ASSETS="ASSETS";

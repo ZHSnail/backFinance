@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class VoucherVo extends PageEntity {
     //凭证号
-    private Integer code;
+    private String code;
 
     private String id;
     //业务单id
@@ -40,12 +40,22 @@ public class VoucherVo extends PageEntity {
     private BigDecimal creditTotal;
     //备注
     private String memo;
+    //源单号
+    private String bizCode;
 
-    public Integer getCode() {
+    public String getBizCode() {
+        return bizCode;
+    }
+
+    public void setBizCode(String bizCode) {
+        this.bizCode = bizCode;
+    }
+
+    public String getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
