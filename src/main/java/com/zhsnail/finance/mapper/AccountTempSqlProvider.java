@@ -1,7 +1,6 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.AccountTemp;
-import com.zhsnail.finance.entity.PayDetail;
 import org.apache.ibatis.jdbc.SQL;
 
 import java.text.MessageFormat;
@@ -34,6 +33,10 @@ public class AccountTempSqlProvider {
             sql.VALUES("credit_amt", "#{creditAmt,jdbcType=DECIMAL}");
         }
         
+        if (record.getDirection() != null) {
+            sql.VALUES("direction", "#{direction,jdbcType=VARCHAR}");
+        }
+        
         return sql.toString();
     }
 
@@ -57,6 +60,10 @@ public class AccountTempSqlProvider {
             sql.SET("credit_amt = #{creditAmt,jdbcType=DECIMAL}");
         }
         
+        if (record.getDirection() != null) {
+            sql.SET("direction = #{direction,jdbcType=VARCHAR}");
+        }
+        
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
         return sql.toString();
@@ -66,10 +73,10 @@ public class AccountTempSqlProvider {
         List<AccountTemp> payDetails = map.get("list");
         StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO VCM_ACCOUNT_TEMP ");
-        sb.append("(id, voucher_id,account_id,debit_amt,credit_amt) ");
+        sb.append("(id, voucher_id,account_id,debit_amt,credit_amt,direction) ");
         sb.append("VALUES ");
         MessageFormat mf = new MessageFormat("(#'{'list[{0}].id},#'{'list[{0}].voucherId}, " +
-                "#'{'list[{0}].accountId},#'{'list[{0}].debitAmt},#'{'list[{0}].creditAmt})");
+                "#'{'list[{0}].accountId},#'{'list[{0}].debitAmt},#'{'list[{0}].creditAmt},#'{'list[{0}].direction})");
         for (int i = 0; i < payDetails.size(); i++) {
             sb.append(mf.format(new Object[]{i}));
             if (i < payDetails.size() - 1) {

@@ -266,12 +266,14 @@ public class CommonUtil {
         creditAccountTemp.setVoucherId(voucherId);
         creditAccountTemp.setCreditAmt((BigDecimal) amountMap.get(DICT.LENDER_ACCOUNT_DIRECTION_CREDIT));
         creditAccountTemp.setAccountId((String) accountIdMap.get(DICT.LENDER_ACCOUNT_DIRECTION_CREDIT));
+        creditAccountTemp.setDirection(DICT.LENDER_ACCOUNT_DIRECTION_CREDIT);
         list.add(creditAccountTemp);
         AccountTemp debitAccountTemp = new AccountTemp();
         debitAccountTemp.setId(CodeUtil.getId());
         debitAccountTemp.setVoucherId(voucherId);
-        debitAccountTemp.setCreditAmt((BigDecimal) amountMap.get(DICT.LENDER_ACCOUNT_DIRECTION_DEBIT));
+        debitAccountTemp.setDebitAmt((BigDecimal) amountMap.get(DICT.LENDER_ACCOUNT_DIRECTION_DEBIT));
         debitAccountTemp.setAccountId((String) accountIdMap.get(DICT.LENDER_ACCOUNT_DIRECTION_DEBIT));
+        debitAccountTemp.setDirection(DICT.LENDER_ACCOUNT_DIRECTION_DEBIT);
         list.add(debitAccountTemp);
         return list;
     }

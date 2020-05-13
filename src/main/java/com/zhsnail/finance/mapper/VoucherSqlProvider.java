@@ -182,4 +182,22 @@ public class VoucherSqlProvider {
         sql.ORDER_BY("code desc");
         return sql.toString();
     }
+
+    public String selectPostVoucherConditionSql(VoucherVo voucherVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("VCM_VOUCHER");
+        if (voucherVo!=null){
+            if (StringUtils.isNotBlank(voucherVo.getCode())){
+                sql.WHERE("code = #{code,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(voucherVo.getAccountPeriod())){
+                sql.WHERE("account_period = #{accountPeriod,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("posting_status = '"+DICT.VOUCHER_POST_STATUS_UNPOST+"'");
+        sql.WHERE("status in ('"+DICT.STATUS_EXE+"','"+DICT.STATUS_FINSH+"')");
+        sql.ORDER_BY("code desc");
+        return sql.toString();
+    }
 }

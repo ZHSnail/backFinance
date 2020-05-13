@@ -2,6 +2,7 @@ package com.zhsnail.finance.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 凭证类
@@ -42,6 +43,16 @@ public class Voucher {
     private String memo;
     //原单号
     private String bizCode;
+    //会计科目分录
+    private List<AccountTemp> accountTempList;
+
+    public List<AccountTemp> getAccountTempList() {
+        return accountTempList;
+    }
+
+    public void setAccountTempList(List<AccountTemp> accountTempList) {
+        this.accountTempList = accountTempList;
+    }
 
     public String getId() {
         return id;

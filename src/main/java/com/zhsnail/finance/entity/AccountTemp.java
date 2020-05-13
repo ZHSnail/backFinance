@@ -2,19 +2,28 @@ package com.zhsnail.finance.entity;
 
 import java.math.BigDecimal;
 
-/**
- * 会计科目冻结表，发生业务时会插到这个表里，过账后才直接算金额
- */
 public class AccountTemp {
     private String id;
-    //凭证id
+
     private String voucherId;
-    //会计科目id
+
     private String accountId;
-    //借方金额
+
     private BigDecimal debitAmt;
-    //贷方金额
+
     private BigDecimal creditAmt;
+    //借贷方向
+    private String direction;
+    //会计科目
+    private Account account;
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
 
     public String getId() {
         return id;
@@ -54,5 +63,13 @@ public class AccountTemp {
 
     public void setCreditAmt(BigDecimal creditAmt) {
         this.creditAmt = creditAmt;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction == null ? null : direction.trim();
     }
 }

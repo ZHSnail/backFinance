@@ -48,7 +48,7 @@
         </javaClientGenerator>
 
 
-        <table tableName="VCM_VOUCHER" domainObjectName="Voucher"
+        <table tableName="VCM_ACCOUNT_TEMP" domainObjectName="AccountTemp"
                enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false" selectByExampleQueryId="false"/>
     </context>

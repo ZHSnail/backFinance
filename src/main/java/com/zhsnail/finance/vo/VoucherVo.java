@@ -1,9 +1,11 @@
 package com.zhsnail.finance.vo;
 
+import com.zhsnail.finance.entity.AccountTemp;
 import com.zhsnail.finance.entity.PageEntity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class VoucherVo extends PageEntity {
     //凭证号
@@ -20,10 +22,16 @@ public class VoucherVo extends PageEntity {
     private String status;
     //制单人
     private String originator;
+    //制单人名称
+    private String originatorName;
     //审核人
     private String auditer;
+    //审核人名称
+    private String auditerName;
     //过账人
     private String keeper;
+    //过账人名称
+    private String keeperName;
     //过账日期
     private Date postingDate;
     //业务类型
@@ -42,6 +50,60 @@ public class VoucherVo extends PageEntity {
     private String memo;
     //源单号
     private String bizCode;
+    //会计科目分录
+    private List<AccountTemp> accountTempList;
+    //业务类型名称
+    private String bizName;
+    //交易类型名称
+    private String dealName;
+
+    public String getDealName() {
+        return dealName;
+    }
+
+    public void setDealName(String dealName) {
+        this.dealName = dealName;
+    }
+
+    public String getBizName() {
+        return bizName;
+    }
+
+    public void setBizName(String bizName) {
+        this.bizName = bizName;
+    }
+
+    public List<AccountTemp> getAccountTempList() {
+        return accountTempList;
+    }
+
+    public void setAccountTempList(List<AccountTemp> accountTempList) {
+        this.accountTempList = accountTempList;
+    }
+
+    public String getOriginatorName() {
+        return originatorName;
+    }
+
+    public void setOriginatorName(String originatorName) {
+        this.originatorName = originatorName;
+    }
+
+    public String getAuditerName() {
+        return auditerName;
+    }
+
+    public void setAuditerName(String auditerName) {
+        this.auditerName = auditerName;
+    }
+
+    public String getKeeperName() {
+        return keeperName;
+    }
+
+    public void setKeeperName(String keeperName) {
+        this.keeperName = keeperName;
+    }
 
     public String getBizCode() {
         return bizCode;

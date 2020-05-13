@@ -38,7 +38,7 @@ public interface VoucherService {
      * @param voucherVo 凭证
      * @return
      */
-    PageInfo<Voucher> findByCondition(VoucherVo voucherVo);
+    PageInfo<VoucherVo> findByCondition(VoucherVo voucherVo);
 
     /**
      * 查询任务列表 草稿、审核中、已完成
@@ -54,4 +54,17 @@ public interface VoucherService {
      */
     void generateVoucher(Voucher voucher,String debitAccountId,String creditAccountId);
 
+    /**
+     * 根据id查找凭证
+     * @param id
+     * @return
+     */
+    VoucherVo findById(String id);
+
+    /**
+     * 分页查询待过账的凭证
+     * @param voucherVo
+     * @return
+     */
+    PageInfo<VoucherVo> findUnpostVoucher(VoucherVo voucherVo);
 }

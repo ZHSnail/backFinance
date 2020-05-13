@@ -34,6 +34,7 @@ public class SysSequenceServiceImpl implements SysSequenceService{
         return prefixName+dateString+suffixCode;
     }
 
+    //每天凌晨十二点
     @Async
     @Scheduled(cron = "0 0 0 */1 * ?")
     @Override
@@ -49,8 +50,9 @@ public class SysSequenceServiceImpl implements SysSequenceService{
         LOGGER.info("初始化序列号结束。。。。");
     }
 
+    //每个月一号凌晨十二点开始
     @Async
-    @Scheduled(cron = "59 59 23 L * ?")
+    @Scheduled(cron = "0 0 0 1 * ? ")
     @Override
     public void runInitVoucherCode() {
         LOGGER.info("初始化凭证序列号开始。。。。");

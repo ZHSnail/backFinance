@@ -60,7 +60,11 @@ public interface DICT {
     /**
      * 凭证业务类型--固定资产采购
      */
-    String VOUCHER_BIZ_TYPE_ASSETS_PURCHASE = "CHARGE_PAY";
+    String VOUCHER_BIZ_TYPE_ASSETS_PURCHASE = "ASSETS_PURCHASE";
+    /**
+     * 凭证业务类型--手工凭证
+     */
+    String VOUCHER_BIZ_TYPE_MANUAL_VOUCHER = "MANUAL_VOUCHER";
 
      /**
      * 资产类会计科目
@@ -98,6 +102,10 @@ public interface DICT {
      * 缴费通知工作流申请
      */
     String PAY_NOTICE_WORK_KEY="payNoticeReq";
+    /**
+     * 手工凭证工作流申请
+     */
+    String VOUCHER_MANUAL_WORK_KEY="voucherReq";
     /**
      * 申请单状态 -- 退回
      */
