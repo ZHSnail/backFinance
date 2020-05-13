@@ -185,4 +185,12 @@ public class AccountServiceImpl implements AccountService {
         PageInfo<Account> accountPageInfo = new PageInfo<>(accountList);
         return accountPageInfo;
     }
+
+    @Override
+    public Map findById(String id) {
+        Account account = accountMapper.selectByPrimaryKey(id);
+        Map<String, Object> map = BeanUtil.beanToMap(account);
+        map.put("name",CommonUtil.getAccountLongName(account));
+        return map;
+    }
 }

@@ -66,4 +66,11 @@ public interface AccountService {
      * @return
      */
     PageInfo<Account> findAllByCondition(AccountVo accountVo);
+
+    /**
+     * 根据id查询会计科目
+     * @param id
+     * @return
+     */
+    Map findById(String id);
 }

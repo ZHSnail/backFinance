@@ -142,4 +142,8 @@ public class LenderController {
         ExcelUtils.export2Web(response,"会计科目明细表"+new Date().getTime(),"会计科目明细表",AccountDetailVo.class,list);
     }
 
+    @GetMapping("/selectedAccount/{id}")
+    public Result findSelectedAccount(@PathVariable String id){
+        return new Result(accountService.findById(id));
+    }
 }
