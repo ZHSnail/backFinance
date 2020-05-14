@@ -63,18 +63,19 @@ public class VoucherServiceImpl implements VoucherService {
         List<AccountTemp> accountTempList = voucherVo.getAccountTempList();
         if (StringUtils.isNotBlank(voucher.getId())){
             voucherMapper.updateByPrimaryKeySelective(voucher);
+            accountTempMapper.deleteByVoucherId(voucher.getId());
         }else {
             voucher.setCode(CodeUtil.getVoucherCode());
             voucher.setId(CodeUtil.getId());
             voucherMapper.insert(voucher);
-            if (CollectionUtils.isNotEmpty(accountTempList)){
-                for (AccountTemp accountTemp:accountTempList){
-                    accountTemp.setId(CodeUtil.getId());
-                    accountTemp.setVoucherId(voucher.getId());
-                }
-            }
-            accountTempMapper.batchInsert(accountTempList);
         }
+        if (CollectionUtils.isNotEmpty(accountTempList)){
+            for (AccountTemp accountTemp:accountTempList){
+                accountTemp.setId(CodeUtil.getId());
+                accountTemp.setVoucherId(voucher.getId());
+            }
+        }
+        accountTempMapper.batchInsert(accountTempList);
     }
 
 

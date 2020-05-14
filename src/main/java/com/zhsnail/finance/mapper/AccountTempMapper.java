@@ -75,4 +75,10 @@ public interface AccountTempMapper {
             @Result(column="account_id",property="account",one=@One(select="com.zhsnail.finance.mapper.AccountMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
     })
     List<AccountTemp> findByVoucherId(String voucherId);
+
+    @Delete({
+            "delete from VCM_ACCOUNT_TEMP",
+            "where voucher_id = #{voucherId,jdbcType=VARCHAR}"
+    })
+    void deleteByVoucherId(String voucherId);
 }
