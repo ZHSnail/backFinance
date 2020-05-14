@@ -224,4 +224,26 @@ public class SystemController {
         systemService.saveSystemParam(systemParamVo);
         return new Result(true,"提交系统参数成功！");
     }
+
+    @PostMapping("/upload")
+    public Result uploadFile(@RequestParam(name="file") MultipartFile multipartFile,@RequestParam String module){
+        try {
+            Appendix appendix = new Appendix();
+            appendix.setName(multipartFile.getOriginalFilename());
+            appendix.setSize(multipartFile.getSize());
+            appendix.setUploadDate(new Date());
+            appendix.setModule(module);
+            String suffix = multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().lastIndexOf("."));
+            appendix.setSuffix(suffix);
+            appendix.setMd5(MD5Util.getMD5(multipartFile.getInputStream()));
+            //将文件存入gridFs
+            String gridfsId = fileService.uploadFileToGridFS(multipartFile.getInputStream() , multipartFile.getContentType());
+            appendix.setGridfsId(gridfsId);
+            appendix.setContentType(multipartFile.getContentType());
+            appendix = fileService.saveFile(appendix);
+            return new Result(appendix);
+        }catch (Exception e){
+            throw new BaseRuningTimeException("你上传的文件"+multipartFile.getOriginalFilename()+"出错啦！");
+        }
+    }
 }
