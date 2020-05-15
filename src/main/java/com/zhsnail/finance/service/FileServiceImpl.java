@@ -17,9 +17,7 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -72,6 +70,29 @@ public class FileServiceImpl implements FileService {
     public List<Appendix> queryByBizId(String bizId){
         Query query = new Query().addCriteria(Criteria.where("bizId").is(bizId));
         List<Appendix> appendixList = mongoTemplate.find(query, Appendix.class);
+        arrangeContext(appendixList);
+        return appendixList;
+    }
+
+    @Override
+    public void deleteFile(String id) {
+        Appendix appendix = mongoTemplate.findById(id, Appendix.class);
+        if (appendix !=null){
+            Query deleteFileQuery = new Query().addCriteria(Criteria.where("filename").is(appendix.getGridfsId()));
+            gridFsTemplate.delete(deleteFileQuery);
+            //删除集合fileDocment中的数据
+            Query deleteQuery=new Query(Criteria.where("id").is(id));
+            mongoTemplate.remove(deleteQuery,Appendix.class);
+        }else {
+            throw new BaseRuningTimeException("文件不存在");
+        }
+    }
+
+    /**
+     * 设置二进制数据
+     * @param appendixList 附件list
+     */
+    private void arrangeContext(List<Appendix> appendixList){
         if (CollectionUtils.isNotEmpty(appendixList)){
             try {
                 for (Appendix appendix: appendixList) {
@@ -87,25 +108,30 @@ public class FileServiceImpl implements FileService {
                         appendix = null;
                     }
                 }
-                return appendixList;
             }catch (Exception e){
                 throw new BaseRuningTimeException("文件不存在");
             }
         }
-        return new ArrayList<>();
     }
 
     @Override
-    public void deleteFile(String id) {
-        Appendix appendix = mongoTemplate.findById(id, Appendix.class);
-        if (appendix !=null){
-            Query deleteFileQuery = new Query().addCriteria(Criteria.where("filename").is(appendix.getGridfsId()));
-            gridFsTemplate.delete(deleteFileQuery);
-            //删除集合fileDocment中的数据
-            Query deleteQuery=new Query(Criteria.where("id").is(id));
-            mongoTemplate.remove(deleteQuery,Appendix.class);
-        }else {
-            throw new BaseRuningTimeException("文件不存在");
-        }
+    public List<Appendix> queryByIds(String... ids) {
+        Query query = new Query().addCriteria(Criteria.where("id").in(ids));
+        List<Appendix> appendixList = mongoTemplate.find(query, Appendix.class);
+        arrangeContext(appendixList);
+        return appendixList;
+    }
+
+    @Override
+    public List<Map> onViewFile(String... ids) {
+        List<Appendix> appendixList = queryByIds(ids);
+        List<Map> list = new ArrayList<>();
+        appendixList.stream().forEach(appendix -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("name",appendix.getName());
+            map.put("url","/system/download/"+appendix.getId());
+            list.add(map);
+        });
+        return list;
     }
 }

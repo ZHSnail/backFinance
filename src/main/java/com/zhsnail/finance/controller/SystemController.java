@@ -246,4 +246,11 @@ public class SystemController {
             throw new BaseRuningTimeException("你上传的文件"+multipartFile.getOriginalFilename()+"出错啦！");
         }
     }
+
+    @GetMapping("/viewFile")
+    public Result viewFileList(@RequestParam String data){
+        List<String> list = JsonUtil.getListByJsonArray(data);
+        List<Map> viewFile = fileService.onViewFile(list.toArray(new String[list.size()]));
+        return new Result(viewFile);
+    }
 }
