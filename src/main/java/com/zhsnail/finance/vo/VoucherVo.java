@@ -56,6 +56,26 @@ public class VoucherVo extends PageEntity {
     private String bizName;
     //交易类型名称
     private String dealName;
+    //勾对状态
+    private String tickState;
+    //勾对日期
+    private Date tickDate;
+
+    public String getTickState() {
+        return tickState;
+    }
+
+    public void setTickState(String tickState) {
+        this.tickState = tickState;
+    }
+
+    public Date getTickDate() {
+        return tickDate;
+    }
+
+    public void setTickDate(Date tickDate) {
+        this.tickDate = tickDate;
+    }
 
     public String getDealName() {
         return dealName;

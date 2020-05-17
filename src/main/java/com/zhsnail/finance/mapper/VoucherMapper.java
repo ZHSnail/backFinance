@@ -18,13 +18,14 @@ public interface VoucherMapper {
     @Insert({
         "insert into VCM_VOUCHER (id, biz_id, ",
         "module, posting_status, ",
-        "STATUS, originator, ",
+        "status, originator, ",
         "auditer, keeper, ",
         "posting_date, biz_type, ",
         "debit_total, account_period, ",
         "code, biz_date, ",
         "deal_type, credit_total, ",
-        "memo, biz_code)",
+        "memo, biz_code, tick_state, ",
+        "tick_date)",
         "values (#{id,jdbcType=VARCHAR}, #{bizId,jdbcType=VARCHAR}, ",
         "#{module,jdbcType=VARCHAR}, #{postingStatus,jdbcType=VARCHAR}, ",
         "#{status,jdbcType=VARCHAR}, #{originator,jdbcType=VARCHAR}, ",
@@ -33,7 +34,8 @@ public interface VoucherMapper {
         "#{debitTotal,jdbcType=DECIMAL}, #{accountPeriod,jdbcType=VARCHAR}, ",
         "#{code,jdbcType=VARCHAR}, #{bizDate,jdbcType=TIMESTAMP}, ",
         "#{dealType,jdbcType=VARCHAR}, #{creditTotal,jdbcType=DECIMAL}, ",
-        "#{memo,jdbcType=VARCHAR}, #{bizCode,jdbcType=VARCHAR})"
+        "#{memo,jdbcType=VARCHAR}, #{bizCode,jdbcType=VARCHAR}, #{tickState,jdbcType=VARCHAR}, ",
+        "#{tickDate,jdbcType=TIMESTAMP})"
     })
     int insert(Voucher record);
 
@@ -42,9 +44,9 @@ public interface VoucherMapper {
 
     @Select({
         "select",
-        "id, biz_id, module, posting_status, STATUS, originator, auditer, keeper, posting_date, ",
+        "id, biz_id, module, posting_status, status, originator, auditer, keeper, posting_date, ",
         "biz_type, debit_total, account_period, code, biz_date, deal_type, credit_total, ",
-        "memo, biz_code",
+        "memo, biz_code, tick_state, tick_date",
         "from VCM_VOUCHER",
         "where id = #{id,jdbcType=VARCHAR}"
     })
@@ -53,7 +55,7 @@ public interface VoucherMapper {
         @Result(column="biz_id", property="bizId", jdbcType=JdbcType.VARCHAR),
         @Result(column="module", property="module", jdbcType=JdbcType.VARCHAR),
         @Result(column="posting_status", property="postingStatus", jdbcType=JdbcType.VARCHAR),
-        @Result(column="STATUS", property="status", jdbcType=JdbcType.VARCHAR),
+        @Result(column="status", property="status", jdbcType=JdbcType.VARCHAR),
         @Result(column="originator", property="originator", jdbcType=JdbcType.VARCHAR),
         @Result(column="auditer", property="auditer", jdbcType=JdbcType.VARCHAR),
         @Result(column="keeper", property="keeper", jdbcType=JdbcType.VARCHAR),
@@ -67,6 +69,8 @@ public interface VoucherMapper {
         @Result(column="credit_total", property="creditTotal", jdbcType=JdbcType.DECIMAL),
         @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
         @Result(column="biz_code", property="bizCode", jdbcType=JdbcType.VARCHAR),
+        @Result(column="tick_state", property="tickState", jdbcType=JdbcType.VARCHAR),
+        @Result(column="tick_date", property="tickDate", jdbcType=JdbcType.TIMESTAMP),
         @Result(property = "accountTempList",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.AccountTempMapper.findByVoucherId",fetchType = FetchType.EAGER))
     })
     Voucher selectByPrimaryKey(String id);
@@ -79,7 +83,7 @@ public interface VoucherMapper {
         "set biz_id = #{bizId,jdbcType=VARCHAR},",
           "module = #{module,jdbcType=VARCHAR},",
           "posting_status = #{postingStatus,jdbcType=VARCHAR},",
-          "STATUS = #{status,jdbcType=VARCHAR},",
+          "status = #{status,jdbcType=VARCHAR},",
           "originator = #{originator,jdbcType=VARCHAR},",
           "auditer = #{auditer,jdbcType=VARCHAR},",
           "keeper = #{keeper,jdbcType=VARCHAR},",
@@ -92,7 +96,9 @@ public interface VoucherMapper {
           "deal_type = #{dealType,jdbcType=VARCHAR},",
           "credit_total = #{creditTotal,jdbcType=DECIMAL},",
           "memo = #{memo,jdbcType=VARCHAR},",
-          "biz_code = #{bizCode,jdbcType=VARCHAR}",
+          "biz_code = #{bizCode,jdbcType=VARCHAR},",
+          "tick_state = #{tickState,jdbcType=VARCHAR},",
+          "tick_date = #{tickDate,jdbcType=TIMESTAMP}",
         "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(Voucher record);
@@ -103,7 +109,7 @@ public interface VoucherMapper {
             @Result(column="biz_id", property="bizId", jdbcType=JdbcType.VARCHAR),
             @Result(column="module", property="module", jdbcType=JdbcType.VARCHAR),
             @Result(column="posting_status", property="postingStatus", jdbcType=JdbcType.VARCHAR),
-            @Result(column="STATUS", property="status", jdbcType=JdbcType.VARCHAR),
+            @Result(column="status", property="status", jdbcType=JdbcType.VARCHAR),
             @Result(column="originator", property="originator", jdbcType=JdbcType.VARCHAR),
             @Result(column="auditer", property="auditer", jdbcType=JdbcType.VARCHAR),
             @Result(column="keeper", property="keeper", jdbcType=JdbcType.VARCHAR),
@@ -116,7 +122,9 @@ public interface VoucherMapper {
             @Result(column="deal_type", property="dealType", jdbcType=JdbcType.VARCHAR),
             @Result(column="credit_total", property="creditTotal", jdbcType=JdbcType.DECIMAL),
             @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
-            @Result(column="biz_code", property="bizCode", jdbcType=JdbcType.VARCHAR)
+            @Result(column="biz_code", property="bizCode", jdbcType=JdbcType.VARCHAR),
+            @Result(column="tick_state", property="tickState", jdbcType=JdbcType.VARCHAR),
+            @Result(column="tick_date", property="tickDate", jdbcType=JdbcType.TIMESTAMP)
     })
     List<Voucher> findAllByCondition(VoucherVo voucherVo);
 
@@ -126,7 +134,7 @@ public interface VoucherMapper {
             @Result(column="biz_id", property="bizId", jdbcType=JdbcType.VARCHAR),
             @Result(column="module", property="module", jdbcType=JdbcType.VARCHAR),
             @Result(column="posting_status", property="postingStatus", jdbcType=JdbcType.VARCHAR),
-            @Result(column="STATUS", property="status", jdbcType=JdbcType.VARCHAR),
+            @Result(column="status", property="status", jdbcType=JdbcType.VARCHAR),
             @Result(column="originator", property="originator", jdbcType=JdbcType.VARCHAR),
             @Result(column="auditer", property="auditer", jdbcType=JdbcType.VARCHAR),
             @Result(column="keeper", property="keeper", jdbcType=JdbcType.VARCHAR),
@@ -139,7 +147,119 @@ public interface VoucherMapper {
             @Result(column="deal_type", property="dealType", jdbcType=JdbcType.VARCHAR),
             @Result(column="credit_total", property="creditTotal", jdbcType=JdbcType.DECIMAL),
             @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
-            @Result(column="biz_code", property="bizCode", jdbcType=JdbcType.VARCHAR)
+            @Result(column="biz_code", property="bizCode", jdbcType=JdbcType.VARCHAR),
+            @Result(column="tick_state", property="tickState", jdbcType=JdbcType.VARCHAR),
+            @Result(column="tick_date", property="tickDate", jdbcType=JdbcType.TIMESTAMP)
     })
     List<Voucher> findUnpostVoucherList(VoucherVo voucherVo);
+
+    @SelectProvider(type=VoucherSqlProvider.class, method="selectAllTaskConditionSql")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="biz_id", property="bizId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="module", property="module", jdbcType=JdbcType.VARCHAR),
+            @Result(column="posting_status", property="postingStatus", jdbcType=JdbcType.VARCHAR),
+            @Result(column="status", property="status", jdbcType=JdbcType.VARCHAR),
+            @Result(column="originator", property="originator", jdbcType=JdbcType.VARCHAR),
+            @Result(column="auditer", property="auditer", jdbcType=JdbcType.VARCHAR),
+            @Result(column="keeper", property="keeper", jdbcType=JdbcType.VARCHAR),
+            @Result(column="posting_date", property="postingDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="biz_type", property="bizType", jdbcType=JdbcType.VARCHAR),
+            @Result(column="debit_total", property="debitTotal", jdbcType=JdbcType.DECIMAL),
+            @Result(column="account_period", property="accountPeriod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="biz_date", property="bizDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="deal_type", property="dealType", jdbcType=JdbcType.VARCHAR),
+            @Result(column="credit_total", property="creditTotal", jdbcType=JdbcType.DECIMAL),
+            @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="biz_code", property="bizCode", jdbcType=JdbcType.VARCHAR),
+            @Result(column="tick_state", property="tickState", jdbcType=JdbcType.VARCHAR),
+            @Result(column="tick_date", property="tickDate", jdbcType=JdbcType.TIMESTAMP)
+    })
+    List<Voucher> findAllCurrentUserTask(VoucherVo voucherVo);
+
+    @SelectProvider(type=VoucherSqlProvider.class, method="findTaskListSql")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="biz_id", property="bizId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="module", property="module", jdbcType=JdbcType.VARCHAR),
+            @Result(column="posting_status", property="postingStatus", jdbcType=JdbcType.VARCHAR),
+            @Result(column="status", property="status", jdbcType=JdbcType.VARCHAR),
+            @Result(column="originator", property="originator", jdbcType=JdbcType.VARCHAR),
+            @Result(column="auditer", property="auditer", jdbcType=JdbcType.VARCHAR),
+            @Result(column="keeper", property="keeper", jdbcType=JdbcType.VARCHAR),
+            @Result(column="posting_date", property="postingDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="biz_type", property="bizType", jdbcType=JdbcType.VARCHAR),
+            @Result(column="debit_total", property="debitTotal", jdbcType=JdbcType.DECIMAL),
+            @Result(column="account_period", property="accountPeriod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="biz_date", property="bizDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="deal_type", property="dealType", jdbcType=JdbcType.VARCHAR),
+            @Result(column="credit_total", property="creditTotal", jdbcType=JdbcType.DECIMAL),
+            @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="biz_code", property="bizCode", jdbcType=JdbcType.VARCHAR),
+            @Result(column="tick_state", property="tickState", jdbcType=JdbcType.VARCHAR),
+            @Result(column="tick_date", property="tickDate", jdbcType=JdbcType.TIMESTAMP)
+    })
+    List<Voucher> findTaskList(VoucherVo voucherVo);
+
+    @Select({
+            "<script>",
+            "select * ",
+            "from VCM_VOUCHER",
+            "where id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="biz_id", property="bizId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="module", property="module", jdbcType=JdbcType.VARCHAR),
+            @Result(column="posting_status", property="postingStatus", jdbcType=JdbcType.VARCHAR),
+            @Result(column="status", property="status", jdbcType=JdbcType.VARCHAR),
+            @Result(column="originator", property="originator", jdbcType=JdbcType.VARCHAR),
+            @Result(column="auditer", property="auditer", jdbcType=JdbcType.VARCHAR),
+            @Result(column="keeper", property="keeper", jdbcType=JdbcType.VARCHAR),
+            @Result(column="posting_date", property="postingDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="biz_type", property="bizType", jdbcType=JdbcType.VARCHAR),
+            @Result(column="debit_total", property="debitTotal", jdbcType=JdbcType.DECIMAL),
+            @Result(column="account_period", property="accountPeriod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="biz_date", property="bizDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="deal_type", property="dealType", jdbcType=JdbcType.VARCHAR),
+            @Result(column="credit_total", property="creditTotal", jdbcType=JdbcType.DECIMAL),
+            @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="biz_code", property="bizCode", jdbcType=JdbcType.VARCHAR),
+            @Result(column="tick_state", property="tickState", jdbcType=JdbcType.VARCHAR),
+            @Result(column="tick_date", property="tickDate", jdbcType=JdbcType.TIMESTAMP)
+    })
+    List<Voucher> findByIds(@Param("ids") List<String> ids);
+
+    @SelectProvider(type=VoucherSqlProvider.class, method="findCashierList")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="biz_id", property="bizId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="module", property="module", jdbcType=JdbcType.VARCHAR),
+            @Result(column="posting_status", property="postingStatus", jdbcType=JdbcType.VARCHAR),
+            @Result(column="status", property="status", jdbcType=JdbcType.VARCHAR),
+            @Result(column="originator", property="originator", jdbcType=JdbcType.VARCHAR),
+            @Result(column="auditer", property="auditer", jdbcType=JdbcType.VARCHAR),
+            @Result(column="keeper", property="keeper", jdbcType=JdbcType.VARCHAR),
+            @Result(column="posting_date", property="postingDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="biz_type", property="bizType", jdbcType=JdbcType.VARCHAR),
+            @Result(column="debit_total", property="debitTotal", jdbcType=JdbcType.DECIMAL),
+            @Result(column="account_period", property="accountPeriod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="biz_date", property="bizDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="deal_type", property="dealType", jdbcType=JdbcType.VARCHAR),
+            @Result(column="credit_total", property="creditTotal", jdbcType=JdbcType.DECIMAL),
+            @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="biz_code", property="bizCode", jdbcType=JdbcType.VARCHAR),
+            @Result(column="tick_state", property="tickState", jdbcType=JdbcType.VARCHAR),
+            @Result(column="tick_date", property="tickDate", jdbcType=JdbcType.TIMESTAMP)
+    })
+    List<Voucher> findCashierList(VoucherVo voucherVo);
+
 }

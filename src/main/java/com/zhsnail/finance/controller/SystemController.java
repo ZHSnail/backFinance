@@ -247,9 +247,9 @@ public class SystemController {
         }
     }
 
-    @GetMapping("/viewFile")
-    public Result viewFileList(@RequestParam String data){
-        List<String> list = JsonUtil.getListByJsonArray(data);
+    @PostMapping("/viewFile")
+    public Result viewFileList(@RequestBody PageEntity pageEntity){
+        List<String> list = pageEntity.getFileIds();
         List<Map> viewFile = fileService.onViewFile(list.toArray(new String[list.size()]));
         return new Result(viewFile);
     }

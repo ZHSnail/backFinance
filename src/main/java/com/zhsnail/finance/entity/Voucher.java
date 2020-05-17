@@ -4,9 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-/**
- * 凭证类
- */
 public class Voucher {
     private String id;
     //凭证号
@@ -45,6 +42,11 @@ public class Voucher {
     private String bizCode;
     //会计科目分录
     private List<AccountTemp> accountTempList;
+    //勾对状态
+    private String tickState;
+    //勾对日期
+    private Date tickDate;
+
 
     public List<AccountTemp> getAccountTempList() {
         return accountTempList;
@@ -196,5 +198,21 @@ public class Voucher {
 
     public void setBizCode(String bizCode) {
         this.bizCode = bizCode == null ? null : bizCode.trim();
+    }
+
+    public String getTickState() {
+        return tickState;
+    }
+
+    public void setTickState(String tickState) {
+        this.tickState = tickState == null ? null : tickState.trim();
+    }
+
+    public Date getTickDate() {
+        return tickDate;
+    }
+
+    public void setTickDate(Date tickDate) {
+        this.tickDate = tickDate;
     }
 }

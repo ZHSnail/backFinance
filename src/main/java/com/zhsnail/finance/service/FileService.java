@@ -36,7 +36,7 @@ public interface FileService {
      * @param bizId 业务id
      * @return
      */
-    List<Appendix> queryByBizId(String bizId);
+    List<Appendix> queryByBizId(String bizId,boolean needContext);
 
     /**
      * 根据id删除文件
@@ -57,4 +57,12 @@ public interface FileService {
      * @return
      */
     List<Map> onViewFile(String... ids);
+
+    /**
+     * 更新关系
+     * @param ids 文件id数组
+     * @param module 模块名
+     * @param bizId 业务id
+     */
+    void updateRelation(String module, String bizId, String... ids);
 }

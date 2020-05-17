@@ -1,6 +1,8 @@
 package com.zhsnail.finance.service;
 
 import com.github.pagehelper.PageInfo;
+import com.zhsnail.finance.entity.PageEntity;
+import com.zhsnail.finance.entity.PayNotice;
 import com.zhsnail.finance.entity.Voucher;
 import com.zhsnail.finance.vo.VoucherVo;
 
@@ -62,9 +64,36 @@ public interface VoucherService {
     VoucherVo findById(String id);
 
     /**
-     * 分页查询待过账的凭证
+     * 分页查询待过账的凭证 凭证界面
      * @param voucherVo
      * @return
      */
     PageInfo<VoucherVo> findUnpostVoucher(VoucherVo voucherVo);
+
+    /**
+     * 分页条件查询当前用户的所有任务列表
+     * @param voucherVo
+     * @return
+     */
+    PageInfo<VoucherVo> findTaskListByCondition(VoucherVo voucherVo);
+
+    /**
+     * 分页查询待审批的流程
+     * @param voucherVo
+     * @return
+     */
+    PageInfo<VoucherVo> findCmtTaskList(VoucherVo voucherVo);
+
+    /**
+     * 分页查询出纳页面所需要的凭证
+     * @param voucherVo
+     * @return
+     */
+    PageInfo<VoucherVo> findCashierList(VoucherVo voucherVo,String tickState);
+
+    /**
+     * 根据id勾对凭证
+     * @param id
+     */
+    void tickVoucher(String id);
 }

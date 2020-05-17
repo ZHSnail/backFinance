@@ -29,7 +29,7 @@ public class VoucherSqlProvider {
         }
         
         if (record.getStatus() != null) {
-            sql.VALUES("STATUS", "#{status,jdbcType=VARCHAR}");
+            sql.VALUES("status", "#{status,jdbcType=VARCHAR}");
         }
         
         if (record.getOriginator() != null) {
@@ -84,6 +84,14 @@ public class VoucherSqlProvider {
             sql.VALUES("biz_code", "#{bizCode,jdbcType=VARCHAR}");
         }
         
+        if (record.getTickState() != null) {
+            sql.VALUES("tick_state", "#{tickState,jdbcType=VARCHAR}");
+        }
+        
+        if (record.getTickDate() != null) {
+            sql.VALUES("tick_date", "#{tickDate,jdbcType=TIMESTAMP}");
+        }
+        
         return sql.toString();
     }
 
@@ -104,7 +112,7 @@ public class VoucherSqlProvider {
         }
         
         if (record.getStatus() != null) {
-            sql.SET("STATUS = #{status,jdbcType=VARCHAR}");
+            sql.SET("status = #{status,jdbcType=VARCHAR}");
         }
         
         if (record.getOriginator() != null) {
@@ -159,11 +167,18 @@ public class VoucherSqlProvider {
             sql.SET("biz_code = #{bizCode,jdbcType=VARCHAR}");
         }
         
+        if (record.getTickState() != null) {
+            sql.SET("tick_state = #{tickState,jdbcType=VARCHAR}");
+        }
+        
+        if (record.getTickDate() != null) {
+            sql.SET("tick_date = #{tickDate,jdbcType=TIMESTAMP}");
+        }
+        
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
         return sql.toString();
     }
-
     public String selectAllConditionSql(VoucherVo voucherVo){
         SQL sql = new SQL();
         sql.SELECT("*");
@@ -196,8 +211,67 @@ public class VoucherSqlProvider {
             }
         }
         sql.WHERE("posting_status = '"+DICT.VOUCHER_POST_STATUS_UNPOST+"'");
+        sql.WHERE("deal_type = '"+DICT.VOUCHER_DEAL_TYPE_OTHER+"'");
         sql.WHERE("status in ('"+DICT.STATUS_EXE+"','"+DICT.STATUS_FINSH+"')");
         sql.ORDER_BY("code desc");
         return sql.toString();
     }
+
+    public String selectAllTaskConditionSql(VoucherVo voucherVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("VCM_VOUCHER");
+        if (voucherVo!=null){
+            if (StringUtils.isNotBlank(voucherVo.getCode())){
+                sql.WHERE("code = #{code,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(voucherVo.getStatus())){
+                sql.WHERE("status = #{status,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("biz_type = '"+DICT.VOUCHER_BIZ_TYPE_MANUAL_VOUCHER+"'");
+        sql.WHERE("originator = #{originator,jdbcType=VARCHAR}");
+        sql.ORDER_BY("code desc");
+        return sql.toString();
+    }
+
+    public String findTaskListSql(VoucherVo voucherVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("VCM_VOUCHER");
+        if (voucherVo!=null){
+            if (StringUtils.isNotBlank(voucherVo.getOriginator())){
+                sql.WHERE("originator = #{originator,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("status in ( '"+ DICT.STATUS_DRAFT+"' , '"
+                +DICT.STATUS_BACK+"' , '" +
+                DICT.STATUS_CMT+"' , '"+DICT.STATUS_EXE
+                +"' )");
+        sql.WHERE("biz_type = '"+DICT.VOUCHER_BIZ_TYPE_MANUAL_VOUCHER+"'");
+        return sql.toString();
+    }
+
+    public String findCashierList(VoucherVo voucherVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("VCM_VOUCHER");
+        if (voucherVo!=null){
+            if (StringUtils.isNotBlank(voucherVo.getCode())){
+                sql.WHERE("code = #{code,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(voucherVo.getStatus())){
+                sql.WHERE("status = #{status,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(voucherVo.getTickState())){
+                sql.WHERE("tick_state = #{tickState,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("posting_status = '"+DICT.VOUCHER_POST_STATUS_UNPOST+"'");
+        sql.WHERE("deal_type in ('"+DICT.VOUCHER_DEAL_TYPE_BANK+"','"+DICT.VOUCHER_DEAL_TYPE_CASH+"')");
+        sql.WHERE("status in ('"+DICT.STATUS_EXE+"','"+DICT.STATUS_FINSH+"')");
+        sql.ORDER_BY("code desc");
+        return sql.toString();
+    }
+
 }

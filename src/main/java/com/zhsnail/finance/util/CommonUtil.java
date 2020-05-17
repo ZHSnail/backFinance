@@ -4,17 +4,18 @@ package com.zhsnail.finance.util;
 import com.github.pagehelper.PageHelper;
 import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.entity.*;
+import com.zhsnail.finance.exception.BaseRuningTimeException;
 import com.zhsnail.finance.service.AccountService;
 import com.zhsnail.finance.service.StudentInfoService;
 import com.zhsnail.finance.service.SysSequenceService;
 import com.zhsnail.finance.service.SystemService;
-import com.zhsnail.finance.vo.AccountVo;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.shiro.SecurityUtils;
 
 import java.math.BigDecimal;
@@ -276,5 +277,33 @@ public class CommonUtil {
         debitAccountTemp.setDirection(DICT.LENDER_ACCOUNT_DIRECTION_DEBIT);
         list.add(debitAccountTemp);
         return list;
+    }
+
+    /**
+     * 生成前端需要任务列表
+     * @param list
+     * @return
+     */
+    public static Map<String, List<Map>> arrangeTaskList(List list) {
+        try {
+            Map map = new HashMap();
+            //草稿
+            List<Map> draftList;
+            //审核中的列表
+            List<Map> cmtList;
+            //正在执行的列表
+            List<Map> exeList;
+            List<Map<String, Object>> maps = BeanUtil.objectsToMaps(list);
+            draftList = maps.stream().filter(item->DICT.STATUS_BACK.equals(item.get("status")) ||
+                    DICT.STATUS_DRAFT.equals(item.get("status"))).collect(Collectors.toList());
+            cmtList = maps.stream().filter(item->DICT.STATUS_CMT.equals(item.get("status"))).collect(Collectors.toList());
+            exeList = maps.stream().filter(item->DICT.STATUS_EXE.equals(item.get("status"))).collect(Collectors.toList());
+            map.put(DICT.TASK_NAME_DRAFT_LIST,draftList);
+            map.put(DICT.TASK_NAME_CMT_LIST,cmtList);
+            map.put(DICT.TASK_NAME_EXE_LIST,exeList);
+            return map;
+        }catch (Exception e){
+            throw new BaseRuningTimeException(e);
+        }
     }
 }

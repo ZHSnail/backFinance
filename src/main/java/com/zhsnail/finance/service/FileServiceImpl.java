@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
@@ -67,10 +68,12 @@ public class FileServiceImpl implements FileService {
         return null;
     }
 
-    public List<Appendix> queryByBizId(String bizId){
+    public List<Appendix> queryByBizId(String bizId,boolean needContext){
         Query query = new Query().addCriteria(Criteria.where("bizId").is(bizId));
         List<Appendix> appendixList = mongoTemplate.find(query, Appendix.class);
-        arrangeContext(appendixList);
+        if (needContext){
+            arrangeContext(appendixList);
+        }
         return appendixList;
     }
 
@@ -124,14 +127,23 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<Map> onViewFile(String... ids) {
-        List<Appendix> appendixList = queryByIds(ids);
+        Query query = new Query().addCriteria(Criteria.where("id").in(ids));
+        List<Appendix> appendixList = mongoTemplate.find(query, Appendix.class);
         List<Map> list = new ArrayList<>();
         appendixList.stream().forEach(appendix -> {
             Map<String, String> map = new HashMap<>();
             map.put("name",appendix.getName());
             map.put("url","/system/download/"+appendix.getId());
+            map.put("id",appendix.getId());
             list.add(map);
         });
         return list;
+    }
+
+    @Override
+    public void updateRelation(String module, String bizId, String... ids) {
+        Query query = new Query().addCriteria(Criteria.where("module").is(module).where("id").in(ids));
+        Update update = Update.update("bizId", bizId);
+        mongoTemplate.updateMulti(query,update,Appendix.class);
     }
 }

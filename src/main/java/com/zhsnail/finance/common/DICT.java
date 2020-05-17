@@ -1,10 +1,84 @@
 package com.zhsnail.finance.common;
 
+import com.zhsnail.finance.entity.AssetsRegister;
+
 /**
  * 字典
  */
 public interface DICT {
     String SYS_ROLE_NAME = "老师";
+    /**
+     * 固定资产取得方式--采购
+     */
+    String ASSETS_OBTAIN_METHOD_PURCHASE = "PURCHASE";
+    /**
+     * 固定资产取得方式--租赁
+     */
+    String ASSETS_OBTAIN_METHOD_LEASE = "LEASE";
+    /**
+     * 固定资产取得方式--研制转入
+     */
+    String ASSETS_OBTAIN_METHOD_DEVELOPMENT= "DEVELOPMENT";
+    /**
+     * 固定资产取得方式--基建转入
+     */
+    String ASSETS_OBTAIN_METHOD_INFRASTRUCTURE = "INFRASTRUCTURE";
+    /**
+     * 固定资产取得方式--接受捐赠
+     */
+    String ASSETS_OBTAIN_METHOD_DONATIONS = "DONATIONS";
+    /**
+     * 固定资产取得方式--外部调入
+     */
+    String ASSETS_OBTAIN_METHOD_EXTERNAL = "EXTERNAL";
+    /**
+     * 固定资产取得方式--盘盈
+     */
+    String ASSETS_OBTAIN_METHOD_INVENTORY = "INVENTORY";
+    /**
+     * 固定资产取得方式--合作建所方投入
+     */
+    String ASSETS_OBTAIN_METHOD_COOPERATIVE = "COOPERATIVE";
+    /**
+     * 固定资产取得方式--融资租入
+     */
+    String ASSETS_OBTAIN_METHOD_FINANCING = "FINANCING";
+    /**
+     * 固定资产取得方式--其他
+     */
+    String ASSETS_OBTAIN_METHOD_OTHER = "OTHER";
+    /**
+     * 固定资产折旧方法--年限平均法(直线法)
+     */
+    String ASSETS_DEPRE_METHOD_STRLINE = "STRLINE";
+    /**
+     * 固定资产折旧方法--工作量法
+     */
+    String ASSETS_DEPRE_METHOD_WORKLOAD = "WORKLOAD";
+    /**
+     * 固定资产折旧方法--双倍余额递减法
+     */
+    String ASSETS_DEPRE_METHOD_DOUDECBAL = "DOUDECBAL";
+    /**
+     * 固定资产折旧方法--年数总和法
+     */
+    String ASSETS_DEPRE_METHOD_SUMYEAR = "SUMYEAR";
+    /**
+     * 任务列表名称--草稿
+     */
+    String TASK_NAME_DRAFT_LIST = "draftList";
+    /**
+     * 任务列表名称--审核中
+     */
+    String TASK_NAME_CMT_LIST = "cmtList";
+    /**
+     * 任务列表名称--已完成
+     */
+    String TASK_NAME_EXE_LIST = "exeList";
+    /**
+     * 任务列表名称--正在收款
+     */
+    String TASK_NAME_FINISH = "finishList";
     /**
      * ture
      */
@@ -21,6 +95,14 @@ public interface DICT {
      * 借贷方向--贷
      */
     String LENDER_ACCOUNT_DIRECTION_CREDIT = "CREDIT";
+    /**
+     * 凭证勾对状态--未勾对
+     */
+    String VOUCHER_TICK_STATE_UNTICK = "UNTICK";
+    /**
+     * 凭证勾对状态--已勾对
+     */
+    String VOUCHER_TICK_STATE_TICKED = "TICKED";
     /**
      * 凭证过账状态--未过账
      */
@@ -106,6 +188,11 @@ public interface DICT {
      * 手工凭证工作流申请
      */
     String VOUCHER_MANUAL_WORK_KEY="voucherReq";
+    /**
+     * 固定资产登记申请
+     */
+    String ASSETS_REGISTER_WORK_KEY="assetsRegisterReq";
+
     /**
      * 申请单状态 -- 退回
      */
