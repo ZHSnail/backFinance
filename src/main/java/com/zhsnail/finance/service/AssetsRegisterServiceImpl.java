@@ -2,7 +2,7 @@ package com.zhsnail.finance.service;
 
 import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.common.DICT;
-import com.zhsnail.finance.entity.Assets;
+import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.entity.AssetsRegister;
 import com.zhsnail.finance.mapper.AssetsMapper;
 import com.zhsnail.finance.mapper.AssetsRegisterMapper;
@@ -11,11 +11,15 @@ import com.zhsnail.finance.util.CodeUtil;
 import com.zhsnail.finance.util.CommonUtil;
 import com.zhsnail.finance.vo.AssetsRegisterVo;
 import com.zhsnail.finance.vo.AssetsVo;
+import com.zhsnail.finance.vo.AssetsRegisterVo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AssetsRegisterServiceImpl implements AssetsRegisterService{
@@ -25,6 +29,8 @@ public class AssetsRegisterServiceImpl implements AssetsRegisterService{
     private AssetsMapper assetsMapper;
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private VoucherService voucherService;
     private static Map<String,String> transMap;
 
     static {
@@ -51,6 +57,11 @@ public class AssetsRegisterServiceImpl implements AssetsRegisterService{
 
     private void transString(AssetsRegisterVo assetsRegisterVo){
         assetsRegisterVo.setStatus(transMap.get(assetsRegisterVo.getStatus()));
+        if(assetsRegisterVo.getAssets() != null){
+            Assets assets = assetsRegisterVo.getAssets();
+            assets.setDepreMethod(transMap.get(assets.getDepreMethod()));
+            assets.setObtainMethod(transMap.get(assets.getObtainMethod()));
+        }
     }
 
     private List<AssetsRegisterVo> transList(List<AssetsRegister> list){
@@ -91,6 +102,7 @@ public class AssetsRegisterServiceImpl implements AssetsRegisterService{
         }else {
             assetsRegister.setCreater((String) CommonUtil.getCurrentUser().get("id"));
             assetsRegister.setCreateTime(new Date());
+            assetsRegister.setCode(CodeUtil.getCode("AR"));
         }
         return assetsRegister;
     }
@@ -104,13 +116,13 @@ public class AssetsRegisterServiceImpl implements AssetsRegisterService{
             assetsRegisterMapper.updateByPrimaryKeySelective(assetsRegister);
         }else {
             assetsRegister.setId(CodeUtil.getId());
-            assetsRegister.setCode(CodeUtil.getCode("AR"));
             assets.setId(CodeUtil.getId());
             assets.setState(DICT.BOOLEAN_STATE_FALSE);
             assetsRegister.setAssetsId(assets.getId());
             assetsMapper.insert(assets);
             assetsRegisterMapper.insert(assetsRegister);
         }
+        activityService.runStart(DICT.ASSETS_REGISTER_WORK_KEY,assetsRegister.getId(),new HashMap());
     }
 
     @Override
@@ -122,7 +134,48 @@ public class AssetsRegisterServiceImpl implements AssetsRegisterService{
 
     @Override
     public void lastApprove(String id) {
+        AssetsRegister assetsRegister = assetsRegisterMapper.selectByPrimaryKey(id);
+        assetsRegister.setStatus(DICT.STATUS_EXE);
+        Assets assets = assetsRegister.getAssets();
+        assets.setState(DICT.BOOLEAN_STATE_TRUE);
+        AssetsKind assetsKind = assets.getAssetsKind();
+        String creditAssetsAccId = assetsKind.getCreditAssetsAccId();
+        String debitAssetsAccId = assetsKind.getDebitAssetsAccId();
+        Voucher voucher = initVoucher(assetsRegister);
+        assetsRegisterMapper.updateByPrimaryKeySelective(assetsRegister);
+        assetsMapper.updateByPrimaryKeySelective(assets);
+        voucherService.generateVoucher(voucher,debitAssetsAccId,creditAssetsAccId);
+    }
 
+    /**
+     * 生成凭证实体
+     * @param assetsRegister
+     * @return
+     */
+    private Voucher initVoucher(AssetsRegister assetsRegister){
+        Assets assets = assetsRegister.getAssets();
+        Voucher voucher = CommonUtil.initVoucher(assetsRegister.getCreater());
+        //业务日期
+        voucher.setBizDate(new Date());
+        //业务id
+        voucher.setBizId(assetsRegister.getId());
+        //业务类型
+        voucher.setBizType(DICT.VOUCHER_BIZ_TYPE_ASSETS_REG);
+        //源单号
+        voucher.setBizCode(assetsRegister.getCode());
+        //交易类型
+        voucher.setDealType(DICT.VOUCHER_DEAL_TYPE_OTHER);
+        BigDecimal orival = assets.getOrival();
+        String num = assets.getNum();
+        //借方金额
+        voucher.setDebitTotal(orival.multiply(new BigDecimal(num)));
+        //贷方金额
+        voucher.setCreditTotal(orival.multiply(new BigDecimal(num)));
+        //审核人
+        voucher.setAuditer((String) CommonUtil.getCurrentUser().get("id"));
+        //备注
+        voucher.setMemo(assetsRegister.getMemo());
+        return voucher;
     }
 
     @Override
@@ -130,12 +183,19 @@ public class AssetsRegisterServiceImpl implements AssetsRegisterService{
         AssetsRegister assetsRegister = assetsRegisterMapper.selectByPrimaryKey(id);
         AssetsRegisterVo assetsRegisterVo = new AssetsRegisterVo();
         BeanUtil.copyProperties(assetsRegisterVo,assetsRegister);
+        transString(assetsRegisterVo);
         return assetsRegisterVo;
     }
 
     @Override
     public PageInfo<AssetsRegisterVo> findByCondition(AssetsRegisterVo assetsRegisterVo) {
-        return null;
+        CommonUtil.startPage(assetsRegisterVo);
+        List<AssetsRegister> assetsRegisterList = assetsRegisterMapper.findAllByCondition(assetsRegisterVo);
+        long pageTotal = CommonUtil.getPageTotal(assetsRegisterList);
+        List<AssetsRegisterVo> assetsRegisterVoList = transList(assetsRegisterList);
+        PageInfo<AssetsRegisterVo> assetsRegisterVoPageInfo = new PageInfo<>(assetsRegisterVoList);
+        assetsRegisterVoPageInfo.setTotal(pageTotal);
+        return assetsRegisterVoPageInfo;
     }
 
     @Override
@@ -158,7 +218,17 @@ public class AssetsRegisterServiceImpl implements AssetsRegisterService{
 
     @Override
     public PageInfo<AssetsRegisterVo> findCmtTaskList(AssetsRegisterVo assetsRegisterVo) {
-        return null;
+        List<String> ids = activityService.findCmtBizIds(DICT.ASSETS_PURCHASE_WORK_KEY);
+        if (CollectionUtils.isNotEmpty(ids)) {
+            CommonUtil.startPage(assetsRegisterVo);
+            List<AssetsRegister> assetsRegisters = assetsRegisterMapper.findByIds(ids);
+            long total = CommonUtil.getPageTotal(assetsRegisters);
+            List<AssetsRegisterVo> list = transList(assetsRegisters);
+            PageInfo<AssetsRegisterVo> assetsRegisterVoPageInfo = new PageInfo<>(list);
+            assetsRegisterVoPageInfo.setTotal(total);
+            return assetsRegisterVoPageInfo;
+        }
+        return new PageInfo<>(new ArrayList<AssetsRegisterVo>());
     }
 
     @Override
@@ -166,8 +236,7 @@ public class AssetsRegisterServiceImpl implements AssetsRegisterService{
         assetsRegisterVo.setCreater((String)CommonUtil.getCurrentUser().get("id"));
         CommonUtil.startPage(assetsRegisterVo);
         List<AssetsRegister> allCurrentUserTask = assetsRegisterMapper.findAllCurrentUserTask(assetsRegisterVo);
-        PageInfo<AssetsRegister> assetsRegisterPageInfo = new PageInfo<>(allCurrentUserTask);
-        long total = assetsRegisterPageInfo.getTotal();
+        long total = CommonUtil.getPageTotal(allCurrentUserTask);
         List<AssetsRegisterVo> assetsRegisterVoList = transList(allCurrentUserTask);
         PageInfo<AssetsRegisterVo> assetsRegisterVoPageInfo = new PageInfo<>(assetsRegisterVoList);
         assetsRegisterVoPageInfo.setTotal(total);

@@ -48,22 +48,7 @@
         </javaClientGenerator>
 
 
-        <table tableName="ASM_ASSETS_KIND" domainObjectName="AssetsKind"
-               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false"/>
         <table tableName="ASM_ASSETS" domainObjectName="Assets"
-               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false"/>
-        <table tableName="ASM_ASSETS_CHANGE" domainObjectName="AssetsChange"
-               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false"/>
-        <table tableName="ASM_ASSETS_DEPRECIATION" domainObjectName="AssetsDepreciation"
-               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false"/>
-        <table tableName="ASM_ASSETS_PURCHASE" domainObjectName="AssetsPurchase"
-               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false"/>
-        <table tableName="ASM_ASSETS_REGISTER" domainObjectName="AssetsRegister"
                enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false" selectByExampleQueryId="false"/>
     </context>

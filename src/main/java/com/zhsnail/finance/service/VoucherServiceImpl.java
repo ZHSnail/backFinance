@@ -70,6 +70,7 @@ public class VoucherServiceImpl implements VoucherService {
             accountTempMapper.deleteByVoucherId(voucher.getId());
         }else {
             voucher.setId(CodeUtil.getId());
+            voucher.setCode(CodeUtil.getVoucherCode());
             voucherMapper.insert(voucher);
         }
         updateAccountTemp(voucherVo.getAccountTempList(),voucher.getId());
@@ -137,15 +138,8 @@ public class VoucherServiceImpl implements VoucherService {
     public PageInfo<VoucherVo> findByCondition(VoucherVo voucherVo) {
         CommonUtil.startPage(voucherVo);
         List<Voucher> voucherList = voucherMapper.findAllByCondition(voucherVo);
-        PageInfo<Voucher> voucherPageInfo = new PageInfo<>(voucherList);
-        long total = voucherPageInfo.getTotal();
-        List<VoucherVo> voucherVoList = new ArrayList<>();
-        voucherList.forEach(voucher -> {
-            VoucherVo temp = new VoucherVo();
-            BeanUtil.copyProperties(temp,voucher);
-            transString(temp);
-            voucherVoList.add(temp);
-        });
+        long total = CommonUtil.getPageTotal(voucherList);
+        List<VoucherVo> voucherVoList = transList(voucherList);
         PageInfo<VoucherVo> voucherVoPageInfo = new PageInfo<>(voucherVoList);
         voucherVoPageInfo.setTotal(total);
         return voucherVoPageInfo;
@@ -232,17 +226,10 @@ public class VoucherServiceImpl implements VoucherService {
     public PageInfo<VoucherVo> findUnpostVoucher(VoucherVo voucherVo) {
         CommonUtil.startPage(voucherVo);
         List<Voucher> unPostVoucherList = voucherMapper.findUnpostVoucherList(voucherVo);
-        PageInfo<Voucher> voucherPageInfo = new PageInfo<>(unPostVoucherList);
-        long total = voucherPageInfo.getTotal();
-        List<VoucherVo> voucherVoList = new ArrayList<>();
-        unPostVoucherList.forEach(voucher -> {
-            VoucherVo temp = new VoucherVo();
-            BeanUtil.copyProperties(temp,voucher);
-            transString(temp);
-            voucherVoList.add(temp);
-        });
+        long total = CommonUtil.getPageTotal(unPostVoucherList);
+        List<VoucherVo> voucherVoList = transList(unPostVoucherList);
         PageInfo<VoucherVo> voucherVoPageInfo = new PageInfo<>(voucherVoList);
-        voucherPageInfo.setTotal(total);
+        voucherVoPageInfo.setTotal(total);
         return voucherVoPageInfo;
     }
 
@@ -251,42 +238,21 @@ public class VoucherServiceImpl implements VoucherService {
         voucherVo.setOriginator((String)CommonUtil.getCurrentUser().get("id"));
         CommonUtil.startPage(voucherVo);
         List<Voucher> allCurrentUserTask = voucherMapper.findAllCurrentUserTask(voucherVo);
-        PageInfo<Voucher> voucherPageInfo = new PageInfo<>(allCurrentUserTask);
-        long total = voucherPageInfo.getTotal();
-        List<VoucherVo> voucherVoList = new ArrayList<>();
-        allCurrentUserTask.forEach(voucher -> {
-            VoucherVo temp = new VoucherVo();
-            BeanUtil.copyProperties(temp,voucher);
-            transString(temp);
-            voucherVoList.add(temp);
-        });
+        long total = CommonUtil.getPageTotal(allCurrentUserTask);
+        List<VoucherVo> voucherVoList = transList(allCurrentUserTask);
         PageInfo<VoucherVo> voucherVoPageInfo = new PageInfo<>(voucherVoList);
-        voucherPageInfo.setTotal(total);
+        voucherVoPageInfo.setTotal(total);
         return voucherVoPageInfo;
     }
 
     @Override
     public PageInfo<VoucherVo> findCmtTaskList(VoucherVo voucherVo) {
-        Map currentUser = CommonUtil.getCurrentUser();
-        List<Role> roles = (List<Role>) currentUser.get("roles");
-        List<String> ids = new ArrayList<>();
-        for (Role role : roles){
-            List<String> bizIdList = activityService.findCmtTask(DICT.VOUCHER_MANUAL_WORK_KEY, role.getId());
-            ids.addAll(bizIdList);
-        }
-        ids = ids.stream().distinct().collect(Collectors.toList());
+        List<String> ids = activityService.findCmtBizIds(DICT.VOUCHER_MANUAL_WORK_KEY);
         if (CollectionUtils.isNotEmpty(ids)) {
             CommonUtil.startPage(voucherVo);
             List<Voucher> vouchers = voucherMapper.findByIds(ids);
-            PageInfo<Voucher> voucherPageInfo = new PageInfo<>(vouchers);
-            long total = voucherPageInfo.getTotal();
-            List<VoucherVo> list = new ArrayList<>();
-            vouchers.forEach(item->{
-                VoucherVo temp = new VoucherVo();
-                BeanUtil.copyProperties(temp,item);
-                transString(temp);
-                list.add(temp);
-            });
+            long total = CommonUtil.getPageTotal(vouchers);
+            List<VoucherVo> list = transList(vouchers);
             PageInfo<VoucherVo> voucherVoPageInfo = new PageInfo<>(list);
             voucherVoPageInfo.setTotal(total);
             return voucherVoPageInfo;
@@ -294,20 +260,28 @@ public class VoucherServiceImpl implements VoucherService {
         return new PageInfo<>(new ArrayList<VoucherVo>());
     }
 
-    @Override
-    public PageInfo<VoucherVo> findCashierList(VoucherVo voucherVo,String tickState) {
-        voucherVo.setTickState(tickState);
-        CommonUtil.startPage(voucherVo);
-        List<Voucher> untickVoucherList = voucherMapper.findCashierList(voucherVo);
-        PageInfo<Voucher> voucherPageInfo = new PageInfo<>(untickVoucherList);
-        long total = voucherPageInfo.getTotal();
+    /**
+     * 转换
+     * @param voucherList
+     * @return
+     */
+    private List<VoucherVo> transList(List<Voucher> voucherList){
         List<VoucherVo> list = new ArrayList<>();
-        untickVoucherList.forEach(item->{
+        voucherList.forEach(item->{
             VoucherVo temp = new VoucherVo();
             BeanUtil.copyProperties(temp,item);
             transString(temp);
             list.add(temp);
         });
+        return list;
+    }
+    @Override
+    public PageInfo<VoucherVo> findCashierList(VoucherVo voucherVo,String tickState) {
+        voucherVo.setTickState(tickState);
+        CommonUtil.startPage(voucherVo);
+        List<Voucher> untickVoucherList = voucherMapper.findCashierList(voucherVo);
+        long total = CommonUtil.getPageTotal(untickVoucherList);
+        List<VoucherVo> list = transList(untickVoucherList);
         PageInfo<VoucherVo> voucherVoPageInfo = new PageInfo<>(list);
         voucherVoPageInfo.setTotal(total);
         return voucherVoPageInfo;

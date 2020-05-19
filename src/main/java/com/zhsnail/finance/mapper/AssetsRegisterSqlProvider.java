@@ -121,6 +121,7 @@ public class AssetsRegisterSqlProvider {
                 sql.WHERE("status = #{status,jdbcType=VARCHAR}");
             }
         }
+        sql.WHERE("status in ( '" + DICT.STATUS_CMT+"' , '"+DICT.STATUS_EXE +"' )");
         sql.WHERE("creater = #{creater,jdbcType=VARCHAR}");
         sql.ORDER_BY("create_time desc");
         return sql.toString();

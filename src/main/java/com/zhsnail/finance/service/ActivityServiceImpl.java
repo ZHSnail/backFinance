@@ -7,6 +7,7 @@ import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.common.ThreadLocalVariables;
 import com.zhsnail.finance.entity.ActivitiDeployment;
 import com.zhsnail.finance.entity.ActivitiModel;
+import com.zhsnail.finance.entity.Role;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
 import com.zhsnail.finance.mapper.ActivitiDeploymentMapper;
 import com.zhsnail.finance.mapper.ActivitiModelMapper;
@@ -852,5 +853,16 @@ public class ActivityServiceImpl implements ActivityService {
         }
     }
 
-
+    @Override
+    public List<String> findCmtBizIds(String workkey) {
+        Map currentUser = CommonUtil.getCurrentUser();
+        List<Role> roles = (List<Role>) currentUser.get("roles");
+        List<String> ids = new ArrayList<>();
+        for (Role role : roles){
+            List<String> bizIdList = findCmtTask(workkey,role.getId());
+            ids.addAll(bizIdList);
+        }
+        ids = ids.stream().distinct().collect(Collectors.toList());
+        return ids;
+    }
 }

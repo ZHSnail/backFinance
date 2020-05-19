@@ -1,9 +1,13 @@
-package com.zhsnail.finance.entity;
+package com.zhsnail.finance.vo;
+
+import com.zhsnail.finance.entity.Assets;
+import com.zhsnail.finance.entity.PageEntity;
 
 import java.util.Date;
 import java.util.List;
 
-public class AssetsPurchase {
+public class AssetsPurchaseVo extends PageEntity {
+
     private String id;
 
     private Date createTime;
@@ -21,17 +25,29 @@ public class AssetsPurchase {
     private Date reqTime;
     //采购方法
     private String purchaseMethod;
+    //采购方法名称
+    private String purchaseMethodName;
+
+    private String createrName;
 
     private String memo;
 
     private List<Assets> assetsList;
 
-    public List<Assets> getAssetsList() {
-        return assetsList;
+    public String getCreaterName() {
+        return createrName;
     }
 
-    public void setAssetsList(List<Assets> assetsList) {
-        this.assetsList = assetsList;
+    public void setCreaterName(String createrName) {
+        this.createrName = createrName;
+    }
+
+    public String getPurchaseMethodName() {
+        return purchaseMethodName;
+    }
+
+    public void setPurchaseMethodName(String purchaseMethodName) {
+        this.purchaseMethodName = purchaseMethodName;
     }
 
     public String getId() {
@@ -39,7 +55,7 @@ public class AssetsPurchase {
     }
 
     public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+        this.id = id;
     }
 
     public Date getCreateTime() {
@@ -55,7 +71,7 @@ public class AssetsPurchase {
     }
 
     public void setCreater(String creater) {
-        this.creater = creater == null ? null : creater.trim();
+        this.creater = creater;
     }
 
     public String getCode() {
@@ -63,7 +79,7 @@ public class AssetsPurchase {
     }
 
     public void setCode(String code) {
-        this.code = code == null ? null : code.trim();
+        this.code = code;
     }
 
     public String getStatus() {
@@ -71,7 +87,7 @@ public class AssetsPurchase {
     }
 
     public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
+        this.status = status;
     }
 
     public Date getUpdateTime() {
@@ -87,7 +103,7 @@ public class AssetsPurchase {
     }
 
     public void setUpdater(String updater) {
-        this.updater = updater == null ? null : updater.trim();
+        this.updater = updater;
     }
 
     public Date getReqTime() {
@@ -103,7 +119,7 @@ public class AssetsPurchase {
     }
 
     public void setPurchaseMethod(String purchaseMethod) {
-        this.purchaseMethod = purchaseMethod == null ? null : purchaseMethod.trim();
+        this.purchaseMethod = purchaseMethod;
     }
 
     public String getMemo() {
@@ -111,6 +127,14 @@ public class AssetsPurchase {
     }
 
     public void setMemo(String memo) {
-        this.memo = memo == null ? null : memo.trim();
+        this.memo = memo;
+    }
+
+    public List<Assets> getAssetsList() {
+        return assetsList;
+    }
+
+    public void setAssetsList(List<Assets> assetsList) {
+        this.assetsList = assetsList;
     }
 }

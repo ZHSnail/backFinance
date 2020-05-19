@@ -2,6 +2,7 @@ package com.zhsnail.finance.util;
 
 
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
@@ -305,5 +306,16 @@ public class CommonUtil {
         }catch (Exception e){
             throw new BaseRuningTimeException(e);
         }
+    }
+
+    /**
+     * 获取当前页面总数
+     * @param list
+     * @param <T>
+     * @return
+     */
+    public static <T> long getPageTotal(List<T> list){
+        PageInfo<T> pageInfo = new PageInfo<>(list);
+        return pageInfo.getTotal();
     }
 }

@@ -8,6 +8,30 @@ import com.zhsnail.finance.entity.AssetsRegister;
 public interface DICT {
     String SYS_ROLE_NAME = "老师";
     /**
+     * 固定资产采购方式--公开招标
+     */
+    String ASSETS_PURCHASE_METHOD_OPEN_TENDER = "OPEN_TENDER";
+    /**
+     * 固定资产采购方式--定点采购
+     */
+    String ASSETS_PURCHASE_METHOD_FIXED_PURCHASE = "FIXED_PURCHASE";
+    /**
+     * 固定资产采购方式--院内招标
+     */
+    String ASSETS_PURCHASE_METHOD_HOSPITAL_TENDER = "HOSPITAL_TENDER";
+    /**
+     * 固定资产采购方式--协议供货
+     */
+    String ASSETS_PURCHASE_METHOD_PROTOCOL_SUPPLY = "PROTOCOL_SUPPLY";
+    /**
+     * 固定资产采购方式--网上竞价
+     */
+    String ASSETS_PURCHASE_METHOD_ONLINE_AUCTION = "ONLINE_AUCTION";
+    /**
+     * 固定资产采购方式--网上商城
+     */
+    String ASSETS_PURCHASE_METHOD_E_SHOP = "E_SHOP";
+    /**
      * 固定资产取得方式--采购
      */
     String ASSETS_OBTAIN_METHOD_PURCHASE = "PURCHASE";
@@ -192,7 +216,10 @@ public interface DICT {
      * 固定资产登记申请
      */
     String ASSETS_REGISTER_WORK_KEY="assetsRegisterReq";
-
+    /**
+     * 固定资产登记申请
+     */
+    String ASSETS_PURCHASE_WORK_KEY="assetsPurchaseReq";
     /**
      * 申请单状态 -- 退回
      */

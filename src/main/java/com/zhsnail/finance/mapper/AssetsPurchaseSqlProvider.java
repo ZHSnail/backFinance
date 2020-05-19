@@ -1,6 +1,9 @@
 package com.zhsnail.finance.mapper;
 
+import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.entity.AssetsPurchase;
+import com.zhsnail.finance.vo.AssetsPurchaseVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 
 public class AssetsPurchaseSqlProvider {
@@ -94,6 +97,59 @@ public class AssetsPurchaseSqlProvider {
         
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
+        return sql.toString();
+    }
+
+    public String findTaskListSql(AssetsPurchaseVo assetsPurchaseVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("ASM_ASSETS_PURCHASE");
+        if (assetsPurchaseVo!=null){
+            if (StringUtils.isNotBlank(assetsPurchaseVo.getCreater())){
+                sql.WHERE("creater = #{creater,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(assetsPurchaseVo.getCode())){
+                sql.WHERE("code = #{code,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("status in ( '"+ DICT.STATUS_DRAFT+"' , '"
+                +DICT.STATUS_BACK+"' , '" +
+                DICT.STATUS_CMT+"' , '"+DICT.STATUS_EXE
+                +"' )");
+        return sql.toString();
+    }
+
+    public String selectAllConditionSql(AssetsPurchaseVo assetsPurchaseVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("ASM_ASSETS_PURCHASE");
+        if (assetsPurchaseVo!=null){
+            if (StringUtils.isNotBlank(assetsPurchaseVo.getCode())){
+                sql.WHERE("code = #{code,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("status in ( '" + DICT.STATUS_FINSH+"' , '" +
+                DICT.STATUS_CMT+"' , '"+DICT.STATUS_EXE
+                +"' )");
+        sql.ORDER_BY("create_time desc");
+        return sql.toString();
+    }
+
+    public String selectAllTaskConditionSql(AssetsPurchaseVo assetsPurchaseVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("ASM_ASSETS_PURCHASE");
+        if (assetsPurchaseVo!=null){
+            if (StringUtils.isNotBlank(assetsPurchaseVo.getCode())){
+                sql.WHERE("code = #{code,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(assetsPurchaseVo.getStatus())){
+                sql.WHERE("status = #{status,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("status in ( '" + DICT.STATUS_CMT+"' , '"+DICT.STATUS_EXE +"' )");
+        sql.WHERE("creater = #{creater,jdbcType=VARCHAR}");
+        sql.ORDER_BY("create_time desc");
         return sql.toString();
     }
 }

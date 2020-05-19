@@ -178,14 +178,7 @@ public class PayNoticeServiceImpl implements PayNoticeService {
 
     @Override
     public PageInfo<PayNotice> findCmtTaskList(PageEntity pageEntity) {
-        Map currentUser = CommonUtil.getCurrentUser();
-        List<Role> roles = (List<Role>) currentUser.get("roles");
-        List<String> ids = new ArrayList<>();
-        for (Role role : roles){
-            List<String> bizIdList = activityService.findCmtTask(DICT.PAY_NOTICE_WORK_KEY, role.getId());
-            ids.addAll(bizIdList);
-        }
-        ids = ids.stream().distinct().collect(Collectors.toList());
+        List<String> ids = activityService.findCmtBizIds(DICT.PAY_NOTICE_WORK_KEY);
         if (CollectionUtils.isNotEmpty(ids)){
             CommonUtil.startPage(pageEntity);
             List<PayNotice> payNoticeList = payNoticeMapper.findByIds(ids);

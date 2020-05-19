@@ -283,8 +283,10 @@ public class AccountBalanceSqlProvider {
                 sb.append(",");
             }
             if (accountBalanceVo.getAccountPeriod() != null) {
-                sb.append("account_period = "+accountBalanceVo.getAccountPeriod());
+                sb.append("account_period = '"+accountBalanceVo.getAccountPeriod()+"'");
+                sb.append(",");
             }
+            sb.replace(sb.lastIndexOf(","),sb.length(),"");
             sb.append(" WHERE account_id = '"+accountBalanceVo.getAccountId()+"'");
             sb.append(";");
         }

@@ -54,7 +54,7 @@ public class AssetsRegisterController {
         return new Result(taskMapList);
     }
 
-    @GetMapping("/allTaskList")
+    @GetMapping("/allAssetsRegisterTaskList")
     public Result findTaskListBycontion(@RequestParam String params){
         AssetsRegisterVo assetsRegisterVo = new AssetsRegisterVo();
         if (StringUtils.isNotBlank(params)) {

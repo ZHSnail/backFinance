@@ -41,6 +41,19 @@ public class Assets {
     //采购订单id
     private String purchaseId;
 
+    private AssetsKind assetsKind;
+
+    //资产变动单id
+    private String changeId;
+
+    public AssetsKind getAssetsKind() {
+        return assetsKind;
+    }
+
+    public void setAssetsKind(AssetsKind assetsKind) {
+        this.assetsKind = assetsKind;
+    }
+
     public String getId() {
         return id;
     }
@@ -183,5 +196,13 @@ public class Assets {
 
     public void setPurchaseId(String purchaseId) {
         this.purchaseId = purchaseId == null ? null : purchaseId.trim();
+    }
+
+    public String getChangeId() {
+        return changeId;
+    }
+
+    public void setChangeId(String changeId) {
+        this.changeId = changeId == null ? null : changeId.trim();
     }
 }

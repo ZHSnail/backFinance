@@ -135,4 +135,11 @@ public interface ActivityService {
      * @param businessKey 业务id
      */
     void deleteFlow(String workKey,String businessKey);
+
+    /**
+     * 根据工作流key查询当前可以审核的业务id
+     * @param workkey
+     * @return
+     */
+    List<String> findCmtBizIds(String workkey);
 }

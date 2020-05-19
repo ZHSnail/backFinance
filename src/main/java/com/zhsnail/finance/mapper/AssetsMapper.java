@@ -1,15 +1,11 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.Assets;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
 import org.apache.ibatis.type.JdbcType;
+
+import java.util.List;
 
 public interface AssetsMapper {
     @Delete({
@@ -26,7 +22,8 @@ public interface AssetsMapper {
         "norms, orival, salvage, ",
         "loss_report_time, clean_cost, ",
         "num, obtain_method, ",
-        "state, purchase_id)",
+        "state, purchase_id, ",
+        "change_id)",
         "values (#{id,jdbcType=VARCHAR}, #{assetsKindId,jdbcType=VARCHAR}, ",
         "#{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{storageTime,jdbcType=TIMESTAMP}, ",
         "#{depreMethod,jdbcType=VARCHAR}, #{lossReport,jdbcType=VARCHAR}, ",
@@ -34,7 +31,8 @@ public interface AssetsMapper {
         "#{norms,jdbcType=VARCHAR}, #{orival,jdbcType=DECIMAL}, #{salvage,jdbcType=DECIMAL}, ",
         "#{lossReportTime,jdbcType=TIMESTAMP}, #{cleanCost,jdbcType=DECIMAL}, ",
         "#{num,jdbcType=VARCHAR}, #{obtainMethod,jdbcType=VARCHAR}, ",
-        "#{state,jdbcType=VARCHAR}, #{purchaseId,jdbcType=VARCHAR})"
+        "#{state,jdbcType=VARCHAR}, #{purchaseId,jdbcType=VARCHAR}, ",
+        "#{changeId,jdbcType=VARCHAR})"
     })
     int insert(Assets record);
 
@@ -45,7 +43,7 @@ public interface AssetsMapper {
         "select",
         "id, assets_kind_id, name, code, storage_time, depre_method, loss_report, useful_life, ",
         "storage_place, norms, orival, salvage, loss_report_time, clean_cost, num, obtain_method, ",
-        "state, purchase_id",
+        "state, purchase_id, change_id",
         "from ASM_ASSETS",
         "where id = #{id,jdbcType=VARCHAR}"
     })
@@ -67,7 +65,9 @@ public interface AssetsMapper {
         @Result(column="num", property="num", jdbcType=JdbcType.VARCHAR),
         @Result(column="obtain_method", property="obtainMethod", jdbcType=JdbcType.VARCHAR),
         @Result(column="state", property="state", jdbcType=JdbcType.VARCHAR),
-        @Result(column="purchase_id", property="purchaseId", jdbcType=JdbcType.VARCHAR)
+        @Result(column="purchase_id", property="purchaseId", jdbcType=JdbcType.VARCHAR),
+        @Result(column="change_id", property="changeId", jdbcType=JdbcType.VARCHAR),
+        @Result(column="assets_kind_id",property="assetsKind",one=@One(select="com.zhsnail.finance.mapper.AssetsKindMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
     })
     Assets selectByPrimaryKey(String id);
 
@@ -92,8 +92,49 @@ public interface AssetsMapper {
           "num = #{num,jdbcType=VARCHAR},",
           "obtain_method = #{obtainMethod,jdbcType=VARCHAR},",
           "state = #{state,jdbcType=VARCHAR},",
-          "purchase_id = #{purchaseId,jdbcType=VARCHAR}",
+          "purchase_id = #{purchaseId,jdbcType=VARCHAR},",
+          "change_id = #{changeId,jdbcType=VARCHAR}",
         "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(Assets record);
+
+    @InsertProvider(type=AssetsSqlProvider.class, method="batchinsertSql")
+    void batchInsert(List<Assets> assets);
+
+    @UpdateProvider(type=AssetsSqlProvider.class, method="batchUpdateSql")
+    void batchUpdate(List<Assets> assets);
+
+    @Select({
+            "select * from ASM_ASSETS",
+            "where purchase_id = #{purchaseId,jdbcType=VARCHAR}"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="assets_kind_id", property="assetsKindId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="storage_time", property="storageTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="depre_method", property="depreMethod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="loss_report", property="lossReport", jdbcType=JdbcType.VARCHAR),
+            @Result(column="useful_life", property="usefulLife", jdbcType=JdbcType.VARCHAR),
+            @Result(column="storage_place", property="storagePlace", jdbcType=JdbcType.VARCHAR),
+            @Result(column="norms", property="norms", jdbcType=JdbcType.VARCHAR),
+            @Result(column="orival", property="orival", jdbcType=JdbcType.DECIMAL),
+            @Result(column="salvage", property="salvage", jdbcType=JdbcType.DECIMAL),
+            @Result(column="loss_report_time", property="lossReportTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="clean_cost", property="cleanCost", jdbcType=JdbcType.DECIMAL),
+            @Result(column="num", property="num", jdbcType=JdbcType.VARCHAR),
+            @Result(column="obtain_method", property="obtainMethod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="state", property="state", jdbcType=JdbcType.VARCHAR),
+            @Result(column="purchase_id", property="purchaseId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="change_id", property="changeId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="assets_kind_id",property="assetsKind",one=@One(select="com.zhsnail.finance.mapper.AssetsKindMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
+    })
+    List<Assets> findByPurchaseId(String purchaseId);
+
+    @Delete({
+            "delete from ASM_ASSETS",
+            "where purchase_id = #{purchaseId,jdbcType=VARCHAR}"
+    })
+    void deleteByPurchaseId(String purchaseId);
 }

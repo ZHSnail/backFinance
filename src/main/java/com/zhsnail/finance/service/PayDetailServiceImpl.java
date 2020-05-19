@@ -107,6 +107,8 @@ public class PayDetailServiceImpl implements  PayDetailService {
         voucher.setDebitTotal(payDetail.getAmount());
         //贷方金额
         voucher.setCreditTotal(payDetail.getAmount());
+        //审核人
+        voucher.setAuditer(originator);
         //备注
         voucher.setMemo(memo);
         return voucher;
