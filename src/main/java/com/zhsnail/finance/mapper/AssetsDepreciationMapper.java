@@ -1,15 +1,14 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.AssetsDepreciation;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import com.zhsnail.finance.entity.AssetsDepreciation;
+import com.zhsnail.finance.vo.AssetsDepreciationVo;
+import com.zhsnail.finance.vo.AssetsDepreciationVo;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
 import org.apache.ibatis.type.JdbcType;
+
+import java.util.List;
 
 public interface AssetsDepreciationMapper {
     @Delete({
@@ -53,7 +52,8 @@ public interface AssetsDepreciationMapper {
         @Result(column="assets_id", property="assetsId", jdbcType=JdbcType.VARCHAR),
         @Result(column="depre_amount", property="depreAmount", jdbcType=JdbcType.DECIMAL),
         @Result(column="depre_time", property="depreTime", jdbcType=JdbcType.TIMESTAMP),
-        @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR)
+        @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+        @Result(column="assets_id",property="assets",one=@One(select="com.zhsnail.finance.mapper.AssetsMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
     })
     AssetsDepreciation selectByPrimaryKey(String id);
 
@@ -75,4 +75,81 @@ public interface AssetsDepreciationMapper {
         "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(AssetsDepreciation record);
+    
+    @SelectProvider(type=AssetsDepreciationSqlProvider.class, method="selectAllConditionSql")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="creater", property="creater", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="status", property="status", jdbcType=JdbcType.VARCHAR),
+            @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="updater", property="updater", jdbcType=JdbcType.VARCHAR),
+            @Result(column="assets_id", property="assetsId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="depre_amount", property="depreAmount", jdbcType=JdbcType.DECIMAL),
+            @Result(column="depre_time", property="depreTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="assets_id",property="assets",one=@One(select="com.zhsnail.finance.mapper.AssetsMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
+    })
+    List<AssetsDepreciation> findAllByCondition(AssetsDepreciationVo assetsRegisterVo);
+
+    @SelectProvider(type=AssetsDepreciationSqlProvider.class, method="selectAllTaskConditionSql")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="creater", property="creater", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="status", property="status", jdbcType=JdbcType.VARCHAR),
+            @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="updater", property="updater", jdbcType=JdbcType.VARCHAR),
+            @Result(column="assets_id", property="assetsId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="depre_amount", property="depreAmount", jdbcType=JdbcType.DECIMAL),
+            @Result(column="depre_time", property="depreTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="assets_id",property="assets",one=@One(select="com.zhsnail.finance.mapper.AssetsMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
+    })
+    List<AssetsDepreciation> findAllCurrentUserTask(AssetsDepreciationVo assetsRegisterVo);
+
+    @SelectProvider(type=AssetsDepreciationSqlProvider.class, method="findTaskListSql")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="creater", property="creater", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="status", property="status", jdbcType=JdbcType.VARCHAR),
+            @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="updater", property="updater", jdbcType=JdbcType.VARCHAR),
+            @Result(column="assets_id", property="assetsId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="depre_amount", property="depreAmount", jdbcType=JdbcType.DECIMAL),
+            @Result(column="depre_time", property="depreTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="assets_id",property="assets",one=@One(select="com.zhsnail.finance.mapper.AssetsMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
+    })
+    List<AssetsDepreciation> findTaskList(AssetsDepreciationVo assetsRegisterVo);
+
+    @Select({
+            "<script>",
+            "select * ",
+            "from ASM_ASSETS_DEPRECIATION",
+            "where id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="creater", property="creater", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="status", property="status", jdbcType=JdbcType.VARCHAR),
+            @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="updater", property="updater", jdbcType=JdbcType.VARCHAR),
+            @Result(column="assets_id", property="assetsId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="depre_amount", property="depreAmount", jdbcType=JdbcType.DECIMAL),
+            @Result(column="depre_time", property="depreTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="assets_id",property="assets",one=@One(select="com.zhsnail.finance.mapper.AssetsMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
+    })
+    List<AssetsDepreciation> findByIds(@Param("ids") List<String> ids);
 }

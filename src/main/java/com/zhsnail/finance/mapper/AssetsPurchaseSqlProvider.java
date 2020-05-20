@@ -52,6 +52,18 @@ public class AssetsPurchaseSqlProvider {
             sql.VALUES("memo", "#{memo,jdbcType=VARCHAR}");
         }
         
+        if (record.getTotalAmt() != null) {
+            sql.VALUES("total_amt", "#{totalAmt,jdbcType=DECIMAL}");
+        }
+        
+        if (record.getDebitAccountId() != null) {
+            sql.VALUES("debit_account_id", "#{debitAccountId,jdbcType=VARCHAR}");
+        }
+        
+        if (record.getCreditAccountId() != null) {
+            sql.VALUES("credit_account_id", "#{creditAccountId,jdbcType=VARCHAR}");
+        }
+        
         return sql.toString();
     }
 
@@ -95,11 +107,22 @@ public class AssetsPurchaseSqlProvider {
             sql.SET("memo = #{memo,jdbcType=VARCHAR}");
         }
         
+        if (record.getTotalAmt() != null) {
+            sql.SET("total_amt = #{totalAmt,jdbcType=DECIMAL}");
+        }
+        
+        if (record.getDebitAccountId() != null) {
+            sql.SET("debit_account_id = #{debitAccountId,jdbcType=VARCHAR}");
+        }
+        
+        if (record.getCreditAccountId() != null) {
+            sql.SET("credit_account_id = #{creditAccountId,jdbcType=VARCHAR}");
+        }
+        
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
         return sql.toString();
     }
-
     public String findTaskListSql(AssetsPurchaseVo assetsPurchaseVo){
         SQL sql = new SQL();
         sql.SELECT("*");

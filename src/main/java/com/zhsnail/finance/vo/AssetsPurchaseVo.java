@@ -3,6 +3,7 @@ package com.zhsnail.finance.vo;
 import com.zhsnail.finance.entity.Assets;
 import com.zhsnail.finance.entity.PageEntity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +34,57 @@ public class AssetsPurchaseVo extends PageEntity {
     private String memo;
 
     private List<Assets> assetsList;
+
+    //单据总金额
+    private BigDecimal totalAmt;
+    //借方会计科目
+    private String debitAccountId;
+    //贷方会计科目
+    private String creditAccountId;
+    //借方会计科目
+    private String debitAccountName;
+    //贷方会计科目
+    private String creditAccountName;
+
+    public BigDecimal getTotalAmt() {
+        return totalAmt;
+    }
+
+    public void setTotalAmt(BigDecimal totalAmt) {
+        this.totalAmt = totalAmt;
+    }
+
+    public String getDebitAccountId() {
+        return debitAccountId;
+    }
+
+    public void setDebitAccountId(String debitAccountId) {
+        this.debitAccountId = debitAccountId;
+    }
+
+    public String getCreditAccountId() {
+        return creditAccountId;
+    }
+
+    public void setCreditAccountId(String creditAccountId) {
+        this.creditAccountId = creditAccountId;
+    }
+
+    public String getDebitAccountName() {
+        return debitAccountName;
+    }
+
+    public void setDebitAccountName(String debitAccountName) {
+        this.debitAccountName = debitAccountName;
+    }
+
+    public String getCreditAccountName() {
+        return creditAccountName;
+    }
+
+    public void setCreditAccountName(String creditAccountName) {
+        this.creditAccountName = creditAccountName;
+    }
 
     public String getCreaterName() {
         return createrName;

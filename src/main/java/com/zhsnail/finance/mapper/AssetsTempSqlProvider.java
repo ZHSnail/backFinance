@@ -1,24 +1,18 @@
 package com.zhsnail.finance.mapper;
 
-import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.entity.Assets;
-import com.zhsnail.finance.entity.Assets;
-import com.zhsnail.finance.vo.AccountBalanceVo;
-import com.zhsnail.finance.vo.AssetsVo;
-import org.apache.commons.lang3.StringUtils;
+import com.zhsnail.finance.entity.AssetsTemp;
 import org.apache.ibatis.jdbc.SQL;
 
-import java.sql.Timestamp;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
-public class AssetsSqlProvider {
+public class AssetsTempSqlProvider {
 
-    public String insertSelective(Assets record) {
+    public String insertSelective(AssetsTemp record) {
         SQL sql = new SQL();
-        sql.INSERT_INTO("ASM_ASSETS");
+        sql.INSERT_INTO("ASM_ASSETS_TEMP");
         
         if (record.getId() != null) {
             sql.VALUES("id", "#{id,jdbcType=VARCHAR}");
@@ -99,9 +93,9 @@ public class AssetsSqlProvider {
         return sql.toString();
     }
 
-    public String updateByPrimaryKeySelective(Assets record) {
+    public String updateByPrimaryKeySelective(AssetsTemp record) {
         SQL sql = new SQL();
-        sql.UPDATE("ASM_ASSETS");
+        sql.UPDATE("ASM_ASSETS_TEMP");
         
         if (record.getAssetsKindId() != null) {
             sql.SET("assets_kind_id = #{assetsKindId,jdbcType=VARCHAR}");
@@ -180,10 +174,10 @@ public class AssetsSqlProvider {
         return sql.toString();
     }
 
-    public String batchinsertSql(Map<String, List<Assets>> map ){
-        List<Assets> assetss = map.get("list");
+    public String batchinsertSql(Map<String, List<AssetsTemp>> map ){
+        List<AssetsTemp> assetsTempList = map.get("list");
         StringBuilder sb = new StringBuilder();
-        sb.append("INSERT INTO ASM_ASSETS ");
+        sb.append("INSERT INTO ASM_ASSETS_TEMP ");
         sb.append("(id,assets_kind_id,name,code,storage_time,depre_method," +
                 "loss_report,useful_life,storage_place,norms,orival,salvage," +
                 "loss_report_time,clean_cost,num,obtain_method,state,purchase_id,change_id) ");
@@ -194,131 +188,12 @@ public class AssetsSqlProvider {
                 "#'{'list[{0}].norms},#'{'list[{0}].orival},#'{'list[{0}].salvage},#'{'list[{0}].lossReportTime}," +
                 "#'{'list[{0}].cleanCost},#'{'list[{0}].num},#'{'list[{0}].obtainMethod},#'{'list[{0}].state}," +
                 "#'{'list[{0}].purchaseId},#'{'list[{0}].changeId})");
-        for (int i = 0; i < assetss.size(); i++) {
+        for (int i = 0; i < assetsTempList.size(); i++) {
             sb.append(mf.format(new Object[]{i}));
-            if (i < assetss.size() - 1) {
+            if (i < assetsTempList.size() - 1) {
                 sb.append(",");
             }
         }
         return sb.toString();
-    }
-
-    public String batchUpdateSql(Map<String, List<Assets>> map ){
-        List<Assets> assetsList = map.get("list");
-        StringBuilder sb = new StringBuilder();
-        //转换时间格式
-        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for (int i = 0;i<assetsList.size();i++){
-            Assets assets = assetsList.get(i);
-            sb.append("UPDATE ASM_ASSETS SET ");
-            if (assets.getAssetsKindId() != null) {
-                sb.append("assets_kind_id = '"+assets.getAssetsKindId()+"'");
-                sb.append(",");
-            }
-
-            if (assets.getName() != null) {
-                sb.append("name = '"+assets.getName()+"'");
-                sb.append(",");
-            }
-
-            if (assets.getCode() != null) {
-                sb.append("code = '"+assets.getCode()+"'");
-                sb.append(",");
-            }
-
-            if (assets.getStorageTime() != null) {
-                Timestamp timestamp = Timestamp.valueOf(simpleDate.format(assets.getStorageTime()));
-                sb.append("storage_time = '"+timestamp+"'");
-                sb.append(",");
-            }
-
-            if (assets.getDepreMethod() != null) {
-                sb.append("depre_method = '"+assets.getDepreMethod()+"'");
-                sb.append(",");
-            }
-
-            if (assets.getLossReport() != null) {
-                sb.append("loss_report = '"+assets.getLossReport()+"'");
-                sb.append(",");
-            }
-
-            if (assets.getUsefulLife() != null) {
-                sb.append("useful_life = '"+assets.getUsefulLife()+"'");
-                sb.append(",");
-            }
-
-            if (assets.getStoragePlace() != null) {
-                sb.append("storage_place = '"+assets.getStoragePlace()+"'");
-                sb.append(",");
-            }
-
-            if (assets.getNorms() != null) {
-                sb.append("norms = '"+assets.getNorms()+"'");
-                sb.append(",");
-            }
-
-            if (assets.getOrival() != null) {
-                sb.append("orival = "+assets.getOrival() );
-                sb.append(",");
-            }
-
-            if (assets.getSalvage() != null) {
-                sb.append("salvage = "+assets.getSalvage());
-                sb.append(",");
-            }
-
-            if (assets.getLossReportTime() != null) {
-                Timestamp timestamp = Timestamp.valueOf(simpleDate.format(assets.getLossReportTime()));
-                sb.append("loss_report_time = '"+timestamp+"'");
-                sb.append(",");
-            }
-
-            if (assets.getCleanCost() != null) {
-                sb.append("clean_cost = "+assets.getCleanCost());
-                sb.append(",");
-            }
-
-            if (assets.getNum() != null) {
-                sb.append("num = '"+assets.getNum()+"'");
-                sb.append(",");
-            }
-
-            if (assets.getObtainMethod() != null) {
-                sb.append("obtain_method = '"+assets.getObtainMethod()+"'");
-                sb.append(",");
-            }
-
-            if (assets.getState() != null) {
-                sb.append("state = '"+assets.getState()+"'");
-                sb.append(",");
-            }
-
-            if (assets.getChangeId() != null) {
-                sb.append("change_id = '"+assets.getChangeId()+"'");
-                sb.append(",");
-            }
-            ;
-            sb.replace(sb.lastIndexOf(","),sb.length(),"");
-            sb.append(" WHERE id = '"+assets.getId()+"'");
-            sb.append(";");
-        }
-        return sb.toString();
-    }
-
-    public String selectAllConditionSql(AssetsVo assetsVo){
-        SQL sql = new SQL();
-        sql.SELECT("*");
-        sql.FROM("ASM_ASSETS");
-        if (assetsVo!=null){
-            if (StringUtils.isNotBlank(assetsVo.getCode())){
-                sql.WHERE("code = #{code,jdbcType=VARCHAR}");
-
-            }
-            if (StringUtils.isNotBlank(assetsVo.getName())){
-                sql.WHERE("name like concat('%', #{name,jdbcType=VARCHAR},'%')");
-            }
-        }
-        sql.WHERE("state = '"+DICT.BOOLEAN_STATE_TRUE+"'");
-        return sql.toString();
     }
 }

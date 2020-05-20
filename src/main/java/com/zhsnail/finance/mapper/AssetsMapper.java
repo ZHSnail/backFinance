@@ -1,6 +1,7 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.Assets;
+import com.zhsnail.finance.vo.AssetsVo;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
 import org.apache.ibatis.type.JdbcType;
@@ -137,4 +138,89 @@ public interface AssetsMapper {
             "where purchase_id = #{purchaseId,jdbcType=VARCHAR}"
     })
     void deleteByPurchaseId(String purchaseId);
+
+    @Select({
+            "select",
+            "id, assets_kind_id, name, code, storage_time, depre_method, loss_report, useful_life, ",
+            "storage_place, norms, orival, salvage, loss_report_time, clean_cost, num, obtain_method, ",
+            "state, purchase_id, change_id",
+            "from ASM_ASSETS",
+            "where state = 'FALSE' and purchase_id != ' '"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="assets_kind_id", property="assetsKindId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="storage_time", property="storageTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="depre_method", property="depreMethod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="loss_report", property="lossReport", jdbcType=JdbcType.VARCHAR),
+            @Result(column="useful_life", property="usefulLife", jdbcType=JdbcType.VARCHAR),
+            @Result(column="storage_place", property="storagePlace", jdbcType=JdbcType.VARCHAR),
+            @Result(column="norms", property="norms", jdbcType=JdbcType.VARCHAR),
+            @Result(column="orival", property="orival", jdbcType=JdbcType.DECIMAL),
+            @Result(column="salvage", property="salvage", jdbcType=JdbcType.DECIMAL),
+            @Result(column="loss_report_time", property="lossReportTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="clean_cost", property="cleanCost", jdbcType=JdbcType.DECIMAL),
+            @Result(column="num", property="num", jdbcType=JdbcType.VARCHAR),
+            @Result(column="obtain_method", property="obtainMethod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="state", property="state", jdbcType=JdbcType.VARCHAR),
+            @Result(column="purchase_id", property="purchaseId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="change_id", property="changeId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="assets_kind_id",property="assetsKind",one=@One(select="com.zhsnail.finance.mapper.AssetsKindMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
+    })
+    List<Assets> findPurchaseAssetsList();
+
+    @SelectProvider(type=AssetsSqlProvider.class, method="selectAllConditionSql")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="assets_kind_id", property="assetsKindId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="storage_time", property="storageTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="depre_method", property="depreMethod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="loss_report", property="lossReport", jdbcType=JdbcType.VARCHAR),
+            @Result(column="useful_life", property="usefulLife", jdbcType=JdbcType.VARCHAR),
+            @Result(column="storage_place", property="storagePlace", jdbcType=JdbcType.VARCHAR),
+            @Result(column="norms", property="norms", jdbcType=JdbcType.VARCHAR),
+            @Result(column="orival", property="orival", jdbcType=JdbcType.DECIMAL),
+            @Result(column="salvage", property="salvage", jdbcType=JdbcType.DECIMAL),
+            @Result(column="loss_report_time", property="lossReportTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="clean_cost", property="cleanCost", jdbcType=JdbcType.DECIMAL),
+            @Result(column="num", property="num", jdbcType=JdbcType.VARCHAR),
+            @Result(column="obtain_method", property="obtainMethod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="state", property="state", jdbcType=JdbcType.VARCHAR),
+            @Result(column="purchase_id", property="purchaseId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="change_id", property="changeId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="assets_kind_id",property="assetsKind",one=@One(select="com.zhsnail.finance.mapper.AssetsKindMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
+    })
+    List<Assets> findAllByCondition(AssetsVo assetsVo);
+
+    @Select({
+            "select * from ASM_ASSETS",
+            "where change_id = #{changeId,jdbcType=VARCHAR}"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="assets_kind_id", property="assetsKindId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
+            @Result(column="storage_time", property="storageTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="depre_method", property="depreMethod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="loss_report", property="lossReport", jdbcType=JdbcType.VARCHAR),
+            @Result(column="useful_life", property="usefulLife", jdbcType=JdbcType.VARCHAR),
+            @Result(column="storage_place", property="storagePlace", jdbcType=JdbcType.VARCHAR),
+            @Result(column="norms", property="norms", jdbcType=JdbcType.VARCHAR),
+            @Result(column="orival", property="orival", jdbcType=JdbcType.DECIMAL),
+            @Result(column="salvage", property="salvage", jdbcType=JdbcType.DECIMAL),
+            @Result(column="loss_report_time", property="lossReportTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="clean_cost", property="cleanCost", jdbcType=JdbcType.DECIMAL),
+            @Result(column="num", property="num", jdbcType=JdbcType.VARCHAR),
+            @Result(column="obtain_method", property="obtainMethod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="state", property="state", jdbcType=JdbcType.VARCHAR),
+            @Result(column="purchase_id", property="purchaseId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="change_id", property="changeId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="assets_kind_id",property="assetsKind",one=@One(select="com.zhsnail.finance.mapper.AssetsKindMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
+    })
+    List<Assets> findByChangeId(String changeId);
 }

@@ -1,12 +1,9 @@
-package com.zhsnail.finance.vo;
-
-import com.zhsnail.finance.entity.AssetsKind;
-import com.zhsnail.finance.entity.PageEntity;
+package com.zhsnail.finance.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class AssetsVo extends PageEntity {
+public class AssetsTemp {
     private String id;
     //资产类别id
     private String assetsKindId;
@@ -57,20 +54,12 @@ public class AssetsVo extends PageEntity {
         this.assetsKind = assetsKind;
     }
 
-    public String getChangeId() {
-        return changeId;
-    }
-
-    public void setChangeId(String changeId) {
-        this.changeId = changeId;
-    }
-
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = id == null ? null : id.trim();
     }
 
     public String getAssetsKindId() {
@@ -78,7 +67,7 @@ public class AssetsVo extends PageEntity {
     }
 
     public void setAssetsKindId(String assetsKindId) {
-        this.assetsKindId = assetsKindId;
+        this.assetsKindId = assetsKindId == null ? null : assetsKindId.trim();
     }
 
     public String getName() {
@@ -86,7 +75,7 @@ public class AssetsVo extends PageEntity {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name == null ? null : name.trim();
     }
 
     public String getCode() {
@@ -94,7 +83,7 @@ public class AssetsVo extends PageEntity {
     }
 
     public void setCode(String code) {
-        this.code = code;
+        this.code = code == null ? null : code.trim();
     }
 
     public Date getStorageTime() {
@@ -110,7 +99,7 @@ public class AssetsVo extends PageEntity {
     }
 
     public void setDepreMethod(String depreMethod) {
-        this.depreMethod = depreMethod;
+        this.depreMethod = depreMethod == null ? null : depreMethod.trim();
     }
 
     public String getLossReport() {
@@ -118,7 +107,7 @@ public class AssetsVo extends PageEntity {
     }
 
     public void setLossReport(String lossReport) {
-        this.lossReport = lossReport;
+        this.lossReport = lossReport == null ? null : lossReport.trim();
     }
 
     public String getUsefulLife() {
@@ -126,7 +115,7 @@ public class AssetsVo extends PageEntity {
     }
 
     public void setUsefulLife(String usefulLife) {
-        this.usefulLife = usefulLife;
+        this.usefulLife = usefulLife == null ? null : usefulLife.trim();
     }
 
     public String getStoragePlace() {
@@ -134,7 +123,7 @@ public class AssetsVo extends PageEntity {
     }
 
     public void setStoragePlace(String storagePlace) {
-        this.storagePlace = storagePlace;
+        this.storagePlace = storagePlace == null ? null : storagePlace.trim();
     }
 
     public String getNorms() {
@@ -142,7 +131,7 @@ public class AssetsVo extends PageEntity {
     }
 
     public void setNorms(String norms) {
-        this.norms = norms;
+        this.norms = norms == null ? null : norms.trim();
     }
 
     public BigDecimal getOrival() {
@@ -182,7 +171,7 @@ public class AssetsVo extends PageEntity {
     }
 
     public void setNum(String num) {
-        this.num = num;
+        this.num = num == null ? null : num.trim();
     }
 
     public String getObtainMethod() {
@@ -190,7 +179,7 @@ public class AssetsVo extends PageEntity {
     }
 
     public void setObtainMethod(String obtainMethod) {
-        this.obtainMethod = obtainMethod;
+        this.obtainMethod = obtainMethod == null ? null : obtainMethod.trim();
     }
 
     public String getState() {
@@ -198,7 +187,7 @@ public class AssetsVo extends PageEntity {
     }
 
     public void setState(String state) {
-        this.state = state;
+        this.state = state == null ? null : state.trim();
     }
 
     public String getPurchaseId() {
@@ -206,6 +195,14 @@ public class AssetsVo extends PageEntity {
     }
 
     public void setPurchaseId(String purchaseId) {
-        this.purchaseId = purchaseId;
+        this.purchaseId = purchaseId == null ? null : purchaseId.trim();
+    }
+
+    public String getChangeId() {
+        return changeId;
+    }
+
+    public void setChangeId(String changeId) {
+        this.changeId = changeId == null ? null : changeId.trim();
     }
 }

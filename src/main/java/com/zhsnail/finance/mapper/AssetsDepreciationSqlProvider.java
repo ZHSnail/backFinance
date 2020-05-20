@@ -1,6 +1,9 @@
 package com.zhsnail.finance.mapper;
 
+import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.entity.AssetsDepreciation;
+import com.zhsnail.finance.vo.AssetsDepreciationVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 
 public class AssetsDepreciationSqlProvider {
@@ -102,6 +105,59 @@ public class AssetsDepreciationSqlProvider {
         
         sql.WHERE("id = #{id,jdbcType=VARCHAR}");
         
+        return sql.toString();
+    }
+
+    public String selectAllConditionSql(AssetsDepreciationVo assetsDepreciationVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("ASM_ASSETS_DEPRECIATION");
+        if (assetsDepreciationVo!=null){
+            if (StringUtils.isNotBlank(assetsDepreciationVo.getCode())){
+                sql.WHERE("code = #{code,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("status in ( '" + DICT.STATUS_FINSH+"' , '" +
+                DICT.STATUS_CMT+"' , '"+DICT.STATUS_EXE
+                +"' )");
+        sql.ORDER_BY("create_time desc");
+        return sql.toString();
+    }
+
+    public String selectAllTaskConditionSql(AssetsDepreciationVo assetsDepreciationVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("ASM_ASSETS_DEPRECIATION");
+        if (assetsDepreciationVo!=null){
+            if (StringUtils.isNotBlank(assetsDepreciationVo.getCode())){
+                sql.WHERE("code = #{code,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(assetsDepreciationVo.getStatus())){
+                sql.WHERE("status = #{status,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("status in ( '" + DICT.STATUS_CMT+"' , '"+DICT.STATUS_EXE +"' )");
+        sql.WHERE("creater = #{creater,jdbcType=VARCHAR}");
+        sql.ORDER_BY("create_time desc");
+        return sql.toString();
+    }
+
+    public String findTaskListSql(AssetsDepreciationVo assetsDepreciationVo){
+        SQL sql = new SQL();
+        sql.SELECT("*");
+        sql.FROM("ASM_ASSETS_DEPRECIATION");
+        if (assetsDepreciationVo!=null){
+            if (StringUtils.isNotBlank(assetsDepreciationVo.getCreater())){
+                sql.WHERE("creater = #{creater,jdbcType=VARCHAR}");
+            }
+            if (StringUtils.isNotBlank(assetsDepreciationVo.getCode())){
+                sql.WHERE("code = #{code,jdbcType=VARCHAR}");
+            }
+        }
+        sql.WHERE("status in ( '"+ DICT.STATUS_DRAFT+"' , '"
+                +DICT.STATUS_BACK+"' , '" +
+                DICT.STATUS_CMT+"' , '"+DICT.STATUS_EXE
+                +"' )");
         return sql.toString();
     }
 }

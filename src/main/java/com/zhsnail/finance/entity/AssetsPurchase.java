@@ -1,5 +1,6 @@
 package com.zhsnail.finance.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +26,12 @@ public class AssetsPurchase {
     private String memo;
 
     private List<Assets> assetsList;
+    //单据总金额
+    private BigDecimal totalAmt;
+    //借方会计科目
+    private String debitAccountId;
+    //贷方会计科目
+    private String creditAccountId;
 
     public List<Assets> getAssetsList() {
         return assetsList;
@@ -112,5 +119,29 @@ public class AssetsPurchase {
 
     public void setMemo(String memo) {
         this.memo = memo == null ? null : memo.trim();
+    }
+
+    public BigDecimal getTotalAmt() {
+        return totalAmt;
+    }
+
+    public void setTotalAmt(BigDecimal totalAmt) {
+        this.totalAmt = totalAmt;
+    }
+
+    public String getDebitAccountId() {
+        return debitAccountId;
+    }
+
+    public void setDebitAccountId(String debitAccountId) {
+        this.debitAccountId = debitAccountId == null ? null : debitAccountId.trim();
+    }
+
+    public String getCreditAccountId() {
+        return creditAccountId;
+    }
+
+    public void setCreditAccountId(String creditAccountId) {
+        this.creditAccountId = creditAccountId == null ? null : creditAccountId.trim();
     }
 }

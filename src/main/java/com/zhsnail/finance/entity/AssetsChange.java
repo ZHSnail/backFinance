@@ -1,6 +1,7 @@
 package com.zhsnail.finance.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class AssetsChange {
     private String id;
@@ -20,6 +21,26 @@ public class AssetsChange {
     private String assetsId;
     //变动说明
     private String memo;
+
+    private List<Assets> assetsList;
+
+    private List<AssetsTemp> assetsTempList;
+
+    public List<AssetsTemp> getAssetsTempList() {
+        return assetsTempList;
+    }
+
+    public void setAssetsTempList(List<AssetsTemp> assetsTempList) {
+        this.assetsTempList = assetsTempList;
+    }
+
+    public List<Assets> getAssetsList() {
+        return assetsList;
+    }
+
+    public void setAssetsList(List<Assets> assetsList) {
+        this.assetsList = assetsList;
+    }
 
     public String getId() {
         return id;

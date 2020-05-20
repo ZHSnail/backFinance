@@ -14,7 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AssetsPurchaseServiceImpl implements AssetsPurchaseService{
@@ -61,6 +63,15 @@ public class AssetsPurchaseServiceImpl implements AssetsPurchaseService{
         assetsPurchaseVo.setPurchaseMethodName(transMap.get(assetsPurchaseVo.getPurchaseMethod()));
         String name = (String)CommonUtil.findUserInfo(assetsPurchaseVo.getCreater()).get("name");
         assetsPurchaseVo.setCreaterName(name);
+        List<Account> allAccount = CommonUtil.findAllAccount();
+        List<Account> creditAccountList = allAccount.stream().filter(account -> account.getId().equals(assetsPurchaseVo.getCreditAccountId())).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(creditAccountList)){
+            assetsPurchaseVo.setCreditAccountName(CommonUtil.getAccountLongName(creditAccountList.get(0)));
+        }
+        List<Account> debitAccountList = allAccount.stream().filter(account -> account.getId().equals(assetsPurchaseVo.getDebitAccountId())).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(debitAccountList)){
+            assetsPurchaseVo.setDebitAccountName(CommonUtil.getAccountLongName(debitAccountList.get(0)));
+        }
     }
 
     private List<AssetsPurchaseVo> transList(List<AssetsPurchase> list){
@@ -138,7 +149,39 @@ public class AssetsPurchaseServiceImpl implements AssetsPurchaseService{
 
     @Override
     public void lastApprove(String id) {
+        AssetsPurchase assetsPurchase = assetsPurchaseMapper.selectByPrimaryKey(id);
+        assetsPurchase.setStatus(DICT.STATUS_EXE);
+        assetsPurchaseMapper.updateByPrimaryKeySelective(assetsPurchase);
+        Voucher voucher = initVoucher(assetsPurchase);
+        voucherService.generateVoucher(voucher,assetsPurchase.getDebitAccountId(),assetsPurchase.getCreditAccountId());
+    }
 
+    /**
+     * 生成凭证实体
+     * @param assetsPurchase
+     * @return
+     */
+    private Voucher initVoucher(AssetsPurchase assetsPurchase){
+        Voucher voucher = CommonUtil.initVoucher(assetsPurchase.getCreater());
+        //业务日期
+        voucher.setBizDate(new Date());
+        //业务id
+        voucher.setBizId(assetsPurchase.getId());
+        //业务类型
+        voucher.setBizType(DICT.VOUCHER_BIZ_TYPE_ASSETS_PURCHASE);
+        //源单号
+        voucher.setBizCode(assetsPurchase.getCode());
+        //交易类型
+        voucher.setDealType(DICT.VOUCHER_DEAL_TYPE_OTHER);
+        //借方金额
+        voucher.setDebitTotal(assetsPurchase.getTotalAmt());
+        //贷方金额
+        voucher.setCreditTotal(assetsPurchase.getTotalAmt());
+        //审核人
+        voucher.setAuditer((String) CommonUtil.getCurrentUser().get("id"));
+        //备注
+        voucher.setMemo(assetsPurchase.getMemo());
+        return voucher;
     }
 
     @Override

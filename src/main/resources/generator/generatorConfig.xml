@@ -48,7 +48,7 @@
         </javaClientGenerator>
 
 
-        <table tableName="ASM_ASSETS" domainObjectName="Assets"
+        <table tableName="ASM_ASSETS_TEMP" domainObjectName="AssetsTemp"
                enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false" selectByExampleQueryId="false"/>
     </context>

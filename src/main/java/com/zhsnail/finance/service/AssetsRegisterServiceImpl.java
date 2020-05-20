@@ -85,10 +85,18 @@ public class AssetsRegisterServiceImpl implements AssetsRegisterService{
             assetsRegisterMapper.updateByPrimaryKeySelective(assetsRegister);
         }else {
             assetsRegister.setId(CodeUtil.getId());
-            assets.setId(CodeUtil.getId());
-            assets.setState(DICT.BOOLEAN_STATE_FALSE);
+            if (DICT.ASSETS_OBTAIN_METHOD_PURCHASE.equals(assets.getObtainMethod())){
+                assets.setState(DICT.BOOLEAN_STATE_TRUE);
+            }else {
+                assets.setState(DICT.BOOLEAN_STATE_FALSE);
+            }
+            if (StringUtils.isNotBlank(assets.getId())){
+                assetsMapper.updateByPrimaryKeySelective(assets);
+            }else {
+                assets.setId(CodeUtil.getId());
+                assetsMapper.insert(assets);
+            }
             assetsRegister.setAssetsId(assets.getId());
-            assetsMapper.insert(assets);
             assetsRegisterMapper.insert(assetsRegister);
         }
     }
@@ -116,10 +124,18 @@ public class AssetsRegisterServiceImpl implements AssetsRegisterService{
             assetsRegisterMapper.updateByPrimaryKeySelective(assetsRegister);
         }else {
             assetsRegister.setId(CodeUtil.getId());
-            assets.setId(CodeUtil.getId());
-            assets.setState(DICT.BOOLEAN_STATE_FALSE);
+            if (DICT.ASSETS_OBTAIN_METHOD_PURCHASE.equals(assets.getObtainMethod())){
+                assets.setState(DICT.BOOLEAN_STATE_TRUE);
+            }else {
+                assets.setState(DICT.BOOLEAN_STATE_FALSE);
+            }
+            if (StringUtils.isNotBlank(assets.getId())){
+                assetsMapper.updateByPrimaryKeySelective(assets);
+            }else {
+                assets.setId(CodeUtil.getId());
+                assetsMapper.insert(assets);
+            }
             assetsRegister.setAssetsId(assets.getId());
-            assetsMapper.insert(assets);
             assetsRegisterMapper.insert(assetsRegister);
         }
         activityService.runStart(DICT.ASSETS_REGISTER_WORK_KEY,assetsRegister.getId(),new HashMap());

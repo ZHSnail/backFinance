@@ -20,10 +20,7 @@ import org.apache.poi.ss.formula.functions.T;
 import org.apache.shiro.SecurityUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CommonUtil {
@@ -317,5 +314,15 @@ public class CommonUtil {
     public static <T> long getPageTotal(List<T> list){
         PageInfo<T> pageInfo = new PageInfo<>(list);
         return pageInfo.getTotal();
+    }
+
+    public static String getKeyByVal(Map<String,String> map, String val){
+        Set<String> keys = map.keySet();
+        for (String key:keys){
+            if (val.equals(map.get(key))){
+                return key;
+            }
+        }
+        return "";
     }
 }

@@ -217,9 +217,18 @@ public interface DICT {
      */
     String ASSETS_REGISTER_WORK_KEY="assetsRegisterReq";
     /**
-     * 固定资产登记申请
+     * 固定资产采购申请
      */
     String ASSETS_PURCHASE_WORK_KEY="assetsPurchaseReq";
+    /**
+     * 固定资产变动申请
+     */
+    String ASSETS_CHANGE_WORK_KEY="assetsChangeReq";
+
+    /**
+     * 固定资产折旧申请
+     */
+    String ASSETS_DEPRECIATION_WORK_KEY="assetsDepreciationReq";
     /**
      * 申请单状态 -- 退回
      */

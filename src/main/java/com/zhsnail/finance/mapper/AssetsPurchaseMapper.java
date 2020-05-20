@@ -20,12 +20,14 @@ public interface AssetsPurchaseMapper {
         "creater, code, status, ",
         "update_time, updater, ",
         "req_time, purchase_method, ",
-        "memo)",
+        "memo, total_amt, ",
+        "debit_account_id, credit_account_id)",
         "values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, ",
         "#{creater,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, ",
         "#{updateTime,jdbcType=TIMESTAMP}, #{updater,jdbcType=VARCHAR}, ",
         "#{reqTime,jdbcType=TIMESTAMP}, #{purchaseMethod,jdbcType=VARCHAR}, ",
-        "#{memo,jdbcType=VARCHAR})"
+        "#{memo,jdbcType=VARCHAR}, #{totalAmt,jdbcType=DECIMAL}, ",
+        "#{debitAccountId,jdbcType=VARCHAR}, #{creditAccountId,jdbcType=VARCHAR})"
     })
     int insert(AssetsPurchase record);
 
@@ -35,7 +37,7 @@ public interface AssetsPurchaseMapper {
     @Select({
         "select",
         "id, create_time, creater, code, status, update_time, updater, req_time, purchase_method, ",
-        "memo",
+        "memo, total_amt, debit_account_id, credit_account_id",
         "from ASM_ASSETS_PURCHASE",
         "where id = #{id,jdbcType=VARCHAR}"
     })
@@ -50,6 +52,9 @@ public interface AssetsPurchaseMapper {
         @Result(column="req_time", property="reqTime", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="purchase_method", property="purchaseMethod", jdbcType=JdbcType.VARCHAR),
         @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+        @Result(column="total_amt", property="totalAmt", jdbcType=JdbcType.DECIMAL),
+        @Result(column="debit_account_id", property="debitAccountId", jdbcType=JdbcType.VARCHAR),
+        @Result(column="credit_account_id", property="creditAccountId", jdbcType=JdbcType.VARCHAR),
         @Result(property = "assetsList",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.AssetsMapper.findByPurchaseId",fetchType = FetchType.LAZY))
     })
     AssetsPurchase selectByPrimaryKey(String id);
@@ -67,7 +72,10 @@ public interface AssetsPurchaseMapper {
           "updater = #{updater,jdbcType=VARCHAR},",
           "req_time = #{reqTime,jdbcType=TIMESTAMP},",
           "purchase_method = #{purchaseMethod,jdbcType=VARCHAR},",
-          "memo = #{memo,jdbcType=VARCHAR}",
+          "memo = #{memo,jdbcType=VARCHAR},",
+          "total_amt = #{totalAmt,jdbcType=DECIMAL},",
+          "debit_account_id = #{debitAccountId,jdbcType=VARCHAR},",
+          "credit_account_id = #{creditAccountId,jdbcType=VARCHAR}",
         "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(AssetsPurchase record);
@@ -84,6 +92,9 @@ public interface AssetsPurchaseMapper {
             @Result(column="req_time", property="reqTime", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="purchase_method", property="purchaseMethod", jdbcType=JdbcType.VARCHAR),
             @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="total_amt", property="totalAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="debit_account_id", property="debitAccountId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="credit_account_id", property="creditAccountId", jdbcType=JdbcType.VARCHAR)
     })
     List<AssetsPurchase> findTaskList(AssetsPurchaseVo assetsPurchaseVo);
 
@@ -108,9 +119,11 @@ public interface AssetsPurchaseMapper {
             @Result(column="req_time", property="reqTime", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="purchase_method", property="purchaseMethod", jdbcType=JdbcType.VARCHAR),
             @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="total_amt", property="totalAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="debit_account_id", property="debitAccountId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="credit_account_id", property="creditAccountId", jdbcType=JdbcType.VARCHAR)
     })
     List<AssetsPurchase> findByIds(@Param("ids") List<String> ids);
-
     @SelectProvider(type=AssetsPurchaseSqlProvider.class, method="selectAllConditionSql")
     @Results({
             @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
@@ -123,6 +136,9 @@ public interface AssetsPurchaseMapper {
             @Result(column="req_time", property="reqTime", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="purchase_method", property="purchaseMethod", jdbcType=JdbcType.VARCHAR),
             @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
+            @Result(column="total_amt", property="totalAmt", jdbcType=JdbcType.DECIMAL),
+            @Result(column="debit_account_id", property="debitAccountId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="credit_account_id", property="creditAccountId", jdbcType=JdbcType.VARCHAR)
     })
     List<AssetsPurchase> findAllByCondition(AssetsPurchaseVo assetsPurchaseVo);
 

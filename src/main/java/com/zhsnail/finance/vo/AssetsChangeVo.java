@@ -1,9 +1,12 @@
-package com.zhsnail.finance.entity;
+package com.zhsnail.finance.vo;
 
-import java.math.BigDecimal;
+import com.zhsnail.finance.entity.Assets;
+import com.zhsnail.finance.entity.PageEntity;
+
 import java.util.Date;
+import java.util.List;
 
-public class AssetsDepreciation {
+public class AssetsChangeVo extends PageEntity {
     private String id;
 
     private Date createTime;
@@ -19,21 +22,19 @@ public class AssetsDepreciation {
     private String updater;
 
     private String assetsId;
-    //折旧金额
-    private BigDecimal depreAmount;
-    //折旧时间
-    private Date depreTime;
-    //折旧说明
+    //变动说明
     private String memo;
 
-    private Assets assets;
+    private List<Assets> assetsList;
 
-    public Assets getAssets() {
-        return assets;
+    private String createrName;
+
+    public String getCreaterName() {
+        return createrName;
     }
 
-    public void setAssets(Assets assets) {
-        this.assets = assets;
+    public void setCreaterName(String createrName) {
+        this.createrName = createrName;
     }
 
     public String getId() {
@@ -41,7 +42,7 @@ public class AssetsDepreciation {
     }
 
     public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+        this.id = id;
     }
 
     public Date getCreateTime() {
@@ -57,7 +58,7 @@ public class AssetsDepreciation {
     }
 
     public void setCreater(String creater) {
-        this.creater = creater == null ? null : creater.trim();
+        this.creater = creater;
     }
 
     public String getCode() {
@@ -65,7 +66,7 @@ public class AssetsDepreciation {
     }
 
     public void setCode(String code) {
-        this.code = code == null ? null : code.trim();
+        this.code = code;
     }
 
     public String getStatus() {
@@ -73,7 +74,7 @@ public class AssetsDepreciation {
     }
 
     public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
+        this.status = status;
     }
 
     public Date getUpdateTime() {
@@ -89,7 +90,7 @@ public class AssetsDepreciation {
     }
 
     public void setUpdater(String updater) {
-        this.updater = updater == null ? null : updater.trim();
+        this.updater = updater;
     }
 
     public String getAssetsId() {
@@ -97,23 +98,7 @@ public class AssetsDepreciation {
     }
 
     public void setAssetsId(String assetsId) {
-        this.assetsId = assetsId == null ? null : assetsId.trim();
-    }
-
-    public BigDecimal getDepreAmount() {
-        return depreAmount;
-    }
-
-    public void setDepreAmount(BigDecimal depreAmount) {
-        this.depreAmount = depreAmount;
-    }
-
-    public Date getDepreTime() {
-        return depreTime;
-    }
-
-    public void setDepreTime(Date depreTime) {
-        this.depreTime = depreTime;
+        this.assetsId = assetsId;
     }
 
     public String getMemo() {
@@ -121,6 +106,14 @@ public class AssetsDepreciation {
     }
 
     public void setMemo(String memo) {
-        this.memo = memo == null ? null : memo.trim();
+        this.memo = memo;
+    }
+
+    public List<Assets> getAssetsList() {
+        return assetsList;
+    }
+
+    public void setAssetsList(List<Assets> assetsList) {
+        this.assetsList = assetsList;
     }
 }
