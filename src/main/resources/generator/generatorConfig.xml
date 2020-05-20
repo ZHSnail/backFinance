@@ -48,8 +48,44 @@
         </javaClientGenerator>
 
 
-        <table tableName="ASM_ASSETS_TEMP" domainObjectName="AssetsTemp"
+<!--        <table tableName="SAM_BANK_INFO" domainObjectName="BankInfo"
                enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false" selectByExampleQueryId="false"/>
+        <table tableName="SAM_FLOAT_STUB" domainObjectName="FloatStub"
+               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               enableUpdateByExample="false" selectByExampleQueryId="false"/>
+        <table tableName="SAM_FLOAT_WAGE" domainObjectName="FloatWage"
+               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               enableUpdateByExample="false" selectByExampleQueryId="false"/>
+        <table tableName="SAM_ORG_INFO" domainObjectName="OrgInfo"
+               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               enableUpdateByExample="false" selectByExampleQueryId="false"/>-->
+        <!--<table tableName="SAM_PAY_STUB_INFO" domainObjectName="PayStubInfo"
+               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               enableUpdateByExample="false" selectByExampleQueryId="false"/>-->
+       <!-- <table tableName="SAM_SCALE_SALARY" domainObjectName="ScaleSalary"
+               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               enableUpdateByExample="false" selectByExampleQueryId="false"/>
+        <table tableName="SAM_SETTLE_WAGE_DETAIL" domainObjectName="SettleWageDetail"
+               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               enableUpdateByExample="false" selectByExampleQueryId="false"/>
+        <table tableName="SAM_SETTLE_WAGE_INFO" domainObjectName="SettleWageInfo"
+               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               enableUpdateByExample="false" selectByExampleQueryId="false"/>
+        <table tableName="SAM_STATION_INFO" domainObjectName="StationInfo"
+               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               enableUpdateByExample="false" selectByExampleQueryId="false"/>
+        <table tableName="SAM_STATION_SALARY" domainObjectName="StationSalary"
+               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               enableUpdateByExample="false" selectByExampleQueryId="false"/>-->
+        <table tableName="SAM_STAFF_INFO" domainObjectName="StaffInfo"
+               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               enableUpdateByExample="false" selectByExampleQueryId="false"/>
+        <!--<table tableName="SAM_SETTLE_WAGE_INFO" domainObjectName="SettleWageInfo"
+               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               enableUpdateByExample="false" selectByExampleQueryId="false"/>-->
+<!--        <table tableName="SAM_PAY_STUB_INFO" domainObjectName="PayStubInfo"-->
+<!--               enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--               enableUpdateByExample="false" selectByExampleQueryId="false"/>-->
     </context>
 </generatorConfiguration>

@@ -1,6 +1,7 @@
 package com.zhsnail.finance.main;
 
 import com.zhsnail.finance.service.AccountService;
+import com.zhsnail.finance.service.StaffInfoService;
 import com.zhsnail.finance.service.StudentInfoService;
 import com.zhsnail.finance.service.SystemService;
 import com.zhsnail.finance.util.SpringUtil;
@@ -17,7 +18,7 @@ public class MyApplicationRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         logger.info("执行初始化缓存开始。。。。。");
         SpringUtil.getBean(StudentInfoService.class).findAll();
-//        SpringUtil.getBean(SystemService.class).findCurrentSysParam();
+        SpringUtil.getBean(StaffInfoService.class).findAll();
         SpringUtil.getBean(AccountService.class).findAllAccount();
         logger.info("执行初始化缓存结束。。。。。");
     }

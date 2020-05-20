@@ -6,10 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
-import com.zhsnail.finance.service.AccountService;
-import com.zhsnail.finance.service.StudentInfoService;
-import com.zhsnail.finance.service.SysSequenceService;
-import com.zhsnail.finance.service.SystemService;
+import com.zhsnail.finance.service.*;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
@@ -20,6 +17,7 @@ import org.apache.poi.ss.formula.functions.T;
 import org.apache.shiro.SecurityUtils;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +26,7 @@ public class CommonUtil {
     private static StudentInfoService studentInfoService = SpringUtil.getBean(StudentInfoService.class);
     private static SystemService systemService = SpringUtil.getBean(SystemService.class);
     private static AccountService accountService = SpringUtil.getBean(AccountService.class);
+    private static StaffInfoService staffInfoService = SpringUtil.getBean(StaffInfoService.class);
 
     /**
      * 获取session中的用户
@@ -120,16 +119,13 @@ public class CommonUtil {
             userMap = BeanUtil.beanToMap(result.get(0));
             return userMap;
         }
+        List<StaffInfo> staffInfoList = staffInfoService.findAll();
+        List<StaffInfo> staffList = staffInfoList.stream().filter(staffInfo -> staffInfo.getId().equals(id)).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(staffList)){
+            userMap = BeanUtil.beanToMap(staffList.get(0));
+            return userMap;
+        }
         return new HashMap();
-        //TODO 查询员工的信息
-//        if (DICT.LOGIN_STUDENT.equals(currentUser.get(DICT.LOGIN))){
-//            StudentInfo studentInfo = studentInfoService.findById(id);
-//            userMap = BeanUtil.beanToMap(studentInfo);
-//        }
-//        if (DICT.LOGIN_STAFF.equals(currentUser.get(DICT.LOGIN))){
-//
-//        }
-
     }
 
     /**
@@ -316,6 +312,12 @@ public class CommonUtil {
         return pageInfo.getTotal();
     }
 
+    /**
+     * 根据值获取key
+     * @param map
+     * @param val
+     * @return
+     */
     public static String getKeyByVal(Map<String,String> map, String val){
         Set<String> keys = map.keySet();
         for (String key:keys){
@@ -324,5 +326,30 @@ public class CommonUtil {
             }
         }
         return "";
+    }
+
+    /**
+     * 根据编码获取会计科目
+     * @param code
+     * @return
+     */
+    public static Account findAccountByCode(String code){
+        List<Account> allAccount = findAllAccount();
+        List<Account> collect = allAccount.stream().filter(account -> code.equals(account.getCode())).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(collect)){
+            return collect.get(0);
+        }
+        return new Account();
+    }
+
+    /**
+     * 获取当前薪酬期间
+     * @return
+     */
+    public static String getNowSalaryPeriod(){
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+        String dateString = format.format(date);
+        return dateString.replaceAll("-","");
     }
 }

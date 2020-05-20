@@ -7,6 +7,47 @@ import com.zhsnail.finance.entity.AssetsRegister;
  */
 public interface DICT {
     String SYS_ROLE_NAME = "老师";
+
+    /**
+     * 扣减分类--应发项
+     */
+    String FLOAT_WAGE_SIGN_TYPE_SHOULD_PAID = "SHOULD_PAID";
+    /**
+     * 扣减分类--扣减项
+     */
+    String FLOAT_WAGE_SIGN_TYPE_DEDUCT = "DEDUCT";
+    /**
+     * 扣减分类--单位缴纳
+     */
+    String FLOAT_WAGE_SIGN_TYPE_UNIT_PAY = "UNIT_PAY";
+    /**
+     * 计税类型--应税项
+     */
+    String FLOAT_WAGE_TAX_TYPE_TAX = "TAX";
+    /**
+     * 计税类型--非税项
+     */
+    String FLOAT_WAGE_TAX_TYPE_NON_TAX = "NON_TAX";
+    /**
+     * 计税类型--税前扣减项
+     */
+    String FLOAT_WAGE_TAX_TYPE_PRE_TAX_DED = "PRE_TAX_DED";
+    /**
+     * 岗位类别--教师类
+     */
+    String STATION_INFO_TYPE_TCH = "TCH";
+    /**
+     * 岗位类别--高级管理类
+     */
+    String STATION_INFO_TYPE_SEN = "SEN";
+    /**
+     * 岗位类别--职能管理类
+     */
+    String STATION_INFO_TYPE_FUNC = "FUNC";
+    /**
+     * 岗位类别--其他类
+     */
+    String STATION_INFO_TYPE_OTH = "OTH";
     /**
      * 固定资产采购方式--公开招标
      */

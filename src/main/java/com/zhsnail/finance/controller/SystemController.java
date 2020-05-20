@@ -7,12 +7,10 @@ import com.zhsnail.finance.common.Result;
 import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.entity.Account;
 import com.zhsnail.finance.exception.BaseRuningTimeException;
-import com.zhsnail.finance.service.FileService;
-import com.zhsnail.finance.service.AccountService;
-import com.zhsnail.finance.service.StudentInfoService;
-import com.zhsnail.finance.service.SystemService;
+import com.zhsnail.finance.service.*;
 import com.zhsnail.finance.util.*;
 import com.zhsnail.finance.vo.RoleVo;
+import com.zhsnail.finance.vo.StaffInfoVo;
 import com.zhsnail.finance.vo.SystemParamVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +43,8 @@ public class SystemController {
     @Autowired
     private StudentInfoService studentInfoService;
     @Autowired
+    private StaffInfoService staffInfoService;
+    @Autowired
     private AccountService accountService;
     @PostMapping("/login")
     public Result checkUser(@RequestBody User user){
@@ -71,6 +71,14 @@ public class SystemController {
                     subject.getSession().setAttribute("userInfo",userInfo);
                 }
                 if (StringUtils.isNotBlank(loginUser.getStaffId())){
+                    //存当前登陆用户
+                    StaffInfoVo staffInfoVo = staffInfoService.findById(loginUser.getStaffId());
+                    Map userInfo = BeanUtil.beanToMap(staffInfoVo);
+                    userInfo.put(DICT.LOGIN,DICT.LOGIN_STAFF);
+                    map.put("userInfo", userInfo);
+                    SystemParam currentSysParam = systemService.findCurrentSysParam();
+                    map.put("sysParam",currentSysParam);
+                    subject.getSession().setAttribute("userInfo",userInfo);
                 }
             }
         }catch (LockedAccountException e){
