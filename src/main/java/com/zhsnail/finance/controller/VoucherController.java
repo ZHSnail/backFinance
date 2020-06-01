@@ -109,4 +109,10 @@ public class VoucherController {
         voucherService.tickVoucher(id);
         return new Result(true,"勾对凭证成功");
     }
+
+    @PostMapping("/postVoucher")
+    public Result postVoucher(@RequestBody VoucherVo voucherVo){
+        voucherService.postVoucher(voucherVo);
+        return new Result(true,"过账凭证成功");
+    }
 }

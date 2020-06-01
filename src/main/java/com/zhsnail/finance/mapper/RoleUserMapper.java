@@ -52,4 +52,9 @@ public interface RoleUserMapper {
         "where id = #{id,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(RoleUser record);
+    @Delete({
+            "delete from SYM_ROLE_USER",
+            "where biz_id = #{bizId,jdbcType=VARCHAR}"
+    })
+    void deleByBizId(String bizId);
 }

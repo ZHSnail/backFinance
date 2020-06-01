@@ -69,6 +69,7 @@ public interface StudentInfoMapper {
             @Result(column="profession_id", property="professionId", jdbcType=JdbcType.VARCHAR),
             @Result(column="profession_id", property="profession",one = @One(select = "com.zhsnail.finance.mapper.ProfessionMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
             @Result(column="dorm_id", property="dormInfo",one = @One(select = "com.zhsnail.finance.mapper.DormInfoMapper.selectByPrimaryKey",fetchType= FetchType.EAGER)),
+            @Result(property = "roles",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.RoleMapper.findByBizId",fetchType = FetchType.EAGER))
     })
     List<StudentInfo> findAllByCondition(StudentInfoVo studentInfoVo);
 

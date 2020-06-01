@@ -5,12 +5,16 @@ import com.zhsnail.finance.common.Appendix;
 import com.zhsnail.finance.common.DICT;
 import com.zhsnail.finance.entity.*;
 import com.zhsnail.finance.entity.Voucher;
+import com.zhsnail.finance.mapper.AccountBalanceMapper;
+import com.zhsnail.finance.mapper.AccountDetailMapper;
 import com.zhsnail.finance.mapper.AccountTempMapper;
 import com.zhsnail.finance.mapper.VoucherMapper;
 import com.zhsnail.finance.util.BeanUtil;
 import com.zhsnail.finance.util.CodeUtil;
 import com.zhsnail.finance.util.CommonUtil;
 import com.zhsnail.finance.util.JsonUtil;
+import com.zhsnail.finance.vo.AccountBalanceVo;
+import com.zhsnail.finance.vo.AccountTempVo;
 import com.zhsnail.finance.vo.VoucherVo;
 import com.zhsnail.finance.vo.VoucherVo;
 import org.apache.commons.collections4.CollectionUtils;
@@ -34,6 +38,10 @@ public class VoucherServiceImpl implements VoucherService {
     private FileService fileService;
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private AccountDetailMapper accountDetailMapper;
+    @Autowired
+    private AccountBalanceMapper accountBalanceMapper;
 
     private static Map<String,String> transMap;
 
@@ -202,11 +210,14 @@ public class VoucherServiceImpl implements VoucherService {
         voucherVo.setPostingStatus(transMap.get(voucherVo.getPostingStatus()));
         voucherVo.setTickState(transMap.get(voucherVo.getTickState()));
         if (CollectionUtils.isNotEmpty(voucherVo.getAccountTempList())){
+            List<AccountTempVo> accountTempVoList = new ArrayList<>();
             for (AccountTemp accountTemp:voucherVo.getAccountTempList()){
-                Account account = accountTemp.getAccount();
-                String accountLongName = CommonUtil.getAccountLongName(account);
-                account.setAccountName(accountLongName);
+                AccountTempVo accountTempVo = new AccountTempVo();
+                BeanUtil.copyProperties(accountTempVo,accountTemp);
+                accountTempVo.setAcconutName(CommonUtil.getAccountLongName(accountTemp.getAccount()));
+                accountTempVoList.add(accountTempVo);
             }
+            voucherVo.setAccountTempVoList(accountTempVoList);
         }
     }
 
@@ -293,5 +304,87 @@ public class VoucherServiceImpl implements VoucherService {
         voucher.setTickState(DICT.VOUCHER_TICK_STATE_TICKED);
         voucher.setTickDate(new Date());
         voucherMapper.updateByPrimaryKeySelective(voucher);
+    }
+
+    @Override
+    public void postVoucher(VoucherVo voucherVo) {
+        List<String> ids = voucherVo.getIds();
+        if (CollectionUtils.isNotEmpty(ids)){
+            List<Voucher> voucherList = voucherMapper.findByIds(ids);
+            List<AccountDetail> accountDetailList = new ArrayList<>();
+            for (Voucher voucher:voucherList){
+                List<AccountTemp> accountTempList = voucher.getAccountTempList();
+                for (AccountTemp accountTemp:accountTempList){
+                    AccountDetail accountDetail = new AccountDetail();
+                    accountDetail.setAccountId(accountTemp.getAccountId());
+                    if (DICT.LENDER_ACCOUNT_DIRECTION_CREDIT.equals(accountTemp.getDirection())){
+                        accountDetail.setCreditAmount(accountTemp.getCreditAmt());
+                    }
+                    if (DICT.LENDER_ACCOUNT_DIRECTION_DEBIT.equals(accountTemp.getDirection())){
+                        accountDetail.setDebitAmount(accountTemp.getDebitAmt());
+                    }
+                    accountDetail.setId(CodeUtil.getId());
+                    accountDetail.setVoucherId(voucher.getId());
+                    accountDetail.setAccountPeriod(voucher.getAccountPeriod());
+                    accountDetailList.add(accountDetail);
+                }
+                voucher.setPostingDate(new Date());
+                voucher.setPostingStatus(DICT.VOUCHER_POST_STATUS_POSTED);
+                voucher.setKeeper((String) CommonUtil.getCurrentUser().get("id"));
+                voucherMapper.updateByPrimaryKeySelective(voucher);
+            }
+            List<String> collect = accountDetailList.stream().map(accountDetail -> accountDetail.getAccountId()).distinct().collect(Collectors.toList());
+            //拿到所有需要更新会计科目余额信息
+            List<AccountBalance> accountBalanceList = accountBalanceMapper.findByAccIds(collect);
+            List<AccountBalanceVo> accountBalanceVoList = new ArrayList<>();
+            for(int i=0;i<accountBalanceList.size();i++){
+                AccountBalance accountBalance = accountBalanceList.get(i);
+                AccountBalanceVo accountBalanceVo = new AccountBalanceVo();
+                BeanUtil.copyProperties(accountBalanceVo,accountBalance);
+                String accountId = accountBalanceVo.getAccountId();
+                List<String> parentIds = new ArrayList<>();
+                CommonUtil.getParentIds(accountId,parentIds);
+                List<AccountDetail> accountDetails = accountDetailList.stream().filter(accountDetail -> accountId.equals(accountDetail.getAccountId())).collect(Collectors.toList());
+                if(CollectionUtils.isNotEmpty(accountDetails)){
+                    for (AccountDetail item:accountDetails){
+                        if (item.getCreditAmount()!=null){
+                            accountBalanceVo.setCreditCurrperiodAmt(accountBalanceVo.getCreditCurrperiodAmt().add(item.getCreditAmount()));
+                            accountBalanceVo.setCreditAccumyearAmt(accountBalanceVo.getCreditAccumyearAmt().add(item.getCreditAmount()));
+                        }
+                        if (item.getDebitAmount()!=null){
+                            accountBalanceVo.setDebitCurrperiodAmt(accountBalanceVo.getDebitCurrperiodAmt().add(item.getDebitAmount()));
+                            accountBalanceVo.setDebitAccumyearAmt(accountBalanceVo.getDebitAccumyearAmt().add(item.getDebitAmount()));
+                        }
+                    }
+                }
+                accountBalanceVoList.add(accountBalanceVo);
+                List<AccountBalanceVo> parentAccountBalanceVoList = new ArrayList<>();
+                if (CollectionUtils.isNotEmpty(parentIds)){
+                    //父级科目
+                    List<AccountBalance> parentAccountBalanceList = accountBalanceMapper.findByAccIds(parentIds);
+                    for (int j = 0;j<parentAccountBalanceList.size();j++){
+                        AccountBalance parentAccountBalance = parentAccountBalanceList.get(j);
+                        AccountBalanceVo parentAccountBalanceVo = new AccountBalanceVo();
+                        BeanUtil.copyProperties(parentAccountBalanceVo,parentAccountBalance);
+                        if(CollectionUtils.isNotEmpty(accountDetails)){
+                            for (AccountDetail item:accountDetails){
+                                if (item.getCreditAmount()!=null){
+                                    parentAccountBalanceVo.setCreditCurrperiodAmt(parentAccountBalanceVo.getCreditCurrperiodAmt().add(item.getCreditAmount()));
+                                    parentAccountBalanceVo.setCreditAccumyearAmt(parentAccountBalanceVo.getCreditAccumyearAmt().add(item.getCreditAmount()));
+                                }
+                                if (item.getDebitAmount()!=null){
+                                    parentAccountBalanceVo.setDebitCurrperiodAmt(parentAccountBalanceVo.getDebitCurrperiodAmt().add(item.getDebitAmount()));
+                                    parentAccountBalanceVo.setDebitAccumyearAmt(parentAccountBalanceVo.getDebitAccumyearAmt().add(item.getDebitAmount()));
+                                }
+                            }
+                        }
+                        parentAccountBalanceVoList.add(parentAccountBalanceVo);
+                    }
+                }
+                accountBalanceVoList.addAll(parentAccountBalanceVoList);
+            }
+            accountBalanceMapper.batchUpdate(accountBalanceVoList);
+            accountDetailMapper.batchInsert(accountDetailList);
+        }
     }
 }

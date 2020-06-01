@@ -61,6 +61,27 @@ public class VoucherVo extends PageEntity {
     //勾对日期
     private Date tickDate;
 
+    private List<String> ids;
+
+    //会计科目分录
+    private List<AccountTempVo> accountTempVoList;
+
+    public List<String> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<String> ids) {
+        this.ids = ids;
+    }
+
+    public List<AccountTempVo> getAccountTempVoList() {
+        return accountTempVoList;
+    }
+
+    public void setAccountTempVoList(List<AccountTempVo> accountTempVoList) {
+        this.accountTempVoList = accountTempVoList;
+    }
+
     public String getTickState() {
         return tickState;
     }

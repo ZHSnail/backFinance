@@ -233,7 +233,8 @@ public interface VoucherMapper {
             @Result(column="memo", property="memo", jdbcType=JdbcType.VARCHAR),
             @Result(column="biz_code", property="bizCode", jdbcType=JdbcType.VARCHAR),
             @Result(column="tick_state", property="tickState", jdbcType=JdbcType.VARCHAR),
-            @Result(column="tick_date", property="tickDate", jdbcType=JdbcType.TIMESTAMP)
+            @Result(column="tick_date", property="tickDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(property = "accountTempList",column = "id",many = @Many(select = "com.zhsnail.finance.mapper.AccountTempMapper.findByVoucherId",fetchType = FetchType.EAGER))
     })
     List<Voucher> findByIds(@Param("ids") List<String> ids);
 

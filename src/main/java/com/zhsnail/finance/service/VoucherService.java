@@ -96,4 +96,6 @@ public interface VoucherService {
      * @param id
      */
     void tickVoucher(String id);
+
+    void postVoucher(VoucherVo voucherVo);
 }

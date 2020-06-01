@@ -1,9 +1,14 @@
 package com.zhsnail.finance.mapper;
 
 import com.zhsnail.finance.entity.AccountDetail;
+import com.zhsnail.finance.entity.AccountDetail;
 import com.zhsnail.finance.vo.AccountDetailVo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
+
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
 
 public class AccountDetailSqlProvider {
 
@@ -80,5 +85,24 @@ public class AccountDetailSqlProvider {
             }
         }
         return sql.toString();
+    }
+
+    public String batchinsertSql(Map<String, List<AccountDetail>> map ){
+        List<AccountDetail> accountDetailList = map.get("list");
+        StringBuilder sb = new StringBuilder();
+        sb.append("INSERT INTO LEM_ACCOUNT_DETAIL ");
+        sb.append("(id, debit_amount,credit_amount,account_period,voucher_id," +
+                "account_id) ");
+        sb.append("VALUES ");
+        MessageFormat mf = new MessageFormat("(#'{'list[{0}].id},#'{'list[{0}].debitAmount}, #'{'list[{0}].creditAmount}" +
+                ",#'{'list[{0}].accountPeriod},#'{'list[{0}].voucherId}," +
+                "#'{'list[{0}].accountId})");
+        for (int i = 0; i < accountDetailList.size(); i++) {
+            sb.append(mf.format(new Object[]{i}));
+            if (i < accountDetailList.size() - 1) {
+                sb.append(",");
+            }
+        }
+        return sb.toString();
     }
 }

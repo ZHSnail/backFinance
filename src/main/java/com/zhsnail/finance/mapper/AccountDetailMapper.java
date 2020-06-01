@@ -70,4 +70,7 @@ public interface AccountDetailMapper {
             @Result(column="voucher_id",property="voucher",one=@One(select="com.zhsnail.finance.mapper.VoucherMapper.selectByPrimaryKey",fetchType= FetchType.EAGER))
     })
     List<AccountDetail> findByCondition(AccountDetailVo accountDetailVo);
+
+    @InsertProvider(type=AccountDetailSqlProvider.class, method="batchinsertSql")
+    void batchInsert(List<AccountDetail> accountDetailList);
 }

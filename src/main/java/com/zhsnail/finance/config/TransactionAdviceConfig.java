@@ -37,7 +37,10 @@ public class TransactionAdviceConfig {
         source.addTransactionalMethod("last*", txAttr_REQUIRED);
         source.addTransactionalMethod("exec*", txAttr_REQUIRED);
         source.addTransactionalMethod("run*", txAttr_REQUIRED);
+        source.addTransactionalMethod("post*", txAttr_REQUIRED);
+        source.addTransactionalMethod("tick*", txAttr_REQUIRED);
         source.addTransactionalMethod("set*", txAttr_REQUIRED);
+        source.addTransactionalMethod("generate*", txAttr_REQUIRED_READONLY);
         source.addTransactionalMethod("get*", txAttr_REQUIRED_READONLY);
         source.addTransactionalMethod("query*", txAttr_REQUIRED_READONLY);
         source.addTransactionalMethod("export*", txAttr_REQUIRED_READONLY);
